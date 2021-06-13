@@ -372,7 +372,7 @@ The template that defines both this small area’s shape, as well as how the ele
 
 ![1623484394933](images/1623484394933.png)
 
-中间的点就是 <font color=red>锚点</font>
+没定义锚点的情况下**中间的点就是 <font color=red>锚点</font>**，如果定义了锚点，那么kernel也可以是偶数。
 
 **Anchor points** 
 
@@ -756,4 +756,101 @@ void cv::bilateralFilter(
 ![1623505722264](images/1623505722264.png)
 
 ![1623505871050](images/1623505871050.png)
+
+### **Derivatives and Gradients**
+
+导数和梯度
+
+#### **The Sobel Derivative**
+
+用来表达微分的最常用操作是 Sobel 微分算子，Sobel 算子包含任意阶的微分以及融合偏导。
+
+Sobel 并不是真正的导数，在离散空间上，而是一个多项式拟合，也就是说，x 方向上的二阶Sobel导数并不是真正的二阶导数，他是对抛物线函数的局部拟合，这就是为什么有时候要用较大的核，因为，更精确吗~~~ 所以，**核小的时候，精度较差，核太大，又影响效率**。
+
+**函数原型：**
+
+~~~c++
+void cv::Sobel(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Result image
+ 	int ddepth, // Pixel depth of output (e.g., CV_8U)
+ 	int xorder, // order of corresponding derivative in x
+ 	int yorder, // order of corresponding derivative in y
+ 	cv::Size ksize = 3, // Kernel size
+ 	double scale = 1, // Scale (applied before assignment)
+ 	double delta = 0, // Offset (applied before assignment)
+ 	int borderType = cv::BORDER_DEFAULT // Border extrapolation
+);
+~~~
+
+注意： if src is an 8-bit image, then the dst should have a depth of at least CV_16S to avoid overflow.  xorder and yorder are the orders of the derivative. Typically, you’ll use 0, 1, or at most 2; a 0 value indicates no derivative in that direction. The ksize parameter should be odd and is the width (and the height) of the filter to be used. Currently, aperture sizes up to 31 are supported.12 The scale factor and delta are applied to the derivative before storing in dst. This can be useful when you want to actually visualize a derivative in an 8-bit image you can show on the screen: 
+
+![1623546342835](images/1623546342835.png)
+
+![1623546367214](images/1623546367214.png)
+
+y方向上 算子计算结果，所以，显示的是水平线比较多。
+
+![1623546404400](images/1623546404400.png)
+
+x方向上 算子计算结果，所以，显示的是竖直线比较多。，导数吗，右边减去左边，求取边缘咯，就差分。
+
+
+
+> 突然想到应用：那我车牌不就可以用这玩意来搞了，横纵线分别求，然后一叠加。车牌那不就能搞出来一点点咯。
+
+
+
+#### **Scharr Filter** 
+
+如果是 3 * 3的kernel来说的话，使用这玩意比 Sobel更好一点。怎么说，就是准确度更高一下。
+
+![1623546793731](images/1623546793731.png)
+
+#### **The Laplacian**
+
+对图像求二阶导数，X Y方向上的。 二阶导数，为0的地方就是边缘。
+
+![1623547192244](images/1623547192244.png)
+
+**算子表达式**
+
+![1623547139828](images/1623547139828.png)
+
+**函数原型：**
+
+~~~c++
+void cv::Laplacian(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Result image
+ 	int ddepth, // Depth of output image (e.g., CV_8U)
+ 	cv::Size ksize = 3, // Kernel size
+ 	double scale = 1, // Scale applied before assignment to dst
+ 	double delta = 0, // Offset applied before assignment to dst
+ 	int borderType = cv::BORDER_DEFAULT // Border extrapolation to use
+);
+~~~
+
+#### Canny
+
+该算法基于 Laplacian 算法，不同的地方在于，首先在 x 和 y 方向上求导，然后组合为 4 个方向的导数，当这些方向导数达到局部最大值的点就是组成边缘的候选点。
+
+最重要的特点：试图将独立边的候选像素拼接成轮廓，轮廓的形成是对这些像素运用滞后性阈值。意味着有两个阈值，上限和下限，如果一个像素的梯度大于上限阈值，则被认为是边缘像素。如果低于下限阈值，则抛弃。如果两者之间，只有当与高于阈值的像素挨着的时候才会被接受。
+
+Canny推荐的上下阈值比 在 2:1 和 3:1之间，
+
+**函数原型**
+
+~~~c++
+void cv::Canny(
+ 	cv::InputArray image, // Input single channel image
+ 	cv::OutputArray edges, // Output edge image
+ 	double threshold1, // "lower" threshold
+ 	double threshold2, // "upper" threshold
+ 	int apertureSize = 3, // Sobel aperture
+ 	bool L2gradient = false // true=L2-norm (more accurate)
+);
+~~~
+
+### **Image Morphology** 
 
