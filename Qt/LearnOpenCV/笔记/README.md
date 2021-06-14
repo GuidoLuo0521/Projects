@@ -854,3 +854,60 @@ void cv::Canny(
 
 ### **Image Morphology** 
 
+形态学操作，所有的形态学操作都是基于  **膨胀** 和  **腐蚀**  来进行的。
+
+![1623682626461](images/1623682626461.png)
+
+#### **Dilation and Erosion**
+
+Dilation is a convolution of some image with a kernel in which any given pixel is replaced with the *local maximum* of all of the pixel values covered by the kernel. As we mentioned earlier, this is an example of a nonlinear operation, so the kernel cannot be expressed in the form shown back in Figure 10-1. Most often, the kernel used for dilation is a “solid” square kernel, or sometimes a disk, with the anchor point at the center. The effect of dilation is to cause filled15 regions within an image to grow as diagrammed in Figure 10-19.
+
+膨胀 函数原型
+
+亮的区域更多
+
+~~~c++
+void cv::dilate(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Result image
+ 	cv::InputArray element, // Structuring, a cv::Mat()
+ 	cv::Point anchor = cv::Point(-1,-1), // Location of anchor point
+ 	int iterations = 1, // Number of times to apply
+	 int borderType = cv::BORDER_CONSTANT // Border extrapolation
+ 	const cv::Scalar& borderValue = cv::morphologyDefaultBorderValue()
+);
+~~~
+
+
+
+![1623682771687](images/1623682771687.png)
+
+![1623683095598](images/1623683095598.png)
+
+腐蚀 函数原型
+
+暗的区域更多
+
+~~~c++
+void cv::erode(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Result image
+ 	cv::InputArray element, // Structuring, a cv::Mat()
+ 	cv::Point anchor = cv::Point(-1,-1), // Location of anchor point
+ 	int iterations = 1, // Number of times to apply
+ 	int borderType = cv::BORDER_CONSTANT // Border extrapolation
+ 	const cv::Scalar& borderValue = cv::morphologyDefaultBorderValue()
+);
+~~~
+
+
+
+![1623682777504](images/1623682777504.png)
+
+![1623683078104](images/1623683078104.png)
+
+上述两个的结果原理公式：
+
+![1623683169466](images/1623683169466.png)
+
+腐蚀：获取，这个 kernel 区域的最小值，膨胀，获取这个 kernel 区域的最大值。
