@@ -18,6 +18,7 @@ SOURCES += \
         main.cpp \
 
 HEADERS += \
+    Exercises.h \
     filtersandconvolution.h
 
 INCLUDEPATH +=  $$PWD/../opencv \

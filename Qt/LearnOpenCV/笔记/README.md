@@ -864,7 +864,7 @@ Dilation is a convolution of some image with a kernel in which any given pixel i
 
 膨胀 函数原型
 
-亮的区域更多
+亮的区域更多， 膨胀的作用是将与物体接触的所有背景点合并到物体中，使目标增大，可添补目标中的空洞。 
 
 ~~~c++
 void cv::dilate(
@@ -880,13 +880,13 @@ void cv::dilate(
 
 
 
-![1623682771687](images/1623682771687.png)
+![](images/1623682771687.png)
 
 ![1623683095598](images/1623683095598.png)
 
 腐蚀 函数原型
 
-暗的区域更多
+暗的区域更多， 腐蚀的作用是消除物体边界点，使目标缩小，可以消除小于结构元素的噪声点； 
 
 ~~~c++
 void cv::erode(
@@ -911,3 +911,99 @@ void cv::erode(
 ![1623683169466](images/1623683169466.png)
 
 腐蚀：获取，这个 kernel 区域的最小值，膨胀，获取这个 kernel 区域的最大值。
+
+
+
+#### The General Morphology Function
+
+opencv 中通用的图像形态学操作
+
+~~~c++
+CV_EXPORTS_W void morphologyEx( InputArray src, OutputArray dst,
+                                int op, InputArray kernel,
+                                Point anchor = Point(-1,-1), int iterations = 1,
+                                int borderType = BORDER_CONSTANT,
+                                const Scalar& borderValue = morphologyDefaultBorderValue() );
+~~~
+
+通过参数 op，指定操作的方式，具体操作方式如下：
+
+![1623737654321](images/1623737654321.png)
+
+#### Opening and Closing
+
+##### Opening
+
+开运算，就是分开的意思。先腐蚀达到分开的目的，再膨胀还原。 可以**消除图像上细小的噪声**，并平滑物体边界。 
+
+书中举了这样一个例子，如果我们对显微镜载玻片上的细胞图像进行了阈值处理，我们可能会在对区域进行计数之前将彼此靠近的细胞分开。![1623737854397](images/1623737854397.png)
+
+##### Closing
+
+为了减少不必要的噪声，先膨胀后腐蚀。 可以**填充物体内细小的空洞**，并平滑物体边界。 
+
+dilate first and then erode . 
+
+![1623738170357](images/1623738170357.png)
+
+<font color=red>请注意，虽然使用打开或关闭的最终结果与使用腐蚀或膨胀类似，但这些新操作倾向于更准确地保留连接区域的面积</font>
+
+**开运算和闭运算比较**
+
+![](images/1623738323880.png)
+
+#### Morphological Gradient
+
+图像梯度
+
+![1623738528431](images/1623738528431.png)
+
+得到的结果：
+
+![1623738550799](images/1623738550799.png)
+
+灰度图的时候，这是表示亮度变化的快慢，膨胀  - 腐蚀，就是相当于边缘区域了撒。
+
+![1623738844875](images/1623738844875.png)
+
+对于灰度图，在灰度变化最大的地方就有了最大值，结合算子一想就明白了。
+
+#### Top Hat and Black Hat
+
+算子：
+
+![1623739478416](images/1623739478416.png)
+
+Top Hat: 顶帽运算往往用来分离比邻近点亮一些的斑块，在一幅图像具有大幅的背景，而微小物品比较有规律的情况下，可以使用顶帽运算进行背景提取。 
+
+![1623739823241](images/1623739823241.png)
+
+Black Hat： 用来分离比临近点暗一点的斑块，效果图有着非常完美的轮廓 
+
+![1623739849213](images/1623739849213.png)
+
+
+
+#### Making Your Own Kernel
+
+~~~c++
+CV_EXPORTS_W void morphologyEx( InputArray src, OutputArray dst,
+                                int op, InputArray kernel,
+                                Point anchor = Point(-1,-1), int iterations = 1,
+                                int borderType = BORDER_CONSTANT,
+                                const Scalar& borderValue = morphologyDefaultBorderValue() );
+~~~
+
+上述第四个参数 kernel ：这个可以自己自定义一个核，函数原型
+
+~~~c++
+cv::Mat cv::getStructuringElement(
+	int shape, // Element shape, e.g., cv::MORPH_RECT
+	cv::Size ksize, // Size of structuring element (odd num!)
+	cv::Point anchor = cv::Point(-1,-1) // Location of anchor point
+);
+~~~
+
+![1623740282695](images/1623740282695.png)
+
+第一个参数：自定义核的类型，第二个参数，自定义核的大小，第三个参数，锚点所在位置、
