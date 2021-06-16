@@ -1091,4 +1091,150 @@ void cv::resize(
 
 ![1623810917797](images/1623810917797.png)
 
+程序示例：
+
+~~~c++
+    Mat src = imread("f:/ecg.jpg"), dst;
+    imshow("raw", src);
+
+    resize(src, dst, cv::Size(200, 200), 0, 0, cv::INTER_NEAREST);
+    imshow("INTER_NEAREST", dst);
+
+    resize(src, dst, cv::Size(200, 200), 0, 0,  cv::INTER_LINEAR);
+    imshow("INTER_LINEAR", dst);
+
+    resize(src, dst, cv::Size(200, 200), 0, 0, cv::INTER_AREA);
+    imshow("INTER_AREA", dst);
+
+    resize(src, dst, cv::Size(200, 200), 0, 0, cv::INTER_CUBIC);
+    imshow("INTER_CUBIC", dst);
+
+    resize(src, dst, cv::Size(200, 200), 0, 0, cv::INTER_LANCZOS4);
+    imshow("INTER_LANCZOS4", dst);
+~~~
+
+
+
+![1623831953200](images/1623831953200.png)
+
 ### Image Pyramids 
+
+图像金字塔， 将图像进行一层一层的下采样，图像金字塔是为了构建图像的多尺度，让模型能够更好的适应图像的尺度变化，图像金字塔可以广泛应用于图像识别，目标检测，还有光流配准，块匹配都能看到它的身影。 
+
+图像金字塔主要有两种，一种是高斯金字塔，gaussian pyramid，另外一种是拉普拉斯金字塔，Laplacian Pyramids。 
+
+![1623831719179](images/1623831719179.png)
+
+#### cv::pyrDown()
+
+ 对图像向下采样，图像尺寸减半（执行了高斯金字塔建造的向下采样操作） ，高斯金字塔。 Down的意思是向下操作，所以图像缩小。
+
+The cv::pyrDown() method will do exactly this for us if we leave the destination size argument dstsize set to its default value of cv::Size(). To be a little more specific, the default size of the output image is ( (src.cols+1)/2, (src.rows+1)/2 ).4 Alternatively, we can supply a dstsize, which will indicate the size we would like for the output image; dstsize, however, must obey some very strict constraints. Specifically: 
+
+![1623832182875](images/1623832182875.png)
+
+所以，意味着，图像只有原来的一半。
+
+**函数原型：**
+
+~~~c++
+void cv::pyrDown(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Result image
+ 	const cv::Size& dstsize = cv::Size() // Output image size
+);
+~~~
+
+**代码：**
+
+~~~c++
+void PyrDown()
+{
+    Mat src = imread("f:/ecg.jpg"), dst;
+    imshow("raw", src);
+
+    cv::pyrDown(src, dst);
+    imshow("PyrDown", dst);
+
+}
+~~~
+
+![1623832444495](images/1623832444495.png)
+
+
+
+#### cv::buildPyramid()
+
+建一个图像金字塔的数组
+
+**函数原型**
+
+~~~c++
+void cv::buildPyramid(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArrayOfArrays dst, // Output images from pyramid
+ 	int maxlevel // Number of pyramid levels
+);
+~~~
+
+
+
+**实例代码：**
+
+~~~C++
+void BuildPyramid()
+{
+    Mat src = imread("f:/ecg.jpg"), dst;
+    imshow("raw", src);
+
+    int nMax = 5;
+
+    std::vector<Mat> vDst;
+    cv::buildPyramid(src, vDst, nMax);
+
+    for (int i = 0 ; i < vDst.size(); ++i)
+    {
+        Mat& dst = vDst[i];
+        QString strTitle = QString("BuildPyramid - %1").arg(i);
+        imshow(strTitle.toLocal8Bit().data(), dst);
+    }
+}
+~~~
+
+![1623832871885](images/1623832871885.png)
+
+#### cv::pyrUp() 
+
+ 对图像向上采样，图像尺寸加倍（执行高斯金字塔的向上采样操作，其实它也可以用于拉普拉斯金字塔） 
+
+**函数原型：**
+
+~~~c++
+void cv::pyrUp(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Result image
+	 const cv::Size& dstsize = cv::Size() // Output image size
+);
+~~~
+
+如果没有约束的话，那么是2倍，如果要自定义 Size，那要满足下面条件
+
+![1623833239637](images/1623833239637.png)
+
+**实例代码：**
+
+~~~c++
+void PyrUp()
+{
+    Mat src = imread("f:/ecg.jpg"), dst;
+    imshow("raw", src);
+
+    cv::pyrUp(src, dst);
+    imshow("PyrUp", dst);
+
+}
+~~~
+
+
+
+![1623833099168](images/1623833099168.png)
