@@ -1007,3 +1007,88 @@ cv::Mat cv::getStructuringElement(
 ![1623740282695](images/1623740282695.png)
 
 第一个参数：自定义核的类型，第二个参数，自定义核的大小，第三个参数，锚点所在位置、
+
+### Convolution with an Arbitrary Linear Filter
+
+和一个线性滤波器做卷积
+
+#### Applying a General Filter with cv::filter2D() 
+
+​		使用自定义内核对图像进行卷积。该功能将任意线性滤波器应用于图像。支持就地操作。当光圈部分位于图像外部时，该功能会根据指定的边框模式插入异常像素值。 
+
+**函数原型：**
+
+~~~c++
+cv::filter2D(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Result image
+ 	int ddepth, // Output depth (e.g., CV_8U)
+ 	cv::InputArray kernel, // Your own kernel
+ 	cv::Point anchor = cv::Point(-1,-1), // Location of anchor point
+ 	double delta = 0, // Offset before assignment
+ 	int borderType = cv::BORDER_DEFAULT // Border extrapolation to use
+);
+/*
+函数功能：利用卷积函数cvFilter2D和不同的卷积核对图像进行二维滤波，
+注意cvFilter2D只对单通道进行滤波操作，如果对多通道进行滤波，可以先用cvSplit将图像分解到单通道分别操作。
+对图像进行滤波平滑，也可用函数cvSmooth
+*/
+~~~
+
+#### Applying a General Separable Filter with cv::sepFilter2D
+
+如果内核可分离，那么可以采用这个函数来提高性能。好比下面这种
+
+![1623806884549](images/1623806884549.png)
+
+
+
+**函数原型：**
+
+~~~c++
+cv::sepFilter2D(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Result image
+ 	int ddepth, // Output depth (e.g., CV_8U)
+ 	cv::InputArray rowKernel, // 1-by-N row kernel
+ 	cv::InputArray columnKernel, // M-by-1 column kernel
+ 	cv::Point anchor = cv::Point(-1,-1), // Location of anchor point
+ 	double delta = 0, // Offset before assignment
+ 	int borderType = cv::BORDER_DEFAULT // Border extrapolation to use
+);
+~~~
+
+
+
+### Exercise
+
+![1623810378081](images/1623810378081.png)
+
+
+
+
+
+## Chapter11. General Image Transforms
+
+### Stretch, Shrink, Warp, and Rotate
+
+缩放，收缩，斜切，旋转
+
+### Uniform Resize
+
+**函数原型：**
+
+~~~c++
+void cv::resize(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Result image
+ 	cv::Size dsize, // New size
+ 	double fx = 0, // x-rescale
+ 	double fy = 0, // y-rescale
+ 	int interpolation = CV::INTER_LINEAR // interpolation method
+);
+~~~
+
+![1623810917797](images/1623810917797.png)
+
+### Image Pyramids 

@@ -1,7 +1,8 @@
 #include <QCoreApplication>
 
 #include "filtersandconvolution.h"
-#include "filterwindow.h"
+#include "Exercises.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -28,6 +29,8 @@ int main(int argc, char *argv[])
 
 
 ///   Filter
+
+    Exercises_1();
 
 
     return a.exec();
