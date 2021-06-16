@@ -93,7 +93,11 @@ void BuildPyramid()
 
 
 /*
-
+void cv::pyrUp(
+    cv::InputArray src, // Input image
+    cv::OutputArray dst, // Result image
+    const cv::Size& dstsize = cv::Size() // Output image size
+);
 */
 void PyrUp()
 {
