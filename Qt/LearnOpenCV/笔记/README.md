@@ -1238,3 +1238,63 @@ void PyrUp()
 
 
 ![1623833099168](images/1623833099168.png)
+
+
+
+### Nonuniform Mappings
+
+#### **Affine Transformation**
+
+ 仿射变换，了解下面这个课程，有助于了解
+
+https://www.bilibili.com/video/av6731067/
+
+**cv::warpAffine():**
+
+其实就是一个线性变化， 2 * 3 的矩阵表示变化。这对于大数据来说，用这个是比较好的。
+
+函数原型
+
+~~~c++
+void cv::warpAffine(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Result image
+ 	cv::InputArray M, // 2-by-3 transform mtx
+ 	cv::Size dsize, // Destination image size
+ 	int flags = cv::INTER_LINEAR, // Interpolation, inverse
+ 	int borderMode = cv::BORDER_CONSTANT, // Pixel extrapolation
+ 	const cv::Scalar& borderValue = cv::Scalar() // For constant borders
+);
+~~~
+
+Here src and dst are your source and destination arrays, respectively. The input M is the 2 × 3 matrix we introduced earlier that quantifies the desired transformation. Each element in the destination array is computed from the element of the source array at the location given by:
+
+![1623858948729](images/1623858948729.png)
+
+一般情况下，dst(x,y) 不会是整数，所以，第五个参数，就是不在整数的时候，插值的算法。见 resize()
+
+**cv::getAffineTransform(): Computing an affine map matrix**
+
+~~~c++
+cv::Mat cv::getAffineTransform( // Return 2-by-3 matrix
+ 	const cv::Point2f* src, // Coordinates *three* of vertices
+ 	const cv::Point2f* dst // Target coords, three vertices
+);
+
+// 逆时针
+cv::Mat cv::getRotationMatrix2D( // Return 2-by-3 matrix
+ 	cv::Point2f center // Center of rotation
+ 	double angle, // Angle of rotation
+ 	double scale // Rescale after rotation
+);
+~~~
+
+通过这几个点的变换，计算出放射的 矩阵，这里其实就是   **向量基** 的变换。三个独立的角，因为三个点确定一个平面撒。
+
+![1623860325993](images/1623860325993.png)
+
+![1623860814382](images/1623860814382.png)
+
+**cv::transform(): Sparse affine transformations** 
+
+这个是稀疏变换，比如，对一系列的独立点映射。

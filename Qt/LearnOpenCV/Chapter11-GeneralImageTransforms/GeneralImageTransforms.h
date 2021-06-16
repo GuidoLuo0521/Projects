@@ -109,6 +109,55 @@ void PyrUp()
 
 }
 
+/*
+ * void cv::warpAffine(
+            cv::InputArray src, // Input image
+            cv::OutputArray dst, // Result image
+            cv::InputArray M, // 2-by-3 transform mtx
+            cv::Size dsize, // Destination image size
+            int flags = cv::INTER_LINEAR, // Interpolation, inverse
+            int borderMode = cv::BORDER_CONSTANT, // Pixel extrapolation
+            const cv::Scalar& borderValue = cv::Scalar() // For constant borders
+);
+
+
+cv::Mat cv::getRotationMatrix2D( // Return 2-by-3 matrix
+        cv::Point2f center // Center of rotation
+        double angle, // Angle of rotation
+        double scale // Rescale after rotation
+);
+*/
+void WarpAffine()
+{
+    Mat src = imread("f:/lena.jpg"), dst;
+    imshow("raw", src);
+
+    Point2f srcTri[3];
+    Point2f dstTri[3];
+    //设置三个点来计算仿射变换
+    srcTri[0] = Point2f(0, 0);
+    srcTri[1] = Point2f(src.cols - 1, 0);
+    srcTri[2] = Point2f(0, src.rows - 1);
+
+    dstTri[0] = Point2f(src.cols*0.0, src.rows*0.33);
+    dstTri[1] = Point2f(src.cols*0.35, src.rows*0.25);
+    dstTri[2] = Point2f(src.cols*0.15, src.rows*0.7);
+
+    cv::Mat mat = getAffineTransform(srcTri, dstTri);
+
+    cv::warpAffine(src, dst, mat, dst.size());
+    imshow("getAffineTransform", dst);
+
+
+    cv::Point2f center =cv::Point2f( dst.cols / 2, dst.rows / 2);
+    // 逆时针
+    cv::Mat rotmat = getRotationMatrix2D(center, 10, 0.5);
+    cv::warpAffine(src, dst, rotmat, dst.size());
+    imshow("getRotationMatrix2D", dst);
+
+}
+
+
 
 
 #endif // GENERALIMAGETRANSFORMS_H

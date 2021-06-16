@@ -12,7 +12,9 @@ int main(int argc, char *argv[])
 
     //BuildPyramid();
 
-    PyrUp();
+    //PyrUp();
+
+    WarpAffine();
 
     return a.exec();
 }
