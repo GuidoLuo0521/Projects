@@ -157,6 +157,44 @@ void WarpAffine()
 
 }
 
+/*
+ * void cv::inpaint(
+        cv::InputArray src,         // Input image: 8-bit, 1 or 3 channels
+        cv::InputArray inpaintMask, // 8-bit, 1 channel. Inpaint nonzeros
+        cv::OutputArray dst,        // Result image
+        double inpaintRadius,       // Range to consider around pixel
+        int flags                   // Select NS or TELEA
+);
+// flags Inpainting method that could be cv::INPAINT_NS or cv::INPAINT_TELEA
+*/
+void InPaint()
+{
+    Mat src = imread("f:/lena-inpaint.jpg"), dst;
+    imshow("raw", src);
+
+    Mat mask = imread("f:/lena-inpaint.jpg", IMREAD_GRAYSCALE);
+    cv::threshold(mask, mask, 20, 255, THRESH_BINARY_INV);
+
+    Mat kernel = getStructuringElement(MORPH_ELLIPSE, cv::Size(7, 7));
+    morphologyEx(mask, mask, MORPH_DILATE, kernel);
+
+    imshow("Mask", mask);
+
+    cv::inpaint(src, mask, dst, 5, INPAINT_NS);
+    imshow("INPAINT_NS", dst);
+
+    cv::inpaint(src, mask, dst, 5, INPAINT_TELEA);
+    imshow("INPAINT_TELEA", dst);
+}
+
+void FastNlMeansDenoising()
+{
+    Mat src = imread("f:/dwk.jpg"), dst;
+    imshow("src", src);
+
+    cv::fastNlMeansDenoisingColored(src, dst);
+    imshow("dst", dst);
+}
 
 
 

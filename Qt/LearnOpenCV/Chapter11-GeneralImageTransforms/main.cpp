@@ -14,7 +14,11 @@ int main(int argc, char *argv[])
 
     //PyrUp();
 
-    WarpAffine();
+    //WarpAffine();
+
+    //InPaint();
+
+    FastNlMeansDenoising();
 
     return a.exec();
 }

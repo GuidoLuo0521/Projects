@@ -82,7 +82,7 @@ void DisplayPicture()
 >
 > OpenCV uses this structure to handle all kinds of images: single-channel, multichannel, integer-valued, floating-point-valued, and so on. 
 
-
+![1623902298324](images/1623902298324.png)
 
 ### **Second Program—Video**
 
@@ -1298,3 +1298,152 @@ cv::Mat cv::getRotationMatrix2D( // Return 2-by-3 matrix
 **cv::transform(): Sparse affine transformations** 
 
 这个是稀疏变换，比如，对一系列的独立点映射。
+
+**函数原型：**
+
+~~~c++
+void cv::transform(
+ 	cv::InputArray src, // Input N-by-1 array (Ds channels)
+ 	cv::OutputArray dst, // Output N-by-1 array (Dd channels)
+ 	cv::InputArray mtx // Transform matrix (Ds-by-Dd)
+);
+~~~
+
+
+
+#### cv::invertAffineTransform(): Inverting an affine transformation
+
+逆放射变换
+
+就是把正在放射变换的变回去
+
+**函数原型**
+
+~~~C++
+void cv::invertAffineTransform(
+ 	cv::InputArray M, // Input 2-by-3 matrix
+ 	cv::OutputArray iM // Output also a 2-by-3 matrix
+);
+~~~
+
+#### Perspective Transformation
+
+**函数原型：**
+
+~~~c++
+void cv::warpPerspective(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Result image
+ 	cv::InputArray M, // 3-by-3 transform mtx
+ 	cv::Size dsize, // Destination image size
+ 	int flags = cv::INTER_LINEAR, // Interpolation, inverse
+ 	int borderMode = cv::BORDER_CONSTANT, // Extrapolation method
+ 	const cv::Scalar& borderValue = cv::Scalar() // For constant borders
+);
+~~~
+
+算子：
+
+![1623898785851](images/1623898785851.png)
+
+#### cv::getPerspectiveTransform(): Computing the perspective map matrix
+
+和放射变换差不多，也有透视矩阵获取函数
+
+~~~C++
+cv::Mat cv::getPerspectiveTransform( // Return 3-by-3 matrix
+ 	const cv::Point2f* src, // Coordinates of *four* vertices
+ 	const cv::Point2f* dst // Target coords, four vertices
+);
+~~~
+
+#### cv::perspectiveTransform(): Sparse perspective transformations
+
+同样，对于一系列的点，同样有这个接口，稀疏仿射
+
+~~~c++
+void cv::perspectiveTransform(
+ 	cv::InputArray src, // Input N-by-1 array (2 or 3 channels)
+ 	cv::OutputArray dst, // Output N-by-1 array (2 or 3 channels)
+ 	cv::InputArray mtx // Transform matrix (3-by-3 or 4-by-4)
+);
+~~~
+
+### Image Repair
+
+#### inpaint
+
+函数原型：
+
+~~~c++
+void cv::inpaint(
+ 	cv::InputArray src, // Input image: 8-bit, 1 or 3 channels
+ 	cv::InputArray inpaintMask, // 8-bit, 1 channel. Inpaint nonzeros
+ 	cv::OutputArray dst, // Result image
+ 	double inpaintRadius, // Range to consider around pixel
+ 	int flags // Select NS or TELEA
+);
+~~~
+
+
+
+**代码**
+
+没掩码图，所以，自己生成的掩码图，这里采用闭运算
+
+~~~~c++
+    Mat src = imread("f:/lena-inpaint.jpg"), dst;
+    imshow("raw", src);
+
+    Mat mask = imread("f:/lena-inpaint.jpg", IMREAD_GRAYSCALE);
+    cv::threshold(mask, mask, 20, 255, THRESH_BINARY_INV);
+
+    Mat kernel = getStructuringElement(MORPH_ELLIPSE, cv::Size(7, 7));
+    morphologyEx(mask, mask, MORPH_CLOSE, kernel);
+
+    imshow("Mask", mask);
+
+    cv::inpaint(src, mask, dst, 5, INPAINT_NS);
+    imshow("INPAINT_NS", dst);
+
+    cv::inpaint(src, mask, dst, 5, INPAINT_TELEA);
+    imshow("INPAINT_TELEA", dst);
+~~~~
+
+原图
+
+![1623915924481](images/1623915924481.png)
+
+![1623915846351](images/1623915846351.png)
+
+掩码图是关键，下面展示扩大掩码图的效果
+
+代码，这次采用膨胀
+
+~~~c++
+    Mat src = imread("f:/lena-inpaint.jpg"), dst;
+    imshow("raw", src);
+
+    Mat mask = imread("f:/lena-inpaint.jpg", IMREAD_GRAYSCALE);
+    cv::threshold(mask, mask, 20, 255, THRESH_BINARY_INV);
+
+    Mat kernel = getStructuringElement(MORPH_ELLIPSE, cv::Size(7, 7));
+    morphologyEx(mask, mask, MORPH_DILATE, kernel);
+
+    imshow("Mask", mask);
+
+    cv::inpaint(src, mask, dst, 5, INPAINT_NS);
+    imshow("INPAINT_NS", dst);
+
+    cv::inpaint(src, mask, dst, 5, INPAINT_TELEA);
+    imshow("INPAINT_TELEA", dst);
+~~~
+
+![1623916134673](images/1623916134673.png)
+
+效果还是可以的，主要是掩码的选择没问题就可以。
+
+
+
+#### Denoising 
+
