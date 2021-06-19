@@ -13,6 +13,8 @@ struct stFileInfo
     // 当前选择的绝对路径
     static QString s_strCurrentFolderPath ;
 
+    stFileInfo(){}
+
     stFileInfo(QString strName, bool bCveted) : strFileName(strName), bIsConverted(bCveted) { }
 
     // 文件名
@@ -20,6 +22,14 @@ struct stFileInfo
 
     // 是否已经转换完成
     bool bIsConverted = false;
+
+    stFileInfo operator =(const stFileInfo& item)
+    {
+        this->strFileName = item.strFileName;
+        this->bIsConverted = item.bIsConverted;
+
+        return *this;
+    }
 
 
 };

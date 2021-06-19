@@ -109,8 +109,8 @@ void MainWindow::wheelEvent(QWheelEvent *event)
 
 void MainWindow::CreateAction()
 {
-    m_pConverToImage = new QAction(QString("All"));
     m_pSetFolder = new QAction(QString("Folder"));
+    m_pConverToImage = new QAction(QString("All"));
 
 }
 
@@ -144,6 +144,9 @@ void MainWindow::InitMainWindow()
     // 创建显示容器
     m_pGraphicsScene = new QGraphicsScene(this);
     m_pGraphicsView = new QGraphicsView( m_pGraphicsScene, this);
+
+    m_pGraphicsView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    m_pGraphicsView->setResizeAnchor(QGraphicsView::AnchorUnderMouse);
 
     // 加入到布局
     pMainLayout->addWidget(m_pFileList, 0, 0);
