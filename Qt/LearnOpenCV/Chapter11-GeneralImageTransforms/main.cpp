@@ -18,7 +18,9 @@ int main(int argc, char *argv[])
 
     //InPaint();
 
-    FastNlMeansDenoising();
+    //FastNlMeansDenoising();
+
+    HistogramEqualization();
 
     return a.exec();
 }

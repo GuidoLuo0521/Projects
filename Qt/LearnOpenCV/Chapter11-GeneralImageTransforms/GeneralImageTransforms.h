@@ -196,6 +196,19 @@ void FastNlMeansDenoising()
     imshow("dst", dst);
 }
 
+void HistogramEqualization()
+{
+    // must be cv::8U
+    Mat src = imread("f:/dwk.jpg", IMREAD_GRAYSCALE), dst;
+    imshow("src", src);
+
+    cv::equalizeHist(src, dst);
+    imshow("dst1", dst);
+
+    cv::equalizeHist(dst, dst);
+    imshow("dst2", dst);
+
+}
 
 
 #endif // GENERALIMAGETRANSFORMS_H

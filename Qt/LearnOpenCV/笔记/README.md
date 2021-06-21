@@ -1447,3 +1447,100 @@ void cv::inpaint(
 
 #### Denoising 
 
+​		噪声的主要来源来自于低光条件的影响。在低光条件下，数字成像仪必须增加数字成像仪的增益，结果是噪声也被放大。这种噪声的特征通常是随机的孤立像素，看起来太亮或太暗，但在彩色图像中也有可能变色。
+
+​		OpenCV中的去噪算法是 **快速非局部  FNLMD**算法，核心概念是在图像的其他地方寻找相似的像素，以及在这些像素中的平均值。在本上下文中，一个像素被认为是一个相似的像素，不是因为它在颜色或强度上相似，而是因为它在环境中相似。这里的关键逻辑是，许多图像包含重复的结构，所以即使你的像素被噪声破坏了，也会有许多其他类似的像素不是。
+
+
+
+**函数原型（1）：**
+
+The image may be one-, two-, or three-channel, but must be or type cv::U8. 
+
+~~~c++
+void cv::fastNlMeansDenoising(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Output image
+ 	float h = 3, // Weight decay parameter
+ 	int templateWindowSize = 7, // Size of patches used for comparison
+ 	int searchWindowSize = 21 // Maximum patch distance to consider
+);
+~~~
+
+参数推荐表
+
+![1624243574422](images/1624243574422.png)
+
+**函数原型（2）：**
+
+ It accepts only images of type cv::U8C3. 
+
+~~~c++
+void cv::fastNlMeansDenoisingColored(
+ 	cv::InputArray src, // Input image
+ 	cv::OutputArray dst, // Output image
+ 	float h = 3, // Luminosity weight decay parameter
+ 	float hColor = 3, // Color weight decay parameter
+ 	int templateWindowSize = 7, // Size of patches used for comparison
+ 	int searchWindowSize = 21 // Maximum patch distance to consider
+);
+~~~
+
+
+
+**FNLMD on video with cv::fastNlMeansDenoisingMulti() and cv::fastNlMeansDenoisingColorMulti()** 
+
+~~~C++
+void cv::fastNlMeansDenoisingMulti(
+ 	cv::InputArrayOfArrays srcImgs, // Sequence of several images
+ 	cv::OutputArray dst, // Output image
+ 	int imgToDenoiseIndex, // Index of image to denoise
+ 	int temporalWindowSize, // Num images to use (odd)
+ 	float h = 3, // Weight decay parameter
+ 	int templateWindowSize = 7, // Size of comparison patches
+ 	int searchWindowSize = 21 // Maximum patch distance
+);
+void cv::fastNlMeansDenoisingColoredMulti(
+ 	cv::InputArrayOfArrays srcImgs, // Sequence of several images
+ 	cv::OutputArray dst, // Output image
+ 	int imgToDenoiseIndex, // Index of image to denoise
+ 	int temporalWindowSize, // Num images to use (odd)
+ 	float h = 3, // Weight decay param
+ 	float hColor = 3, // Weight decay param for color
+ 	int templateWindowSize = 7, // Size of comparison patches
+ 	int searchWindowSize = 21 // Maximum patch distance
+);
+~~~
+
+
+
+### Histogram Equalization
+
+ 直方图均衡化的作用是图像增强。 
+
+**1.直方图**
+
+  		直方图表达的信息是每种亮度的像素点的个数，直方图用少量的数据表达图像的灰度统计特征。灰度级别在范围【0，L-1】的数字图像的直方图是一个离散函数，图像的灰度直方图只能反映图像的灰度分布情况，反映数字图像中每一灰度级与其出现频率间的关系，但它能描述该图像的概貌。
+
+**2.直方图均衡化的作用**
+
+  		直方图均衡化是将原图像通过某种变换，得到一幅灰度直方图为均匀分布的新图像的方法，这样增加了像素灰度值的动态范围，从而达到增强图像整体对比度的效果。直方图均衡化不改变灰度出现的次数，改变的是出现次数所对应的灰度级，以避免改变图像的信息结构。直方图均衡化力图使等长区间出现的像素数接近相等。
+
+**3.图像的信噪比（SNR）概念**
+
+  		图像的信噪比应该等于信号与噪声的功率谱之比，但通常功率谱难以计算，有一种方法可以近似估计图像信噪比，即信号与噪声的方差之比。首先计算图像所有像素的局部方差，将局部方差的最大值认为是信号方差，最小值是噪声方差，求出他们的比值，再转成dB数，最后用经验公式修正。
+
+
+
+**函数原型：**
+
+~~~c++
+//cv::equalizeHist(): Contrast equalization
+//OpenCV wraps this whole process up in one neat function.
+void cv::equalizeHist(
+ 	const cv::InputArray src, // Input image
+ 	cv::OutputArray dst // Result image
+);
+~~~
+
+In cv::equalizeHist(), the source src must be a single-channel, 8-bit image. The destination image dst will be the same. For color images, you will have to separate the channels and process them one by one.
