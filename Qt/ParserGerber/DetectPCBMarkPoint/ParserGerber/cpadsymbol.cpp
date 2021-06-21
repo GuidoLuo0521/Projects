@@ -3,9 +3,9 @@
 
 CPadSymbol::CPadSymbol(const PadSymbolType pst, const QPoint &cpt, const int angle, const bool positive)
     : CSymbol(ST_PAD, positive)
-    , m_PadSymbolType(pst)
     , m_ptCenter(cpt)
     , m_nAngle(angle)
+    , m_PadSymbolType(pst)
 
 {
 
@@ -13,10 +13,9 @@ CPadSymbol::CPadSymbol(const PadSymbolType pst, const QPoint &cpt, const int ang
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CRectPadSymbol::CRectPadSymbol(const QPoint &cpt, const int width, const int heigth, const int angle, const bool positive)
+CRectPadSymbol::CRectPadSymbol(const QPoint &cpt, const short width, const short heigth, const short angle, const bool positive)
     : CPadSymbol(PST_RECTANGLE, cpt, angle, positive)
-    , m_nWidth(width)
-    , m_nHeight(heigth)
+    , CRectShape(width, heigth)
 {
 
 }
@@ -28,9 +27,9 @@ void CRectPadSymbol::Draw(QPainter &painter)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CRoundPadSymbol::CRoundPadSymbol(const QPoint &cpt, const int rad, const int angle, const bool positive)
+CRoundPadSymbol::CRoundPadSymbol(const QPoint &cpt, const short rad, const short angle, const bool positive)
     : CPadSymbol(PST_ROUNT, cpt, angle, positive)
-    , m_nRad(rad)
+    , CRoundShape(rad)
 {
 
 }
@@ -42,9 +41,9 @@ void CRoundPadSymbol::Draw(QPainter &painter)
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-CSquarePadSymbol::CSquarePadSymbol(const QPoint &cpt, const int width, const int angle, const bool positive)
+CSquarePadSymbol::CSquarePadSymbol(const QPoint &cpt, const short width, const short angle, const bool positive)
     : CPadSymbol(PST_SQUARE, cpt, angle, positive)
-    , m_nWidth(width)
+    , CSquareShape(width)
 {
 
 }

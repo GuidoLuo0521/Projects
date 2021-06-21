@@ -36,6 +36,7 @@ protected:
     // slots
 private slots:
     void slot_SetFolder();
+    void slot_ConverToImageTriggered();
     void slot_FileInfoChanged();
     void slot_FileListCurrentRowChanged(int currentRow);
 

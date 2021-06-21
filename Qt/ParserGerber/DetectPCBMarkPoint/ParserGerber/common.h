@@ -10,6 +10,8 @@ public:
 
     static QString GetSelectFolder();
 
+    static QString GetSelectFile();
+
 };
 
 #endif // COMMON_H

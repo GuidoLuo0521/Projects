@@ -17,19 +17,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     carcsymbol.cpp \
+    cgerberstructure.cpp \
     clinesymbol.cpp \
     common.cpp \
     cpadsymbol.cpp \
+    cparsergerber.cpp \
     csymbol.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
+    CShape.h \
     FileInfo.h \
     carcsymbol.h \
+    cgerberstructure.h \
     clinesymbol.h \
     common.h \
     cpadsymbol.h \
+    cparsergerber.h \
     csymbol.h \
     mainwindow.h
 

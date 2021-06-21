@@ -2,6 +2,7 @@
 #define CPADSYMBOL_H
 
 #include "csymbol.h"
+#include "CShape.h"
 
 enum PadSymbolType
 {
@@ -10,6 +11,10 @@ enum PadSymbolType
     PST_RECTANGLE
 };
 
+
+/////////////////////////////////////////////////////////////////////////////////////
+/// \brief The CPadSymbol class
+///
 class CPadSymbol : CSymbol
 {
 public:
@@ -24,42 +29,44 @@ protected:
     PadSymbolType m_PadSymbolType;
 };
 
-class CSquarePadSymbol : CPadSymbol
+/////////////////////////////////////////////////////////////////////////////////////
+/// \brief The CSquarePadSymbol class
+///
+class CSquarePadSymbol : public CPadSymbol, CSquareShape
 {
 public:
-    CSquarePadSymbol(const QPoint& cpt, const int width, const int angle, const bool positive);
+    CSquarePadSymbol(const QPoint& cpt, const short width, const short angle, const bool positive);
     ~CSquarePadSymbol(){}
 
-    virtual void Draw(QPainter& painter);
-
-protected:
-    short m_nWidth;
-
+    virtual void Draw(QPainter& painter) override;
+    virtual QRect GetBoundingRect() override;
 };
 
-class CRectPadSymbol : CPadSymbol
+/////////////////////////////////////////////////////////////////////////////////////
+/// \brief The CRectPadSymbol class
+///
+class CRectPadSymbol : public CPadSymbol, CRectShape
 {
 public:
-    CRectPadSymbol(const QPoint& cpt, const int width, const int heigth, const int angle, const bool positive);
+    CRectPadSymbol(const QPoint& cpt, const short width, const short heigth, const short angle, const bool positive);
     ~CRectPadSymbol(){}
 
-    virtual void Draw(QPainter& painter);
+    virtual void Draw(QPainter& painter) override;
+    virtual QRect GetBoundingRect() override;
 
-protected:
-    short m_nWidth;
-    short m_nHeight;
 };
 
-class CRoundPadSymbol : CPadSymbol
+/////////////////////////////////////////////////////////////////////////////////////
+/// \brief The CRoundPadSymbol class
+///
+class CRoundPadSymbol : public CPadSymbol, CRoundShape
 {
 public:
-    CRoundPadSymbol(const QPoint& cpt, const int rad, const int angle, const bool positive);
+    CRoundPadSymbol(const QPoint& cpt, const short rad, const short angle, const bool positive);
     ~CRoundPadSymbol(){}
 
-    virtual void Draw(QPainter& painter);
-
-protected:
-    short m_nRad;
+    virtual void Draw(QPainter& painter) override;
+    virtual QRect GetBoundingRect() override;
 };
 
 

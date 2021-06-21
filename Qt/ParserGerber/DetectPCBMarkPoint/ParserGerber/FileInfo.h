@@ -7,6 +7,16 @@
  * 定义文件信息
 */
 
+enum ConvertType
+{
+    CT_NONE,
+    CT_ING,
+    CT_OVER
+
+};
+
+/// 文件信息
+///
 struct stFileInfo
 {
 
@@ -15,18 +25,18 @@ struct stFileInfo
 
     stFileInfo(){}
 
-    stFileInfo(QString strName, bool bCveted) : strFileName(strName), bIsConverted(bCveted) { }
+    stFileInfo(QString strName, ConvertType ct) : strFileName(strName), convertType(ct) { }
 
     // 文件名
     QString strFileName;
 
-    // 是否已经转换完成
-    bool bIsConverted = false;
+    // 转换类型
+    ConvertType convertType;
 
     stFileInfo operator =(const stFileInfo& item)
     {
         this->strFileName = item.strFileName;
-        this->bIsConverted = item.bIsConverted;
+        this->convertType = item.convertType;
 
         return *this;
     }

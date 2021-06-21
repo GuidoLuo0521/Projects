@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "common.h"
+#include "cparsergerber.h"
 
 #include <QHBoxLayout>
 #include <QGridLayout>
@@ -41,6 +42,15 @@ void MainWindow::slot_SetFolder()
     emit signal_FileInfoChanged();
 }
 
+void MainWindow::slot_ConverToImageTriggered()
+{
+    QString strFile = Common::GetSelectFile();
+
+    CParserGerber parser;
+    parser.Parser(strFile);
+
+}
+
 void MainWindow::slot_FileInfoChanged()
 {
     QDir dir(stFileInfo::s_strCurrentFolderPath);
@@ -63,7 +73,7 @@ void MainWindow::slot_FileInfoChanged()
         if(fileList[i] != "." && fileList[i] != "..")
         {
             m_pFileList->addItem(fileList[i]);
-            m_vFileInfo.push_back(stFileInfo(fileList[i], false));
+            m_vFileInfo.push_back(stFileInfo(fileList[i], CT_NONE));
         }
     }
 }
@@ -162,6 +172,8 @@ void MainWindow::InitMainWindow()
 void MainWindow::BindAction()
 {
     connect(m_pSetFolder, &QAction::triggered, this, &MainWindow::slot_SetFolder);
+    connect(m_pConverToImage, &QAction::triggered, this, &MainWindow::slot_ConverToImageTriggered);
+
     connect(this, &MainWindow::signal_FileInfoChanged, this, &MainWindow::slot_FileInfoChanged );
 
     connect(m_pFileList, &QListWidget::currentRowChanged, this, &MainWindow::slot_FileListCurrentRowChanged);
