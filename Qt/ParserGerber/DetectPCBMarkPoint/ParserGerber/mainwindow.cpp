@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "common.h"
+#include "commontool.h"
 #include "cparsergerber.h"
 
 #include <QHBoxLayout>
@@ -37,14 +37,14 @@ MainWindow::~MainWindow()
 
 void MainWindow::slot_SetFolder()
 {
-    stFileInfo::s_strCurrentFolderPath = Common::GetSelectFolder();
+    stFileInfo::s_strCurrentFolderPath = CommonFileTool::GetSelectFolder();
 
     emit signal_FileInfoChanged();
 }
 
 void MainWindow::slot_ConverToImageTriggered()
 {
-    QString strFile = Common::GetSelectFile();
+    QString strFile = CommonFileTool::GetSelectFile();
 
     CParserGerber parser;
     parser.Parser(strFile);

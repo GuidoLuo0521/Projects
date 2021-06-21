@@ -31,8 +31,7 @@ class CRectShape : public CShape
 {
 public:
     CRectShape(const short width, const short heigth) : CShape(ST_RECT), m_nWidth(width), m_nHeight(heigth){}
-
-    virtual QRect GetBoundingRect() { return QRect(0, 0, m_nWidth, m_nHeight); }
+    virtual QRect GetBoundingRect() { return QRect(-m_nWidth/2, m_nHeight/2, m_nWidth/2, m_nHeight/2); }
 
 protected:
     short m_nWidth;
@@ -48,7 +47,7 @@ public:
     CRoundShape(const short rad) : CShape(ST_ROUND), m_nRad(rad) {};
     ~CRoundShape(){}
 
-    virtual QRect GetBoundingRect() { return QRect(0, 0, m_nRad, m_nRad); }
+    virtual QRect GetBoundingRect() { return QRect( -m_nRad/2, -m_nRad/2, m_nRad/2, m_nRad/2); }
 
 protected:
     short m_nRad;
@@ -61,7 +60,7 @@ class CSquareShape : public CShape
 {
 public:
     CSquareShape(const short width) : CShape(ST_SQUARE), m_nWidth(width) {};
-    virtual QRect GetBoundingRect() { return QRect(0, 0, m_nWidth, m_nWidth); }
+    virtual QRect GetBoundingRect() { return QRect(-m_nWidth/2, m_nWidth/2, m_nWidth/2, m_nWidth/2); }
 
 protected:
     short m_nWidth;
@@ -70,10 +69,10 @@ protected:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief The CHollowRectInRect class
 ///
-class CHollowRectInRect : public CRectShape
+class CHollowRectInRectShape : public CRectShape
 {
 public:
-    CHollowRectInRect(const short ow, const short oh, const short iw, const short ih) : CRectShape(ow, oh), m_nInnerWidth(iw), m_nInnerHeight(ih) {}
+    CHollowRectInRectShape(const short ow, const short oh, const short iw, const short ih) : CRectShape(ow, oh), m_nInnerWidth(iw), m_nInnerHeight(ih) {}
 protected:
     short m_nInnerWidth;
     short m_nInnerHeight;
@@ -82,10 +81,10 @@ protected:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief The CHollowRoundInRect class
 ///
-class CHollowRoundInRect : public CRectShape
+class CHollowRoundInRectShape : public CRectShape
 {
 public:
-    CHollowRoundInRect(const short ow, const short oh, const short irad) : CRectShape(ow, oh), m_nInnerRad(irad) {}
+    CHollowRoundInRectShape(const short ow, const short oh, const short irad) : CRectShape(ow, oh), m_nInnerRad(irad) {}
 protected:
     short m_nInnerRad;
 };
@@ -93,10 +92,10 @@ protected:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief The CHollowRoundInRound class
 ///
-class CHollowRoundInRound : public CRoundShape
+class CHollowRoundInRoundShape : public CRoundShape
 {
 public:
-    CHollowRoundInRound(const short orad,  const short irad) : CRoundShape(orad), m_nInnerRad(irad) {}
+    CHollowRoundInRoundShape(const short orad,  const short irad) : CRoundShape(orad), m_nInnerRad(irad) {}
 protected:
     short m_nInnerRad;
 };
@@ -104,10 +103,10 @@ protected:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief The CHollowRectInRound class
 ///
-class CHollowRectInRound : public CRoundShape
+class CHollowRectInRoundShape : public CRoundShape
 {
 public:
-    CHollowRectInRound(const short orad, const short iw, const short ih) : CRoundShape(orad), m_nInnerWidth(iw), m_nInnerHeight(ih) {}
+    CHollowRectInRoundShape(const short orad, const short iw, const short ih) : CRoundShape(orad), m_nInnerWidth(iw), m_nInnerHeight(ih) {}
 protected:
     short m_nInnerWidth;
     short m_nInnerHeight;

@@ -19,7 +19,7 @@ SOURCES += \
     carcsymbol.cpp \
     cgerberstructure.cpp \
     clinesymbol.cpp \
-    common.cpp \
+    commontool.cpp \
     cpadsymbol.cpp \
     cparsergerber.cpp \
     csymbol.cpp \
@@ -32,7 +32,7 @@ HEADERS += \
     carcsymbol.h \
     cgerberstructure.h \
     clinesymbol.h \
-    common.h \
+    commontool.h \
     cpadsymbol.h \
     cparsergerber.h \
     csymbol.h \
