@@ -1,4 +1,4 @@
-#ifndef CSYMBOL_H
+﻿#ifndef CSYMBOL_H
 #define CSYMBOL_H
 
 #include <QPainter>
@@ -16,7 +16,7 @@ class CSymbol
 {
 public:
     CSymbol(const SymbolType st, const bool positive) : m_SymbolType(st), m_bPositive(positive) {}
-    ~CSymbol() {}
+    virtual ~CSymbol() {}
 
     virtual void Draw(QPainter& painter ) = 0;
 

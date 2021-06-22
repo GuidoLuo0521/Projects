@@ -18,6 +18,7 @@ class CShape
 {
 public:
     CShape(ShapeType st) : m_ShapeType(st) {};
+    virtual ~CShape(){};
     virtual QRect GetBoundingRect() = 0;
 
 protected:
@@ -31,6 +32,8 @@ class CRectShape : public CShape
 {
 public:
     CRectShape(const short width, const short heigth) : CShape(ST_RECT), m_nWidth(width), m_nHeight(heigth){}
+    virtual ~CRectShape(){};
+
     virtual QRect GetBoundingRect() { return QRect(-m_nWidth/2, m_nHeight/2, m_nWidth/2, m_nHeight/2); }
 
 protected:
@@ -45,7 +48,7 @@ class CRoundShape : public CShape
 {
 public:
     CRoundShape(const short rad) : CShape(ST_ROUND), m_nRad(rad) {};
-    ~CRoundShape(){}
+    virtual ~CRoundShape(){}
 
     virtual QRect GetBoundingRect() { return QRect( -m_nRad/2, -m_nRad/2, m_nRad/2, m_nRad/2); }
 
@@ -60,6 +63,8 @@ class CSquareShape : public CShape
 {
 public:
     CSquareShape(const short width) : CShape(ST_SQUARE), m_nWidth(width) {};
+    virtual ~CSquareShape(){}
+
     virtual QRect GetBoundingRect() { return QRect(-m_nWidth/2, m_nWidth/2, m_nWidth/2, m_nWidth/2); }
 
 protected:
@@ -71,8 +76,10 @@ protected:
 ///
 class CHollowRectInRectShape : public CRectShape
 {
-public:
+public:   
     CHollowRectInRectShape(const short ow, const short oh, const short iw, const short ih) : CRectShape(ow, oh), m_nInnerWidth(iw), m_nInnerHeight(ih) {}
+    virtual ~CHollowRectInRectShape(){}
+
 protected:
     short m_nInnerWidth;
     short m_nInnerHeight;
@@ -85,6 +92,7 @@ class CHollowRoundInRectShape : public CRectShape
 {
 public:
     CHollowRoundInRectShape(const short ow, const short oh, const short irad) : CRectShape(ow, oh), m_nInnerRad(irad) {}
+    virtual ~CHollowRoundInRectShape(){}
 protected:
     short m_nInnerRad;
 };
@@ -96,6 +104,7 @@ class CHollowRoundInRoundShape : public CRoundShape
 {
 public:
     CHollowRoundInRoundShape(const short orad,  const short irad) : CRoundShape(orad), m_nInnerRad(irad) {}
+    virtual ~CHollowRoundInRoundShape(){}
 protected:
     short m_nInnerRad;
 };
@@ -107,6 +116,7 @@ class CHollowRectInRoundShape : public CRoundShape
 {
 public:
     CHollowRectInRoundShape(const short orad, const short iw, const short ih) : CRoundShape(orad), m_nInnerWidth(iw), m_nInnerHeight(ih) {}
+    virtual ~CHollowRectInRoundShape(){}
 protected:
     short m_nInnerWidth;
     short m_nInnerHeight;

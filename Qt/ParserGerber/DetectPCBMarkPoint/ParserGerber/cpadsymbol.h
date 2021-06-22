@@ -19,7 +19,7 @@ class CPadSymbol : CSymbol
 {
 public:
     CPadSymbol(const PadSymbolType pst, const QPoint& cpt, const int angle, const bool positive);
-    ~CPadSymbol(){}
+    virtual ~CPadSymbol(){}
 
     virtual void Draw(QPainter& painter) = 0;
 
@@ -36,7 +36,7 @@ class CSquarePadSymbol : public CPadSymbol, CSquareShape
 {
 public:
     CSquarePadSymbol(const QPoint& cpt, const short width, const short angle, const bool positive);
-    ~CSquarePadSymbol(){}
+    virtual ~CSquarePadSymbol(){}
 
     virtual void Draw(QPainter& painter) override;
     virtual QRect GetBoundingRect() override;
@@ -49,7 +49,7 @@ class CRectPadSymbol : public CPadSymbol, CRectShape
 {
 public:
     CRectPadSymbol(const QPoint& cpt, const short width, const short heigth, const short angle, const bool positive);
-    ~CRectPadSymbol(){}
+    virtual ~CRectPadSymbol(){}
 
     virtual void Draw(QPainter& painter) override;
     virtual QRect GetBoundingRect() override;
@@ -63,7 +63,7 @@ class CRoundPadSymbol : public CPadSymbol, CRoundShape
 {
 public:
     CRoundPadSymbol(const QPoint& cpt, const short rad, const short angle, const bool positive);
-    ~CRoundPadSymbol(){}
+    virtual ~CRoundPadSymbol(){}
 
     virtual void Draw(QPainter& painter) override;
     virtual QRect GetBoundingRect() override;

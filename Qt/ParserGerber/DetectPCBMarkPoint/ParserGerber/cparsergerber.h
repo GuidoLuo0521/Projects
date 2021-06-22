@@ -14,18 +14,29 @@ public:
 public:
     bool Parser(const QString& strPath);
 
-    bool ParserAD();
-    bool ParserAD_C();
-    bool ParserAD_R();
+    bool ParserFS(const QString& line);
+    bool ParserMO(const QString& line);
+    bool ParserLP(const QString& line);
+    bool ParserG54(const QString& line);
 
+    bool ParserAD(const QString& line);
+    bool ParserAD_C(const QString& line);
+    bool ParserAD_R(const QString& line);
+
+
+    bool ParserPoint(const QString& line);
 
 protected:
 
-    // 光圈
     QMap<int, CShape*> m_mapApertures;
 
-    // 当前采用的光圈
+    // 当前采用的光圈 G54 决定
     int m_nCurrentAptr;
+
+    // 总共的位数，由 FS 决定
+    int m_nTotalNumSize;
+
+
 
 };
 
