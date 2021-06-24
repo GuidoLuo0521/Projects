@@ -23,7 +23,6 @@ public:
     bool ParserAD_C(const QString& line);
     bool ParserAD_R(const QString& line);
 
-
     bool ParserPoint(const QString& line);
 
 protected:
