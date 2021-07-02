@@ -363,3 +363,11 @@ cv2.warpAffine(src, M, dsize[, dst[, flags[, borderMode[, borderValue]]]]) → d
 ![image-20210702002331958](images/image-20210702002331958.png)
 
 当当当当，结果还是比较满意的，下一步，文字的识别。具体看代码
+
+### 文字识别
+
+这里采用百度的 API 
+
+#### 注册 [百度AI](https://ai.baidu.com/)，详细教程网上找，识别的结果还是蛮可以的。
+
+![image-20210702172647642](images/image-20210702172647642.png)

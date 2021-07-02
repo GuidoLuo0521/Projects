@@ -2,6 +2,7 @@
 
 import cv2
 import numpy as np
+from aip import AipOcr
 
 def ORC_Imread(path):
     return cv2.imread(path)    
@@ -25,8 +26,6 @@ def ORC_GaussianBlur(mat, ksize = 5):
 # 中值滤波
 def ORC_MedianBlur(mat, ksize = 5):
     return cv2.medianBlur(mat, ksize)
-
-
 
 ##########################################################
     
@@ -67,7 +66,6 @@ def ORC_FindMaxAreaContoursAngle(mat):
     return angle
 
 
-
 def ORC_RotateImage( mat, angle ):
     # 获取矩形中心
     h, w , c= mat.shape
@@ -79,6 +77,40 @@ def ORC_RotateImage( mat, angle ):
     # 仿射变换
     return cv2.warpAffine(mat, M, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
 
+
+def ORC_BaiduORC(path) :
+    K = "eXB4LuKAHvF8QTGYjaf2uafx" # 官网获取的AK
+    SK = "Gonvh2GlQMSuQjNWSG6y7jGtL1ugPxKR" # 官网获取的SK
+    code_url = "https://aip.baidubce.com/rest/2.0/ocr/v1/accurate" # 百度图片识别接口地址
+
+    code_obj=CodeDemo(AK=AK,SK=SK,code_url=code_url,img_path=path)
+    res=code_obj.getCode()
+    code=res.get("words_result")[0].get("words")
+    print(res)
+    print(code)
+
+
+def baiduOCR(img, picfile):  # picfile:图片文件名
+    # 百度提供
+    """ 你的 APPID AK SK """
+    APP_ID = ''  # 应用的appid
+    API_KEY = ''  # 应用的appkey
+    SECRET_KEY = ''  # 应用的secretkey
+    client = AipOcr(APP_ID, API_KEY, SECRET_KEY)
+    i = open(picfile, 'rb')
+    img = i.read()
+    """ 调用通用文字识别（高精度版） """
+    message = client.basicAccurate(img)
+    i.close()
+
+    # 输出文本内容
+    x = 10
+    y = 10
+    j = 0
+    for text in message.get('words_result'):  # 识别的内容
+        #print(text)
+        print(text.get('words'))
+        #img = cv2.putText(img, text, (i,y*j), cv2.FONT_HERSHEY_COMPLEX, 1, (0, 255, 0), 2)
 
 if __name__ == "__main__" :
 
@@ -114,6 +146,13 @@ if __name__ == "__main__" :
 
     # 旋转图形
     mat = ORC_RotateImage(raw, angle)
+
+    # 存图片
+    path = "D:\\EasyORC.png"
+    cv2.imwrite( path, mat)
+
+    # 百度文字识别
+    baiduOCR(mat, path)
 
     cv2.imshow("Image", mat)
     cv2.waitKey(0)
