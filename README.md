@@ -1,42 +1,40 @@
-# Projects
+# [Projects](https://github.com/GuidoLuo0521/Projects)
 一些小项目合集
 
 
 
-## ParserGerber
+## [ParserGerber](https://github.com/GuidoLuo0521/Projects/tree/master/ParserGerber)
 
 框架Qt读取Gerber文件，主要用来标注Mark点。
 
 
 
-## **LPR**
+## **[LPR](https://github.com/GuidoLuo0521/Projects/tree/master/LPR)**
 
 Qt，OpenCV 编写的车牌识别系统。
 
 原图
 
-![1626676548274](images/1626676548274.png)
+<img src="images/1626676548274.png" alt="1626676548274" style="zoom:25%;" />
 
 结果
 
 ![1626676608596](images/1626676608596.png)
 
-## OpenCV
+## [OpenCV](https://github.com/GuidoLuo0521/Projects/tree/master/OpenCV)
 
 Python，OpenCV编写的小项目。
 
-
-
-### 相机图像轮廓显示
+### [显示轮廓](https://github.com/GuidoLuo0521/Projects/blob/master/OpenCV/findContoursOnVideo.py)
 
 关键字：OpenCV
 
-![1626676405732](images/1626676405732.png)
+<img src="images/1626676405732.png" alt="1626676405732" style="zoom:25%;" />
 
 
 
-### ORC
+### [ORC](https://github.com/GuidoLuo0521/Projects/blob/master/OpenCV/EasyORC.py)
 
 关键字：图像校正，文字识别，百度AI。
 
-![1626676465545](images/1626676465545.png)
+<img src="images/1626676465545.png" alt="1626676465545" style="zoom: 25%;" />
