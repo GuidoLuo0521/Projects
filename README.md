@@ -46,3 +46,11 @@ Python，OpenCV编写的小项目。
 关键字：图像校正，文字识别，百度AI。
 
 <img src="images/1626676465545.png" alt="1626676465545" style="zoom: 25%;" />
+
+
+
+## [MilletWord](https://github.com/GuidoLuo0521/Notes/tree/master/Qt/QtDevelopmentAndExamples/Chapter05-Qt5MainWindow)
+
+Qt，简易版本的Word。
+
+![1626679442242](images/1626679442242.png)
