@@ -54,3 +54,11 @@ Python，OpenCV编写的小项目。
 Qt，简易版本的Word。
 
 ![1626679442242](images/1626679442242.png)
+
+
+
+## [Painter](https://github.com/GuidoLuo0521/Notes/tree/master/Qt/QtDevelopmentAndExamples/Chapter06-Qt5ShapeAndImage)
+
+Qt，绘制，电线弧面等的简易版绘图板
+
+![1626864125528](images/1626864125528.png)
