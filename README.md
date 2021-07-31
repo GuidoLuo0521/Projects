@@ -62,3 +62,16 @@ Qt，简易版本的Word。
 Qt，绘制，电线弧面等的简易版绘图板
 
 ![1626864125528](images/1626864125528.png)
+
+## [TCP聊天室](https://github.com/GuidoLuo0521/Notes/tree/master/Qt/QtDevelopmentAndExamples/TcpSocket)
+
+Qt QTcpSocket QTcpServer 的聊天室
+
+![image-20210731234626790](images/image-20210731234626790.png)
+
+## [网络下载器](https://github.com/GuidoLuo0521/Notes/tree/master/Qt/QtDevelopmentAndExamples/Chapter10-Qt5NetworkAndCommunication)
+
+Qt `QNetworkAccessManager`，`QNetworkRequest`，`QNetworkReply`
+
+![image-20210731234815911](images/image-20210731234815911.png)
+
