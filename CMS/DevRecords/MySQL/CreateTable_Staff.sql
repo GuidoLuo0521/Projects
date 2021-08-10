@@ -22,6 +22,6 @@ CREATE TABLE Staff(
 	Resignation int(1) NOT NULL COMMENT '是否离职 0:就职，1：办理入职，2，办理离职，3：离职',
 	Params VARCHAR(10) COMMENT '预留字段',
 	PRIMARY KEY(StaffID)
-	)
+	);
 	
 	

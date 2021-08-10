@@ -1,0 +1,10 @@
+
+DROP TABLE IF EXISTS Role;
+
+CREATE TABLE Role (
+	RoleID INT(11) NOT NULL COMMENT '角色编号（主键）',
+	RoleName VARCHAR(20) NOT NULL COMMENT '角色名称',
+	Description VARCHAR(80) NOT NULL COMMENT '说明',
+	Param VARCHAR(10) COMMENT '预留字段',
+	PRIMARY KEY(RoleID)
+	);

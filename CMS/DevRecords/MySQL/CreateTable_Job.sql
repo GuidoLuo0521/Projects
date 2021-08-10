@@ -1,0 +1,11 @@
+
+DROP TABLE IF EXISTS Job;
+
+CREATE TABLE Job (
+	JobID INT(11) NOT NULL COMMENT '职务编号（主键）',
+	JobName VARCHAR(30) NOT NULL COMMENT '职务名称',
+	BasicWage FLOAT  COMMENT '基本工资',
+	Description VARCHAR(80) COMMENT '说明',
+	Param VARCHAR(10) COMMENT '预留字段',
+	PRIMARY KEY(JobID)	
+	);
