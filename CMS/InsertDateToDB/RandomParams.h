@@ -6,10 +6,12 @@
 #include <QTime>       //使用了QTime函数
 #include <QtGlobal>    //qsrand和qrand这两个函数在这里面
 
-QStringList g_strList={"0","1","2","3","4","5","6","7","8","9",
-                       "a","b","c","d","e","f","g","h","i","g",
-                       "k","l","m","n","o","p","q","r","s","t",
-                       "u","v","w","x","y","z"};
+QStringList g_strList={
+    "0","1","2","3","4","5","6","7","8","9",
+    "a","b","c","d","e","f","g","h","i","g",
+    "k","l","m","n","o","p","q","r","s","t",
+    "u","v","w","x","y","z"
+};
 
 QStringList g_strListDepartment = {
     "董事部",
@@ -26,9 +28,56 @@ QStringList g_strListDepartment = {
     "设计部",
     "生产部",
     "质检部",
-    "研发部",
-    };
+    "研发部"
+};
 
+QStringList g_strListPlace = {
+    "重庆市渝北区",
+    "重庆市渝中区",
+    "重庆市江北区",
+    "重庆市南岸区",
+    "重庆市北碚区",
+    "重庆市江津区",
+    "重庆市万盛区",
+    "重庆市綦江区",
+    "北京市朝阳区",
+    "北京市东城区",
+    "北京市海淀区",
+    "北京市丰台区",
+    "河北省武安县",
+    "河北省邯郸县",
+    "河北省成安县",
+    "河北省雄安县",
+    "河北省廊坊市",
+    "河北省大名县"
+};
+
+QStringList g_strListEducation = {
+    "小学",
+    "初中",
+    "高中",
+    "大专",
+    "本科",
+    "硕士",
+    "博士",
+    "教授"
+};
+
+QStringList g_strListSpecialty = {
+    "哲学",
+    "经济学",
+    "法学",
+    "教育学",
+    "文学",
+    "历史",
+    "科学",
+    "工程",
+    "农业",
+    "医学",
+    "管理",
+    "艺术",
+    "军事"
+};
 
 /// <summary> 获取随机数 </sumamry>
 /// 因为按时间s来说，种子数差别不大，导致随机数也一样。
@@ -123,8 +172,8 @@ QString GetRandomBirthday()
     else
     {
         param2 = "0";
-        param3 = GetRandomString(g_strList, 3);
-        param4 = GetRandomString(g_strList, param3 == "2" ? 2 : 9);
+        param3 = "0";
+        param4 = GetRandomString(g_strList, 2);
     }
 
     param5 = GetRandomString(g_strList, 2);
@@ -166,6 +215,67 @@ float GetRandomWorkingAge()
     return GetRandomNumber() % 20;
 }
 
+/// <summary> 随机籍贯 </sumamry>
+QString GetRandomPlace()
+{
+    return GetRandomString(g_strListPlace, g_strListPlace.size());
+}
+
+/// <summary> 随机学历 </sumamry>
+QString GetRandomEducation()
+{
+    return GetRandomString(g_strListEducation, g_strListEducation.size());
+}
+
+/// <summary> 随机专业 </sumamry>
+QString GetRandomSpecialty()
+{
+    return GetRandomString(g_strListSpecialty, g_strListSpecialty.size());
+}
+
+/// <summary> 随机住址 </sumamry>
+QString GetRandomAddress()
+{
+    return GetRandomString(g_strListPlace, g_strListPlace.size());
+}
+
+/// <summary> 随机入职时间 </sumamry>
+QString GetRandomEnterCompany()
+{
+    //return GetRandomTime();
+    QString param1, param2, param3, param4, param5, param6, param7, param8;
+
+    param1 = "2";
+    param2 = "0";
+    param3 = "0";
+    param4 = GetRandomString(g_strList, 9);
+
+    param5 = GetRandomString(g_strList, 2);
+    param6 = GetRandomString(g_strList, param5 == "1" ? 2 : 9);
+    if(param5 == "0" && param5 == param6)
+        param6 = "1";
+
+    param7 = GetRandomString(g_strList, 4);
+    param8 = GetRandomString(g_strList, param7 == "3" ? 2 : 9);
+    if(param7 == "3" && param7 == param8)
+        param7 = "1";
+
+    return  QString("%1%2%3%4-%5%6-%7%8")
+            .arg(param1)
+            .arg(param2)
+            .arg(param3)
+            .arg(param4)
+            .arg(param5)
+            .arg(param6)
+            .arg(param7)
+            .arg(param8);
+}
+
+/// <summary> 随机住址 </sumamry>
+int GetRandomResignation()
+{
+    return GetRandomNumber() % 5;
+}
 
 
 
