@@ -1,4 +1,4 @@
-#include <QCoreApplication>
+﻿#include <QCoreApplication>
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -53,10 +53,18 @@ int main(int argc, char *argv[])
     for( int i = 0; i < knCount; ++i)
     {
         StaffID = 0;
-        StaffName = strListName[i];
+        //StaffName = strListName[i];
         StaffPassword = GetRandomPassword();
         Sex = GetRandomSex();
         Birthday = GetRandomBirthday();
+        Department = GetRandomDepartent();
+        JobName = Department;
+        JobName.remove("部");
+        JobName.remove("科");
+
+        Wage = GetRandomWage();
+        WorkingAge = GetRandomWorkingAge();
+
 
 
         /*
@@ -69,7 +77,9 @@ int main(int argc, char *argv[])
                 .arg(EnterCampany).arg(LeaveCampany).arg(Introduction).arg(Resignation).arg(Param);
         */
 
-        qDebug() << StaffPassword << " " << Sex << " " << Birthday;
+        qDebug() << StaffPassword << " " << Sex << " " << Birthday
+                 << " " << Department << " " << JobName << " " << Wage
+                 << " " << WorkingAge;
 
     }
 
