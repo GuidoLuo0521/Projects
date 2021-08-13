@@ -1,7 +1,7 @@
 DROP TABLE  IF EXISTS Staff;
 
 CREATE TABLE Staff(
-	StaffID int(11) NOT NULL COMMENT '职工编号（主键）' AUTO_INCREMENT,
+	StaffID int(11) NOT NULL COMMENT '职工编号（主键）' AUTO_INCREMENT=2,
 	StaffName VARCHAR(20) NOT NULL COMMENT '职工姓名',
 	StaffPassword VARCHAR(30) NOT NULL COMMENT '密码',
 	Sex int(1) NOT NULL COMMENT '性别（0 未知，1 男，2 女）',

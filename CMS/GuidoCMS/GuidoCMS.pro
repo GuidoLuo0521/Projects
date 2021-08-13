@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT += sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,13 +26,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        logindialog.cpp \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
+        logindialog.h \
         mainwindow.h
 
 FORMS += \
+        logindialog.ui \
         mainwindow.ui
 
 # Default rules for deployment.

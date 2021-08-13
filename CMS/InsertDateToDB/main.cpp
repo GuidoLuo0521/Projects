@@ -86,10 +86,18 @@ int main(int argc, char *argv[])
                     .arg(EnterCampany).arg(LeaveCampany).arg(Introduction).arg(Resignation).arg(Param);
 
             guidocms.exec(strSql);
-        }
+            strSql = "SELECT last_insert_id() AS 'Account';";
+            QSqlQuery query = guidocms.exec(strSql);
 
+            while (query.next()) {
+               qDebug() << QString("%1").arg(query.value("Account").toInt(), 6, 10, QLatin1Char('0'));
+            }
+        }
     }
+
     qDebug() << "exec end.";
+
+    guidocms.close();
 
     return a.exec();
 }
