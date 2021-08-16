@@ -130,13 +130,21 @@
     <string>注册账号</string>
    </property>
   </widget>
+  <widget class="QLabel" name="labelInfo">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>340</y>
+     <width>241</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
   <zorder>lePassword</zorder>
   <zorder>leUserName</zorder>
-  <zorder>pushButton</zorder>
-  <zorder>pushButton_2</zorder>
-  <zorder>horizontalSpacer</zorder>
-  <zorder>horizontalSpacer_2</zorder>
-  <zorder>horizontalSpacer_3</zorder>
   <zorder>labelProfile</zorder>
   <zorder>cbUserName</zorder>
   <zorder>btnLogin</zorder>
@@ -144,6 +152,7 @@
   <zorder>checkBoxAutoLogin</zorder>
   <zorder>labelFindPW</zorder>
   <zorder>labelSignUp</zorder>
+  <zorder>labelInfo</zorder>
  </widget>
  <resources/>
  <connections/>

@@ -1,17 +1,30 @@
-#include "logindialog.h"
+﻿#include "logindialog.h"
 #include "ui_logindialog.h"
-
-#include <QMessageBox>
-#include <QSqlDatabase>
-#include <QSqlQuery>
-#include <QDebug>
-#include <QSqlError>
+#include "CMSDef.h"
 
 LoginDialog::LoginDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::LoginDialog)
+    QDialog(parent)
+    , ui(new Ui::LoginDialog)
+    , m_pWebDatabase(nullptr)
 {
     ui->setupUi(this);
+    this->setFixedSize(360, 415);
+
+    CMSDatabase * pWebDB = WebDatabaseSingleton::GetInstance();
+    CMSDatabase * pLocalDB = LocalDatabaseSingleton::GetInstance();
+
+    QString strErrorText = "";
+    if(pWebDB->isOpen())
+        m_pWebDatabase = pWebDB;
+    else
+        strErrorText += "WebDatabase Not Open。";
+
+    if(pLocalDB->isOpen())
+        m_pLocalDatabase = pLocalDB;
+    else
+        strErrorText += "LocalDatabase Not Open。";
+
+    ui->labelInfo->setText(m_pWebDatabase && m_pLocalDatabase ? "已连接网络。" : strErrorText);
 }
 
 LoginDialog::~LoginDialog()
@@ -31,6 +44,9 @@ QString LoginDialog::GetPassWord()
 
 void LoginDialog::on_btnLogin_clicked()
 {
+    if(m_pWebDatabase == nullptr)
+        return;
+
     int nRetInput = VerificationInput();
     if(nRetInput == 1)
     {
@@ -39,16 +55,17 @@ void LoginDialog::on_btnLogin_clicked()
 
         int nRet = VerificationLogin(strUserName, strPassWord);
         if(nRet == 1)
+        {
             accept();
+        }
         else if(nRet == -1)
         {
             QMessageBox::warning(this, "警告", "暂无此用户！");
 
-            ui->leUserName->clear();
             ui->lePassword->clear();
             ui->leUserName->setFocus();
         }
-        else
+        else if( nRet == 0)
         {
             QMessageBox::warning(this, "警告", "密码错误！");
 
@@ -86,19 +103,14 @@ int LoginDialog::VerificationLogin(const QString& strUsername, const QString& st
 {
     //把登录信息的账号密码传进来，然后跟数据库进行比较，相同则验证成功，否则失败
     //连接数据库
-    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL", "MySQL_guidocms");
-    db.setHostName("127.0.0.1");
-    db.setDatabaseName("guidocms");
-    db.setUserName("root");
-    db.setPassword("");
-
-    if(db.open())
+    if(m_pWebDatabase)
     {
        //数据库操作
-       QSqlQuery query(db);
-       QString strSQL = QString("SELECT staffpassword FROM staff where staffid = %1;").arg(strUsername);
+       QString strSQL = QString("SELECT staffpassword FROM staff where staffid = %1;")
+                            .arg(strUsername);
 
-       if(query.exec(strSQL))
+       QSqlQuery query = m_pWebDatabase->exec(strSQL);
+       //if(query.isValid())
        {
            while(query.next())//遍历数据表
            {
@@ -106,12 +118,13 @@ int LoginDialog::VerificationLogin(const QString& strUsername, const QString& st
 
                 if((strPassword == password))
                     return 1;
+                else
+                    return 0;
            }
 
-           db.close();
+           return -1;
        }
-       return -1;
-
     }
-    return 0;
+
+    return  -2;
 }

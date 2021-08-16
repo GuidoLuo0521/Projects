@@ -1,7 +1,8 @@
-#ifndef LOGINDIALOG_H
+﻿#ifndef LOGINDIALOG_H
 #define LOGINDIALOG_H
 
 #include <QDialog>
+#include "CMSDef.h"
 
 namespace Ui {
 class LoginDialog;
@@ -27,6 +28,9 @@ private:
     int VerificationInput();
     int VerificationLogin(const QString& strUsername, const QString& strPassword);
 
+private:
+    CMSDatabase * m_pWebDatabase;
+    CMSDatabase * m_pLocalDatabase;
 };
 
 #endif // LOGINDIALOG_H
