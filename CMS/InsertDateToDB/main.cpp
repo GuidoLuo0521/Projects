@@ -19,10 +19,10 @@ int main(int argc, char *argv[])
     guidocms.setPort(3306);
     guidocms.setDatabaseName("guidocms");
     guidocms.setUserName("root");
-    guidocms.setPassword("");
+    guidocms.setPassword("kangrulai");
 
     QStringList strListName;
-    QString strFilePath = "D:/github/Projects/CMS/DevRecords/MySQL/name.txt";
+    QString strFilePath = "F:/git/Projects/CMS/DevRecords/MySQL/name.txt";
     QFile file(strFilePath);
     if( file.open(QIODevice::ReadOnly | QIODevice::Text) )
     {

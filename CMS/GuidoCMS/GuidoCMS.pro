@@ -26,19 +26,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        CMSDef.cpp \
         cmsdatabase.cpp \
+        commonapi.cpp \
         logindialog.cpp \
         main.cpp \
         mainwindow.cpp \
-        singleton.cpp
+        singleton.cpp \
+        staffinfo.cpp
 
 HEADERS += \
-        CMSDef.h \
         cmsdatabase.h \
+        commonapi.h \
         logindialog.h \
         mainwindow.h \
-        singleton.h
+        singleton.h \
+        staffinfo.h
 
 FORMS += \
         logindialog.ui \

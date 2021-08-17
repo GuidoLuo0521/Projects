@@ -1,30 +1,30 @@
 ﻿#include "logindialog.h"
 #include "ui_logindialog.h"
-#include "CMSDef.h"
+
 
 LoginDialog::LoginDialog(QWidget *parent) :
     QDialog(parent)
     , ui(new Ui::LoginDialog)
-    , m_pWebDatabase(nullptr)
+    , m_pCMSDatabase(nullptr)
 {
     ui->setupUi(this);
-    this->setFixedSize(360, 415);
+    this->setFixedSize(360, 450);
 
-    CMSDatabase * pWebDB = WebDatabaseSingleton::GetInstance();
-    CMSDatabase * pLocalDB = LocalDatabaseSingleton::GetInstance();
+    CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
 
-    QString strErrorText = "";
-    if(pWebDB->isOpen())
-        m_pWebDatabase = pWebDB;
-    else
-        strErrorText += "WebDatabase Not Open。";
+    QString strErrorText = pDB ? "网络已连接。\n" : "网络未连接。\n";
+    if( pDB )
+    {
+        if(!pDB->WDB_IsOpen())
+            strErrorText += "WebDatabase Not Open。\n";
 
-    if(pLocalDB->isOpen())
-        m_pLocalDatabase = pLocalDB;
-    else
-        strErrorText += "LocalDatabase Not Open。";
+        if(!pDB->LDB_IsOpen())
+            strErrorText += "LocalDatabase Not Open。\n";
+    }
 
-    ui->labelInfo->setText(m_pWebDatabase && m_pLocalDatabase ? "已连接网络。" : strErrorText);
+    ui->labelInfo->setText(strErrorText);
+
+    m_pCMSDatabase = pDB;
 }
 
 LoginDialog::~LoginDialog()
@@ -44,16 +44,16 @@ QString LoginDialog::GetPassWord()
 
 void LoginDialog::on_btnLogin_clicked()
 {
-    if(m_pWebDatabase == nullptr)
+    if(m_pCMSDatabase == nullptr)
         return;
 
-    int nRetInput = VerificationInput();
+    int nRetInput = VerifyInput();
     if(nRetInput == 1)
     {
-        QString strUserName = QString::number(GetUserName().toInt());
+        QString strUserName = GetUserName();
         QString strPassWord = GetPassWord();
 
-        int nRet = VerificationLogin(strUserName, strPassWord);
+        int nRet = m_pCMSDatabase->WDB_VerifyLogin(strUserName, strPassWord);
         if(nRet == 1)
         {
             accept();
@@ -83,7 +83,7 @@ void LoginDialog::on_btnLogin_clicked()
     }
 }
 
-int LoginDialog::VerificationInput()
+int LoginDialog::VerifyInput()
 {
     QString strUserName = GetUserName();
     QString strPassWord = GetPassWord();
@@ -99,32 +99,4 @@ int LoginDialog::VerificationInput()
     return  1;
 }
 
-int LoginDialog::VerificationLogin(const QString& strUsername, const QString& strPassword)
-{
-    //把登录信息的账号密码传进来，然后跟数据库进行比较，相同则验证成功，否则失败
-    //连接数据库
-    if(m_pWebDatabase)
-    {
-       //数据库操作
-       QString strSQL = QString("SELECT staffpassword FROM staff where staffid = %1;")
-                            .arg(strUsername);
 
-       QSqlQuery query = m_pWebDatabase->exec(strSQL);
-       //if(query.isValid())
-       {
-           while(query.next())//遍历数据表
-           {
-                QString password=query.value("staffpassword").toString().trimmed();
-
-                if((strPassword == password))
-                    return 1;
-                else
-                    return 0;
-           }
-
-           return -1;
-       }
-    }
-
-    return  -2;
-}

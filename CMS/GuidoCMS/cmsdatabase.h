@@ -10,28 +10,55 @@
 
 #include "singleton.h"
 
-class CMSDatabase : public QSqlDatabase
+class CMSDatabase
 {
 public:
-    CMSDatabase(
-        const QString& type,
-        const QString& connectionName,
-        const QString& hostName,
-        const QString& databaseName,
-        const QString& userName,
-        const QString& password );
-
+    CMSDatabase();
     ~CMSDatabase();
 
+    bool WDB_IsOpen();
+    bool LDB_IsOpen();
+
+    /// 登录检查
+    /// 返回值  1：成功，0：密码错误 -1：没此账户 2：数据库未连接
+    int WDB_VerifyLogin(const QString& strUsername, const QString& strPassword);
+
+    QSqlQuery WDB_Exec(const QString& strQuery);
+    QSqlError WBD_LastError();
+
+    QSqlQuery LDB_Exec(const QString& strQuery);
+    QSqlError LBD_LastError();
+
 private:
-    const QString m_strType;
-    const QString m_strConnectionName;
-    const QString m_strHostName;
-    const QString m_strDatabaseName;
-    const QString m_strUserName;
-    const QString m_strPassword;
+    void InitParams();
+
+    void LoadDatabase();
+    void LoadWebDatabase();
+    void LoadLocalDatabase();
+
+    void CloseDatabase();
+    void CloseWebDatabase();
+    void CloseLocalDatabase();
+
+    QSqlDatabase m_WebDatabase;
+    QSqlDatabase m_LocalDatabase;
+
+    QString m_strWebType;
+    QString m_strWebConnectionName;
+    QString m_strWebHostName;
+    QString m_strWebDatabaseName;
+    QString m_strWebUserName;
+    QString m_strWebPassword;
+
+    QString m_strLocalType;
+    QString m_strLocalConnectionName;
+    QString m_strLocalHostName;
+    QString m_strLocalDatabaseName;
+    QString m_strLocalUserName;
+    QString m_strLocalPassword;
 };
 
+typedef Singleton<CMSDatabase> CMSDatabaseSingleton;
 
 
 #endif // GUIDOCMSDATABASE_H
