@@ -10,34 +10,26 @@
 
 #include "RandomParams.h"
 
-int main(int argc, char *argv[])
+
+void InsertStaff( QSqlDatabase& guidocms)
 {
-    QCoreApplication a(argc, argv);
-
-    QSqlDatabase guidocms = QSqlDatabase::addDatabase("QMYSQL", "MySQL_GuidoCMS");
-    guidocms.setHostName("127.0.0.1");
-    guidocms.setPort(3306);
-    guidocms.setDatabaseName("guidocms");
-    guidocms.setUserName("root");
-    guidocms.setPassword("kangrulai");
-
-    QStringList strListName;
-    QString strFilePath = "F:/git/Projects/CMS/DevRecords/MySQL/name.txt";
-    QFile file(strFilePath);
-    if( file.open(QIODevice::ReadOnly | QIODevice::Text) )
+    if(guidocms.isOpen())
     {
-        QTextStream stream(&file);
-        stream.setCodec("UTF-8");
+        QStringList strListName;
+        QString strFilePath = "D:/github/Projects/CMS/DevRecords/MySQL/name.txt";
+        QFile file(strFilePath);
+        if( file.open(QIODevice::ReadOnly | QIODevice::Text) )
+        {
+            QTextStream stream(&file);
+            stream.setCodec("UTF-8");
 
-        while (!stream.atEnd()) {
-            strListName << stream.readLine();
+            while (!stream.atEnd()) {
+                strListName << stream.readLine();
+            }
+
+            file.close();
         }
 
-        file.close();
-    }
-
-    if(guidocms.open())
-    {
         const int knCount = strListName.size();
         for( int i = 0; i < knCount; ++i)
         {
@@ -95,7 +87,70 @@ int main(int argc, char *argv[])
         }
     }
 
-    qDebug() << "exec end.";
+    qDebug() << "InsertStaff exec end.";
+}
+
+void InsertDepartment(QSqlDatabase& guidocms)
+{
+    if(guidocms.isOpen())
+    {
+        const int knCount = g_strListDepartment.size();
+        for( int i = 0; i < knCount; ++i)
+        {
+            int DepartmntID = 0, State = 1;
+            QString DepartmentName = g_strListDepartment[i], Description, Param;
+
+            QString strSql = QString(" INSERT INTO department "
+                                     "(DepartmntID, DepartmentName, State, Description, Param)"
+                                     "VALUES (%1,'%2', %3,'%4', '%5');")
+                    .arg(DepartmntID).arg(DepartmentName).arg(State).arg(Description).arg(Param);
+
+            guidocms.exec(strSql);
+        }
+    }
+}
+
+void InsertJob(QSqlDatabase& guidocms)
+{
+    if(guidocms.isOpen())
+    {
+        const int knCount = g_strListDepartment.size();
+        for( int i = 0; i < knCount; ++i)
+        {
+            int JobID = 0, State = 1;
+            float BasicWage = GetRandomWage();
+            QString JobName = g_strListDepartment[i], Description, Param;
+            JobName.remove("部");
+            JobName.remove("科");
+
+            QString strSql = QString(" INSERT INTO job "
+                                     "(JobID, JobName, State, BasicWage, Description, Param)"
+                                     "VALUES (%1,'%2', %3, %4,'%5','%6');")
+                    .arg(JobID).arg(JobName).arg(State).arg(BasicWage).arg(Description).arg(Param);
+
+            guidocms.exec(strSql);
+        }
+    }
+}
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication a(argc, argv);
+
+    QSqlDatabase guidocms = QSqlDatabase::addDatabase("QMYSQL", "MySQL_GuidoCMS");
+    guidocms.setHostName("127.0.0.1");
+    guidocms.setPort(3306);
+    guidocms.setDatabaseName("guidocms");
+    guidocms.setUserName("root");
+    guidocms.setPassword("");
+
+    guidocms.open();
+
+    //InsertStaff(guidocms);
+
+    //InsertDepartment(guidocms);
+
+    //InsertJob(guidocms);
 
     guidocms.close();
 

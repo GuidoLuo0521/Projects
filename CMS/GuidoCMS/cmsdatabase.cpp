@@ -77,7 +77,7 @@ void CMSDatabase::InitParams()
     m_strWebHostName = "127.0.0.1";
     m_strWebDatabaseName = "guidocms";
     m_strWebUserName = "root";
-    m_strWebPassword = "kangrulai";
+    m_strWebPassword = "";
 
     m_strLocalType = "QSQLITE";
     m_strLocalConnectionName = "QSQLITE_LOCALDB";
