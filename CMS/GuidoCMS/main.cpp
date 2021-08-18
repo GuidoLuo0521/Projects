@@ -12,13 +12,15 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
+    InitGlobalParams();
+
     SystemManagerDialog w;
     w.show();
 
     return a.exec();
 
 
-    InitGlobalParams();
+
 
     LoginDialog logindlg;
     logindlg.show();

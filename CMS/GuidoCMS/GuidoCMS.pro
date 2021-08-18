@@ -27,8 +27,10 @@ CONFIG += c++11
 
 SOURCES += \
         cmsdatabase.cpp \
+        comboxdelegate.cpp \
         commonapi.cpp \
         cusernamectrl.cpp \
+        datedelegate.cpp \
         logindialog.cpp \
         main.cpp \
         mainwindow.cpp \
@@ -38,8 +40,10 @@ SOURCES += \
 
 HEADERS += \
         cmsdatabase.h \
+        comboxdelegate.h \
         commonapi.h \
         cusernamectrl.h \
+        datedelegate.h \
         logindialog.h \
         mainwindow.h \
         singleton.h \

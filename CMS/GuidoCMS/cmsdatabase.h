@@ -29,6 +29,9 @@ public:
     QSqlQuery LDB_Exec(const QString& strQuery);
     QSqlError LBD_LastError();
 
+    QSqlDatabase m_WebDatabase;
+    QSqlDatabase m_LocalDatabase;
+
 private:
     void InitParams();
 
@@ -39,9 +42,6 @@ private:
     void CloseDatabase();
     void CloseWebDatabase();
     void CloseLocalDatabase();
-
-    QSqlDatabase m_WebDatabase;
-    QSqlDatabase m_LocalDatabase;
 
     QString m_strWebType;
     QString m_strWebConnectionName;

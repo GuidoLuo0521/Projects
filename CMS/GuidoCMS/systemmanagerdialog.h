@@ -2,6 +2,8 @@
 #define SYSTEMMANAGERDIALOG_H
 
 #include <QMainWindow>
+#include <QSqlQueryModel>
+#include <QTableView>
 
 
 class QStandardItemModel;
@@ -20,7 +22,21 @@ public:
     explicit SystemManagerDialog(QWidget *parent = nullptr);
     ~SystemManagerDialog();
 
+signals:
+    void signalQuery(QString);
+
+private slots:
+    void slotShowStaffs();
+    void slotShowRole();
+    void slotShowDepartment();
+    void slotShowJob();
+
+    void slotQuery(QString);
+
 private:
+    void BindSlot();
+    void ActionChecked(QAction * pAction);
+
     Ui::SystemManagerDialog *ui;
 
     QAction * m_pStaffManager;
@@ -30,8 +46,8 @@ private:
 
     void InitLayout();
 
-    QStandardItemModel * m_pStandardItemModel;
-
+    QSqlQueryModel * m_pSqlQueryModel;
+    QTableView * m_pTableView;
 
 };
 
