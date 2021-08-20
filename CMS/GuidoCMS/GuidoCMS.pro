@@ -27,24 +27,33 @@ CONFIG += c++11
 
 SOURCES += \
         cmsdatabase.cpp \
+        comboxdelegate.cpp \
         commonapi.cpp \
+        cusernamectrl.cpp \
+        datedelegate.cpp \
         logindialog.cpp \
         main.cpp \
         mainwindow.cpp \
         singleton.cpp \
-        staffinfo.cpp
+        staffinfo.cpp \
+        systemmanagerdialog.cpp
 
 HEADERS += \
         cmsdatabase.h \
+        comboxdelegate.h \
         commonapi.h \
+        cusernamectrl.h \
+        datedelegate.h \
         logindialog.h \
         mainwindow.h \
         singleton.h \
-        staffinfo.h
+        staffinfo.h \
+        systemmanagerdialog.h
 
 FORMS += \
         logindialog.ui \
-        mainwindow.ui
+        mainwindow.ui \
+        systemmanagerdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
