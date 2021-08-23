@@ -58,12 +58,16 @@ private slots:
     void slotError(QNetworkReply::NetworkError);
     void slotDownLoadNewExe();
     void slotUpdateLocalUpdateFile();
-    void replyFinished(QNetworkReply *reply);   //json 文件下载结束
+    void replyJsonFinished(QNetworkReply *reply);   //json 文件下载结束
 
+    void slotDownloadExeFinished();   //json 文件下载结束
+
+    void slotUpdateProcessBar(QString, qint64, qint64);
 
 private:
     Ui::AutoUpdateWidget *ui;
 
+    static const QString skm_UpdateExeName;
     static const QString skm_UpdateFileName;
     static const QString skm_UpdateUrl;
     static const QString skm_LocalTempUpdateName;

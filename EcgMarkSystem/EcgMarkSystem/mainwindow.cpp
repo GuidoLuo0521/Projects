@@ -1,7 +1,5 @@
 ﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "chttpdownloadfile.h"
-#include "autoupdatewidget.h"
 
 #include <QSplitter>
 #include <QHBoxLayout>
@@ -17,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowIcon(QIcon(":/icon/Main.ico"));
 
+    InitColor();
     InitLayout();
     BindSignalSlot();
 }
@@ -51,7 +50,9 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
                 {
                     m_HitMarkPoint = hitpoint;
                     ShowSelectdType();
-                    SetCustomplotSelectdData(xint, m_CustomplotEcgData[1][ xint ]);
+
+                    SetCustomplotSelectedData(hitpoint.nSelectPos, m_CustomplotEcgData[1][ hitpoint.nSelectPos ]);
+                    SetCustomplotActiviedData(hitpoint.nSelectPos, m_CustomplotEcgData[1][ hitpoint.nSelectPos ]);
 
                     return true;
                 }
@@ -79,7 +80,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
                 if( m_bMousePressing)
                 {
                     m_HitMarkPoint.nNewPos = xint;
-                    SetCustomplotSelectdData(xint, m_CustomplotEcgData[1][ xint ]);
+                    SetCustomplotActiviedData(xint, m_CustomplotEcgData[1][ xint ]);
                 }
 
                 return true;
@@ -104,7 +105,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
                 if(m_HitMarkPoint.type < MARK_POINT_COUNT)
                 {
                     m_HitMarkPoint.nNewPos = xint;
-                    SetCustomplotSelectdData(xint, m_CustomplotEcgData[1][ xint ]);
+                    SetCustomplotActiviedData(xint, m_CustomplotEcgData[1][ xint ]);
 
                     return true;
                 }
@@ -119,18 +120,23 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
                 {
                     slotUpdataHitToMarkPointData(false);
                     ClearHitMarkDate();
-                    SetCustomplotSelectdData(-1, -1);
+
+                    SetCustomplotSelectedData(-1, -1);
+                    SetCustomplotActiviedData(-1, -1);
                     ShowSelectdType();
                     return true;
                 }
             }
             else if(keyEvent->key() == Qt::Key_Return)
             {
+                m_bMousePressing = false;
                 if(m_HitMarkPoint.type < MARK_POINT_COUNT)
                 {
                     slotUpdataHitToMarkPointData(true);
                     ClearHitMarkDate();
-                    SetCustomplotSelectdData(-1, -1);
+
+                    SetCustomplotSelectedData(-1, -1);
+                    SetCustomplotActiviedData(-1, -1);
                     ShowSelectdType();
                     return true;
                 }
@@ -138,8 +144,11 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             else if(keyEvent->key() == Qt::Key_Escape)
             {
                 ClearHitMarkDate();
-                SetCustomplotSelectdData(-1, -1);
+
+                SetCustomplotSelectedData(-1, -1);
+                SetCustomplotActiviedData(-1, -1);
                 ShowSelectdType();
+
                 return true;
             }
             else if(keyEvent->key() == Qt::Key_Q) { AddMarkPoint(MarkPointType::PS); return true; }
@@ -159,12 +168,20 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
 void MainWindow::slotCurrentDirChanged()
 {
-    QString strDir = QFileDialog::getExistingDirectory(this, "选择文件夹", "F:/QRS_lable_data");
+    QString strInitPath = "F:/QRS_lable_data";
+    if(m_strCurrentDir != "")
+        strInitPath = m_strCurrentDir;
+
+    QString strDir = QFileDialog::getExistingDirectory(this, "选择文件夹", strInitPath);
     if(strDir.isEmpty())
         return;
 
     m_strCurrentDir = strDir;
-    emit signalCurrentDirChanged();
+
+    m_pActionOpenDir->setEnabled(true);
+    m_pActionDeleteFile->setEnabled(true);
+
+    emit signalFillFileList();
 }
 
 void MainWindow::slotCurrentFileChanged()
@@ -175,7 +192,7 @@ void MainWindow::slotCurrentFileChanged()
 void MainWindow::slotFillFileList()
 {
     QDir dir(m_strCurrentDir);
-    QFileInfoList list = dir.entryInfoList();
+    QFileInfoList list = dir.entryInfoList( QDir::Filter::Files, m_Sortflag);
 
     m_pModel->clear();
 
@@ -184,14 +201,29 @@ void MainWindow::slotFillFileList()
         QString str = list[i].fileName();
         if(str != "." && str != "..")
         {
-            QStandardItem *item = new QStandardItem(list[i].fileName());
-            m_pModel->appendRow(item);
+            if(m_nCustomFilterType == 1)
+            {
+                if( str.contains("副本") == false )
+                {
+                    QStandardItem *item = new QStandardItem(list[i].fileName());
+                    m_pModel->appendRow(item);
+                }
+            }
+            else if (m_nCustomFilterType == 2)
+            {
+                if( str.contains("副本") == true )
+                {
+                    QStandardItem *item = new QStandardItem(list[i].fileName());
+                    m_pModel->appendRow(item);
+                }
+            }
+            else
+            {
+                QStandardItem *item = new QStandardItem(list[i].fileName());
+                m_pModel->appendRow(item);
+            }
         }
     }
-
-    m_pListView->setModel(m_pModel);
-
-    connect(m_pListView->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &MainWindow::slotListViewSelectdChanged);
 }
 
 void MainWindow::slotListViewSelectChanged(QModelIndex index)
@@ -213,10 +245,7 @@ void MainWindow::slotOpenCurrentFile()
         return;
 
     ClearLastFile();
-
     setWindowTitle(m_strCurrentFile);
-
-    //ShowMessage(strFilePath);
 
     QFile file(strFilePath);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -244,7 +273,7 @@ void MainWindow::slotOpenCurrentFile()
 
     emit signalUpdataCustomplotEcgData();
     emit signalUpdataCustomplotMarkData();
-    emit signalUpdataCustomplotSelectedData();
+    emit signalUpdataCustomplotActiviedData();
 }
 
 
@@ -261,27 +290,8 @@ static void InsertToJsonArray(QJsonObject& jsonObject, const QString& name, cons
 
 void MainWindow::slotSaveCurrentFile()
 {
-    if(m_vectMarkPoint[(int)MarkPointType::PS].size() != m_vectMarkPoint[(int)MarkPointType::PE].size())
-    {
-        QMessageBox::critical(this, "警告", "PS PE 个数不相等");
+    if(CheckSaveCorrect() == false)
         return;
-    }
-    if(m_vectMarkPoint[(int)MarkPointType::Q].size() != m_vectMarkPoint[(int)MarkPointType::S].size())
-    {
-        QMessageBox::critical(this, "警告", "Q S 个数不相等");
-        return;
-    }
-    if(m_vectMarkPoint[(int)MarkPointType::TS].size() != m_vectMarkPoint[(int)MarkPointType::TE].size())
-    {
-        QMessageBox::critical(this, "警告", "TS TE 个数不相等");
-        return;
-    }
-
-    if(m_CustomplotEcgData->size() <= 0)
-    {
-        ShowStatusTips("未打开文件");
-        return;
-    }
 
     QFileInfo fileInfo(m_strCurrentDir + "/" + m_strCurrentFile);
     QString strFilePath = m_strCurrentDir + "/" + fileInfo.baseName() + "_副本." + fileInfo.suffix();
@@ -297,6 +307,7 @@ void MainWindow::slotSaveCurrentFile()
         }
         jsonObject.insert("data", jsonarray);
     }
+
     for( int i = 0; i < g_listMarkPointTypeNameInJson.size(); ++i )
     {
         InsertToJsonArray(jsonObject, g_listMarkPointTypeNameInJson[i], m_vectMarkPoint[i]);
@@ -314,18 +325,16 @@ void MainWindow::slotSaveCurrentFile()
 
     ShowStatusTips("文件已保存：" + strFilePath);
 
-    emit signalCurrentDirChanged();
+    emit signalFillFileList();
     emit signalCurrentFileChanged();
 }
 
 void MainWindow::slotCheckUpdate()
 {
-    AutoUpdateWidget autoupdate;
-    if(autoupdate.exec() == QDialog::Accepted)
-    {
-        QMessageBox::information(this, "提示", "请用浏览器中下载文件替换目录中Exe，然后重启软件。");
-        close();
-    }
+    // 可以单独写一个 update.exe 文件;
+    QString strUpdateExe = "EcgMarkSystemUpdate.exe";
+    QProcess process(this);
+    process.startDetached(strUpdateExe);
 }
 
 void MainWindow::slotUpdataCustomplotMarkData()
@@ -358,7 +367,45 @@ void MainWindow::slotUpdataHitToMarkPointData(bool insert)
 
 void MainWindow::slotUpdataCustomplotSelectedData()
 {
-    m_pCustomPlot->graph(GT_SELECTED_MARK)->setData(m_CustomplotSelectdData[0], m_CustomplotSelectdData[1]);
+    QPen pen = m_pCustomPlot->graph(GT_SELECTED_MARK)->pen();
+    pen.setColor(m_vColorSelected[GT_SELECTED_MARK]);
+
+    QString strName = "Select ";
+    strName += g_listMarkPointTypeName[m_HitMarkPoint.type];
+
+    switch(m_HitMarkPoint.type)
+    {
+    case MarkPointType::PS:
+    case MarkPointType::P:
+    case MarkPointType::PE:
+        pen.setColor(m_vColorSelected[GT_MARK_POINT_P]);
+        m_pCustomPlot->graph(GT_SELECTED_MARK)->setPen(pen);
+        break;
+    case MarkPointType::Q:
+    case MarkPointType::R:
+    case MarkPointType::S:
+        pen.setColor(m_vColorSelected[GT_MARK_POINT_R]);
+        m_pCustomPlot->graph(GT_SELECTED_MARK)->setPen(pen);
+        break;
+    case MarkPointType::TS:
+    case MarkPointType::T:
+    case MarkPointType::TE:
+        pen.setColor(m_vColorSelected[GT_MARK_POINT_T]);
+        m_pCustomPlot->graph(GT_SELECTED_MARK)->setPen(pen);
+        break;
+    default:
+         m_pCustomPlot->graph(GT_SELECTED_MARK)->setPen(pen);
+        break;
+    }
+
+    m_pCustomPlot->graph(GT_SELECTED_MARK)->setName(strName);
+    m_pCustomPlot->graph(GT_SELECTED_MARK)->setData(m_CustomplotSelectedData[0], m_CustomplotSelectedData[1]);
+    emit signalRePaint();
+}
+
+void MainWindow::slotUpdataCustomplotActiviedData()
+{
+    m_pCustomPlot->graph(GT_ACTIVIED_MARK)->setData(m_CustomplotActiviedData[0], m_CustomplotActiviedData[1]);
     emit signalRePaint();
 }
 
@@ -408,6 +455,97 @@ void MainWindow::slotInsertCustomplotMarkData()
     emit signalUpdataCustomplotMarkData();
 }
 
+void MainWindow::slotShowListViewContextMenu(const QPoint&)
+{
+    m_pListViewContextMenu->exec(QCursor::pos());//在当前鼠标位置显示
+}
+
+void MainWindow::slotSetListSort()
+{
+    m_pActionSortByName->setChecked(false);
+    m_pActionSortBySize->setChecked(false);
+    m_pActionSortByTime->setChecked(false);
+    m_pActionSortByType->setChecked(false);
+    m_pActionSortByLocal->setChecked(false);
+
+    QAction * pAction = (QAction *)sender();
+
+    if(pAction == m_pActionSortByName)
+        m_Sortflag = QDir::SortFlag::Name;
+    else if(pAction == m_pActionSortBySize)
+        m_Sortflag = QDir::SortFlag::Size;
+    else if(pAction == m_pActionSortByTime)
+        m_Sortflag = QDir::SortFlag::Time;
+    else if(pAction == m_pActionSortByType)
+        m_Sortflag = QDir::SortFlag::Type;
+    else
+        m_Sortflag = QDir::SortFlag::LocaleAware;
+
+    if(pAction != nullptr)
+        pAction->setChecked(true);
+
+    emit signalFillFileList();
+}
+
+void MainWindow::slotOpenDir()
+{
+    if(m_strCurrentDir == "")
+    {
+        ShowStatusTips("未设置路径。");
+        return;
+    }
+
+    QDesktopServices::openUrl(QUrl::fromLocalFile(m_strCurrentDir));
+}
+
+void MainWindow::slotDeleteFile()
+{
+    if(m_strCurrentDir == "")
+    {
+        ShowStatusTips("未设置路径。");
+        return;
+    }
+
+    QModelIndexList indexlist = m_pListView->selectionModel()->selectedIndexes();
+    for( int i = 0; i < indexlist.size(); ++i )
+    {
+        QString strName = indexlist[i].data().toString();
+        QString strAbsPath = m_strCurrentDir + "/" + strName;
+
+        QFile::remove(strAbsPath);
+    }
+
+    ShowStatusTips("已删除文件。");
+
+    emit signalFillFileList();
+}
+
+void MainWindow::slotSetFillFileKeyWord()
+{
+    m_pActionKeyByDup->setChecked(false);
+    m_pActionKeyByRaw->setChecked(false);
+    m_pActionKeyByAll->setChecked(false);
+
+    QAction * pAction = (QAction *)sender();
+    if(pAction == m_pActionKeyByDup)
+    {
+        m_nCustomFilterType = 2;
+        m_pActionKeyByDup->setChecked(true);
+    }
+    else if(pAction == m_pActionKeyByRaw)
+    {
+        m_nCustomFilterType = 1;
+        m_pActionKeyByRaw->setChecked(true);
+    }
+    else
+    {
+        m_nCustomFilterType = 0;
+        m_pActionKeyByAll->setChecked(true);
+    }
+
+    emit signalFillFileList();
+}
+
 void MainWindow::ClearLastFile()
 {
     m_MaxVal_Y = -10000,
@@ -416,7 +554,8 @@ void MainWindow::ClearLastFile()
     ClearMarkPointVect();
     ClearCustomplotEcgData();
     ClearCustomplotMarkData();
-    ClearCustomplotSelectdData();
+    ClearCustomplotSelectedData();
+    ClearCustomplotActiviedData();
 
     ClearHitMarkDate();
 }
@@ -452,10 +591,16 @@ void MainWindow::ClearCustomplotMarkData()
     m_CustomplotTMarkData[1].clear();
 }
 
-void MainWindow::ClearCustomplotSelectdData()
+void MainWindow::ClearCustomplotSelectedData()
 {
-    m_CustomplotSelectdData[0].clear();
-    m_CustomplotSelectdData[1].clear();
+    m_CustomplotSelectedData[0].clear();
+    m_CustomplotSelectedData[1].clear();
+}
+
+void MainWindow::ClearCustomplotActiviedData()
+{
+    m_CustomplotActiviedData[0].clear();
+    m_CustomplotActiviedData[1].clear();
 }
 
 void MainWindow::InsertMarkPointList(MarkPointType marktype, const QJsonArray& jsonarr)
@@ -490,7 +635,45 @@ void MainWindow::InsertEcgDataList(const QJsonArray &jsonarr)
     }
 }
 
+void MainWindow::InitColor()
+{
+    m_vColorMark[GT_ECG_DATA] = QColor::fromRgb(0, 0, 255, 180);
+    m_vColorMark[GT_MARK_POINT_P] = QColor::fromRgb(255, 0, 0, 180);
+    m_vColorMark[GT_MARK_POINT_R] = QColor::fromRgb(0, 255, 0, 180);
+    m_vColorMark[GT_MARK_POINT_T] = QColor::fromRgb(0, 0, 255, 180);
+    m_vColorMark[GT_SELECTED_MARK] = QColor::fromRgb(255, 0, 255, 100);
+    m_vColorMark[GT_ACTIVIED_MARK] = QColor::fromRgb(255, 0, 255, 255);
+
+    m_vColorSelected[GT_MARK_POINT_P] = QColor::fromRgb(255, 32, 11, 255);
+    m_vColorSelected[GT_MARK_POINT_R] = QColor::fromRgb(153, 204, 51, 255);
+    m_vColorSelected[GT_MARK_POINT_T] = QColor::fromRgb(1, 0, 41, 255);
+    m_vColorSelected[GT_SELECTED_MARK] = QColor::fromRgb(255, 255, 255);
+}
+
 void MainWindow::InitLayout()
+{
+    QSplitter * pMainSplitter = new QSplitter(Qt::Horizontal);
+
+    // 菜单栏
+    InitMenuBar();
+    // 状态栏
+    InitStatuBar();
+    // 文件列表
+    InitListView();
+    // 绘图
+    InitCustomplot();
+
+    pMainSplitter->addWidget(m_pListView);    
+    pMainSplitter->addWidget(m_pCustomPlot);
+
+    pMainSplitter->setStretchFactor(0, 1);
+    pMainSplitter->setStretchFactor(1, 15);
+
+    this->setCentralWidget(pMainSplitter);
+
+ }
+
+void MainWindow::InitMenuBar()
 {
     QMenuBar * pMenuBar = this->menuBar();
 
@@ -504,26 +687,10 @@ void MainWindow::InitLayout()
     m_pUpdateAction = new QAction("检查更新");
     pHelpMenu->addAction(m_pUpdateAction);
     pMenuBar->addMenu(pHelpMenu);
+}
 
-
-    // 文件列表
-    QSplitter * pMainSplitter = new QSplitter(Qt::Horizontal);
-    m_pListView = new QListView;
-    m_pListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    pMainSplitter->addWidget(m_pListView);
-    m_pListView->installEventFilter(this);
-
-    // 绘图
-    InitCustomplot();
-    pMainSplitter->addWidget(m_pCustomPlot);
-
-    pMainSplitter->setStretchFactor(0, 1);
-    pMainSplitter->setStretchFactor(1, 15);
-
-    this->setCentralWidget(pMainSplitter);
-
-    m_pModel = new QStandardItemModel;
-
+void MainWindow::InitStatuBar()
+{
     //
     QStatusBar * pStatusBar = this->statusBar();
 
@@ -538,8 +705,9 @@ void MainWindow::InitLayout()
 
     m_pStatusAxisPosLable = new QLabel("坐标:(0, 0)");
     pStatusBar->addPermanentWidget(m_pStatusAxisPosLable);
-
 }
+
+
 
 void MainWindow::InitCustomplot()
 {
@@ -568,12 +736,18 @@ void MainWindow::InitCustomplot()
     doubleTicker->setScaleStrategy( QCPAxisTickerFixed::ssMultiples );
     m_pCustomPlot->yAxis->setTicker( doubleTicker ) ;
 
+
+    QPen drawPen;
     /***************************************************************************************/
     // 心电数据
     m_pCustomPlot->addGraph();
     m_pCustomPlot->graph(GT_ECG_DATA)->setName("ECG");   // 设置曲线图的名字
 
-    QPen drawPen;
+    drawPen.setWidth(1);
+    drawPen.setColor(m_vColorMark[GT_ECG_DATA]);
+    m_pCustomPlot->graph(GT_ECG_DATA)->setPen(drawPen);
+    /***************************************************************************************/
+
     drawPen.setWidth(5);
     /***************************************************************************************/
     // 标记点 P
@@ -582,17 +756,19 @@ void MainWindow::InitCustomplot()
     m_pCustomPlot->graph(GT_MARK_POINT_P)->setLineStyle(QCPGraph::lsNone);
     m_pCustomPlot->graph(GT_MARK_POINT_P)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
 
-    drawPen.setColor(QColor::fromRgb(255, 0, 0, 180));
+    drawPen.setColor(m_vColorMark[GT_MARK_POINT_P]);
     m_pCustomPlot->graph(GT_MARK_POINT_P)->setPen(drawPen);
+
     /***************************************************************************************/
     // 标记点 QRS
     m_pCustomPlot->addGraph();
-    m_pCustomPlot->graph(GT_MARK_POINT_R)->setName("QRS");
+    m_pCustomPlot->graph(GT_MARK_POINT_R)->setName("Rs R Re");
     m_pCustomPlot->graph(GT_MARK_POINT_R)->setLineStyle(QCPGraph::lsNone);
     m_pCustomPlot->graph(GT_MARK_POINT_R)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
 
-    drawPen.setColor(QColor::fromRgb(0, 255, 0, 180));
+    drawPen.setColor(m_vColorMark[GT_MARK_POINT_R]);
     m_pCustomPlot->graph(GT_MARK_POINT_R)->setPen(drawPen);
+
     /***************************************************************************************/
     // 标记点 T
     m_pCustomPlot->addGraph();
@@ -600,22 +776,107 @@ void MainWindow::InitCustomplot()
     m_pCustomPlot->graph(GT_MARK_POINT_T)->setLineStyle(QCPGraph::lsNone);
     m_pCustomPlot->graph(GT_MARK_POINT_T)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
 
-    drawPen.setColor(QColor::fromRgb(0, 0, 255, 180));
+    drawPen.setColor(m_vColorMark[GT_MARK_POINT_T]);
     m_pCustomPlot->graph(GT_MARK_POINT_T)->setPen(drawPen);
 
     /***************************************************************************************/
-    // 选中点
+    // 被选中点
     m_pCustomPlot->addGraph();
     m_pCustomPlot->graph(GT_SELECTED_MARK)->setName("Select");
     m_pCustomPlot->graph(GT_SELECTED_MARK)->setLineStyle(QCPGraph::lsNone);
     m_pCustomPlot->graph(GT_SELECTED_MARK)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
 
-    drawPen.setWidth(8);
-    drawPen.setColor(QColor::fromRgb(255, 0, 255, 255));
+    drawPen.setColor(m_vColorSelected[GT_SELECTED_MARK]);
     m_pCustomPlot->graph(GT_SELECTED_MARK)->setPen(drawPen);
 
+    /***************************************************************************************/
+    // 激活移动点
+    m_pCustomPlot->addGraph();
+    m_pCustomPlot->graph(GT_ACTIVIED_MARK)->setName("Active");
+    m_pCustomPlot->graph(GT_ACTIVIED_MARK)->setLineStyle(QCPGraph::lsNone);
+    m_pCustomPlot->graph(GT_ACTIVIED_MARK)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 2));
+
+    drawPen.setWidth(8);
+    drawPen.setColor(m_vColorMark[GT_ACTIVIED_MARK]);
+    m_pCustomPlot->graph(GT_ACTIVIED_MARK)->setPen(drawPen);
+
+    /***************************************************************************************/
     m_pCustomPlot->installEventFilter(this);
 
+}
+
+void MainWindow::InitListView()
+{
+    m_pModel = new QStandardItemModel;
+    m_pListView = new QListView;
+
+    m_pListView->setModel(m_pModel);
+    connect(m_pListView->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &MainWindow::slotListViewSelectdChanged);
+    //m_pListView->setSelectionMode(QAbstractItemView::SelectionMode::MultiSelection);
+
+    m_pListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    // 右键菜单
+    m_pListView->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_pListView, SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(slotShowListViewContextMenu(const QPoint&)));
+
+    m_pListViewContextMenu = new QMenu(m_pListView);
+    QMenu * pSortType = new QMenu("排序方式");
+    m_pListViewContextMenu->addMenu(pSortType);
+
+    m_pActionSortByLocal = pSortType->addAction("默认");
+    m_pActionSortByName = pSortType->addAction("名称");
+    m_pActionSortByTime = pSortType->addAction("时间");
+    m_pActionSortBySize = pSortType->addAction("大小");
+    m_pActionSortByType = pSortType->addAction("类型");
+
+    //排序
+    m_pActionSortByName->setCheckable(true);
+    m_pActionSortBySize->setCheckable(true);
+    m_pActionSortByTime->setCheckable(true);
+    m_pActionSortByType->setCheckable(true);
+    m_pActionSortByLocal->setCheckable(true);
+    m_pActionSortByLocal->setChecked(true);
+    m_Sortflag = QDir::SortFlag::LocaleAware;
+
+    connect(m_pActionSortByName, SIGNAL(triggered(bool)), this, SLOT(slotSetListSort()));
+    connect(m_pActionSortByTime, SIGNAL(triggered(bool)), this, SLOT(slotSetListSort()));
+    connect(m_pActionSortBySize, SIGNAL(triggered(bool)), this, SLOT(slotSetListSort()));
+    connect(m_pActionSortByType, SIGNAL(triggered(bool)), this, SLOT(slotSetListSort()));
+    connect(m_pActionSortByLocal, SIGNAL(triggered(bool)), this, SLOT(slotSetListSort()));
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // 筛选副本
+    QMenu * pFilterType = new QMenu("筛选");
+    m_pListViewContextMenu->addMenu(pFilterType);
+
+    m_pActionKeyByAll = pFilterType->addAction("全部");
+    m_pActionKeyByRaw = pFilterType->addAction("原始");
+    m_pActionKeyByDup = pFilterType->addAction("副本");
+
+    m_pActionKeyByAll->setCheckable(true);
+    m_pActionKeyByRaw->setCheckable(true);
+    m_pActionKeyByDup->setCheckable(true);
+
+    m_pActionKeyByAll->setChecked(true);
+
+    connect(m_pActionKeyByAll, SIGNAL(triggered(bool)), this, SLOT(slotSetFillFileKeyWord()));
+    connect(m_pActionKeyByRaw, SIGNAL(triggered(bool)), this, SLOT(slotSetFillFileKeyWord()));
+    connect(m_pActionKeyByDup, SIGNAL(triggered(bool)), this, SLOT(slotSetFillFileKeyWord()));
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    m_pActionOpenDir = m_pListViewContextMenu->addAction("文件夹");
+    m_pActionDeleteFile = m_pListViewContextMenu->addAction("删除");
+
+    m_pActionOpenDir->setEnabled(false);
+    m_pActionDeleteFile->setEnabled(false);
+
+    connect(m_pActionOpenDir, SIGNAL(triggered(bool)), this, SLOT(slotOpenDir()));
+    connect(m_pActionDeleteFile, SIGNAL(triggered(bool)), this, SLOT(slotDeleteFile()));
+
+
+    m_pListView->installEventFilter(this);
 }
 
 void MainWindow::BindSignalSlot()
@@ -626,21 +887,44 @@ void MainWindow::BindSignalSlot()
 
     connect(m_pListView ,SIGNAL(clicked(QModelIndex)), this, SLOT(slotListViewSelectChanged(QModelIndex)));
 
-    //connect(m_pListView ,SIGNAL(activated(QModelIndex)), this, SLOT(slotListViewSelectChanged(QModelIndex)));
-
-    //connect(m_pModel, &QStandardItemModel::itemChanged, this, &MainWindow::slotListViewSelectdChanged);
-
-
-    connect(this, &MainWindow::signalCurrentDirChanged, this, &MainWindow::slotFillFileList);
+    connect(this, &MainWindow::signalFillFileList, this, &MainWindow::slotFillFileList);
     connect(this, &MainWindow::signalCurrentFileChanged, this, &MainWindow::slotCurrentFileChanged);
 
     connect(this, &MainWindow::signalUpdataCustomplotEcgData, this, &MainWindow::slotUpdataCustomplotEcgData);
     connect(this, &MainWindow::signalUpdataCustomplotMarkData, this, &MainWindow::slotUpdataCustomplotMarkData);
     connect(this, &MainWindow::signalUpdataCustomplotSelectedData, this, &MainWindow::slotUpdataCustomplotSelectedData);
+    connect(this, &MainWindow::signalUpdataCustomplotActiviedData, this, &MainWindow::slotUpdataCustomplotActiviedData);
 
     connect(this, &MainWindow::signalInsertMarkPoint, this, &MainWindow::slotInsertCustomplotMarkData);
 
     connect(this, &MainWindow::signalRePaint, this, &MainWindow::slotRePaint);
+}
+
+bool MainWindow::CheckSaveCorrect()
+{
+    if(m_vectMarkPoint[(int)MarkPointType::PS].size() != m_vectMarkPoint[(int)MarkPointType::PE].size())
+    {
+        QMessageBox::critical(this, "警告", "PS PE 个数不相等");
+        return false;
+    }
+    if(m_vectMarkPoint[(int)MarkPointType::Q].size() != m_vectMarkPoint[(int)MarkPointType::S].size())
+    {
+        QMessageBox::critical(this, "警告", "Q S 个数不相等");
+        return false;
+    }
+    if(m_vectMarkPoint[(int)MarkPointType::TS].size() != m_vectMarkPoint[(int)MarkPointType::TE].size())
+    {
+        QMessageBox::critical(this, "警告", "TS TE 个数不相等");
+        return false;
+    }
+
+    if(m_CustomplotEcgData->size() <= 0)
+    {
+        ShowStatusTips("未打开文件");
+        return false;
+    }
+
+    return true;
 }
 
 void MainWindow::AddMarkPoint(MarkPointType type)
@@ -654,14 +938,28 @@ void MainWindow::AddMarkPoint(MarkPointType type)
     ClearHitMarkDate();
 }
 
-void MainWindow::SetCustomplotSelectdData(double x, double y)
+
+void MainWindow::SetCustomplotActiviedData(double x, double y)
 {
-    ClearCustomplotSelectdData();
+    ClearCustomplotActiviedData();
+
+    if(m_HitMarkPoint.type < MARK_POINT_COUNT)
+    {        
+        m_CustomplotActiviedData[0].push_back(x);
+        m_CustomplotActiviedData[1].push_back(y);
+    }
+
+    emit signalUpdataCustomplotActiviedData();
+}
+
+void MainWindow::SetCustomplotSelectedData(double x, double y)
+{
+    ClearCustomplotSelectedData();
 
     if(m_HitMarkPoint.type < MARK_POINT_COUNT)
     {
-        m_CustomplotSelectdData[0].push_back(x);
-        m_CustomplotSelectdData[1].push_back(y);
+        m_CustomplotSelectedData[0].push_back(x);
+        m_CustomplotSelectedData[1].push_back(y);
     }
 
     emit signalUpdataCustomplotSelectedData();

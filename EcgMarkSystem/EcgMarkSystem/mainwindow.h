@@ -37,7 +37,11 @@ class MainWindow : public QMainWindow
         GT_MARK_POINT_P,
         GT_MARK_POINT_R,
         GT_MARK_POINT_T,
-        GT_SELECTED_MARK
+        GT_SELECTED_MARK,
+        GT_ACTIVIED_MARK,
+
+        GT_MARK_COUNT
+
     };
 
 public:
@@ -47,18 +51,14 @@ public:
 public:
     virtual bool eventFilter(QObject *watched, QEvent *event);
 
-protected:
-    //virtual void mousePressEvent(QMouseEvent *event);
-    //virtual void mouseReleaseEvent(QMouseEvent *event);
-    //virtual void mouseMoveEvent(QMouseEvent *event);
-
 signals:
-    void signalCurrentDirChanged();
+    void signalFillFileList();
     void signalCurrentFileChanged();
 
     void signalUpdataCustomplotEcgData();
     void signalUpdataCustomplotMarkData();
     void signalUpdataCustomplotSelectedData();
+    void signalUpdataCustomplotActiviedData();
 
     void signalRePaint();
     void signalUpdataHitToMark(bool insert);
@@ -81,39 +81,59 @@ private slots:
     void slotUpdataHitToMarkPointData(bool insert);
 
     void slotUpdataCustomplotSelectedData();
+    void slotUpdataCustomplotActiviedData();
     void slotRePaint();
 
     void slotInsertCustomplotMarkData();
+
+    void slotShowListViewContextMenu(const QPoint&);
+
+    void slotSetListSort();
+
+    void slotOpenDir();
+    void slotDeleteFile();
+    void slotSetFillFileKeyWord();
 
 private:
     void ClearLastFile();
 
     void ClearHitMarkDate();
     void ClearMarkPointVect();
+
     void ClearCustomplotEcgData();
     void ClearCustomplotMarkData();
-    void ClearCustomplotSelectdData();
+    void ClearCustomplotSelectedData();
+    void ClearCustomplotActiviedData();
 
-    void InsertMarkPointList(MarkPointType marktype, const QJsonArray& jsonarr);
     void InsertEcgDataList(const QJsonArray& jsonarr);
+    void InsertMarkPointList(MarkPointType marktype, const QJsonArray& jsonarr);
 
+    void InitColor();
     void InitLayout();
+    void InitMenuBar();
+    void InitStatuBar();
     void InitCustomplot();
 
+    /**********************************************************************************/
+    void InitListView();
     void BindSignalSlot();
 
 
 private:
+    bool CheckSaveCorrect();
+
     void AddMarkPoint(MarkPointType type);
     void ShowSelectdType();
     void ShowMarkCount();
     void ShowStatusTips(const QString& str);
-    void SetCustomplotSelectdData(double x, double y);
+    void SetCustomplotActiviedData(double x, double y);
+    void SetCustomplotSelectedData(double x, double y);
 
     HitMarkPoint HitMark(double xpos, double ypos);
 
     Ui::MainWindow *ui;
 
+    QMenu * m_pListViewContextMenu;
     QLabel * m_pStatusTipsLable;
     QLabel * m_pStatusMarkCountLable;
     QLabel * m_pStatusAxisPosLable;
@@ -126,6 +146,25 @@ private:
     QAction * m_pSaveAction;
     QAction * m_pUpdateAction;
     QAction * m_pSetDirAction;
+
+    // pop menu
+    QAction * m_pActionSortByName ;
+    QAction * m_pActionSortByTime ;
+    QAction * m_pActionSortBySize ;
+    QAction * m_pActionSortByType ;
+    QAction * m_pActionSortByLocal;
+
+    QAction * m_pActionOpenDir;
+    QAction * m_pActionDeleteFile;
+
+    QAction * m_pActionKeyByAll;
+    QAction * m_pActionKeyByRaw;
+    QAction * m_pActionKeyByDup;
+
+    // 文件列表选项
+    int m_nCustomFilterType;    // 0: 全部显示 1：原始文件 2：副本
+    QDir::SortFlag m_Sortflag = QDir::SortFlag::LocaleAware;
+
 
     QString m_strCurrentDir;
     QString m_strCurrentFile;
@@ -142,11 +181,14 @@ private:
     CustomplotAxisData m_CustomplotRMarkData;
     CustomplotAxisData m_CustomplotTMarkData;
 
-    CustomplotAxisData m_CustomplotSelectdData;
+    CustomplotAxisData m_CustomplotSelectedData;
+    CustomplotAxisData m_CustomplotActiviedData;
 
     MarkPointVect m_vectMarkPoint[MarkPointType::MARK_POINT_COUNT];
     HitMarkPoint m_HitMarkPoint;
 
+    QColor m_vColorMark[GT_MARK_COUNT];
+    QColor m_vColorSelected[GT_MARK_COUNT];
 
     bool m_bMousePressing = false;
 

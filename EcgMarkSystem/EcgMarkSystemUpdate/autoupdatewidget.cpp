@@ -1,6 +1,4 @@
 ﻿#include "autoupdatewidget.h"
-#include "downloadfilethread.h"
-#include "downloadprocess.h"
 #include "ui_autoupdatewidget.h"
 
 #include <QApplication>
@@ -9,6 +7,7 @@
 #include <QThread>
 
 
+const QString AutoUpdateWidget::skm_UpdateExeName = "EcgMarkSystem.exe";
 const QString AutoUpdateWidget::skm_UpdateFileName = "update.json";
 const QString AutoUpdateWidget::skm_LocalTempUpdateName = "tempupdate.json";
 const QString AutoUpdateWidget::skm_UpdateUrl = "http://www.millet.fun/ECG/EcgMarkSystem/update.json";
@@ -22,15 +21,13 @@ AutoUpdateWidget::AutoUpdateWidget(QDialog *parent) :
     ui->btnCancle->setHidden(true);
     ui->btnDownload->setHidden(true);
 
-    m_strFileName = QApplication::applicationDirPath() + "/" + skm_LocalTempUpdateName;
-
     setWindowTitle("检查版本");
     setWindowIcon(QIcon(":/icon/Main.ico"));
     setFixedSize(400,300);
     //setWindowFlags(Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint | Qt::WindowStaysOnTopHint);
 
     m_NetManager = new QNetworkAccessManager(this);          //新建QNetworkAccessManager对象
-    connect(m_NetManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));//关联信号和槽
+    connect(m_NetManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyJsonFinished(QNetworkReply*)));//关联信号和槽
 
     QNetworkRequest quest;
     quest.setUrl(QUrl(skm_UpdateUrl)); //包含最新版本软件的下载地址
@@ -120,29 +117,28 @@ void AutoUpdateWidget::slotError(QNetworkReply::NetworkError error)
 
 void AutoUpdateWidget::slotDownLoadNewExe()
 {
-    QDesktopServices::openUrl(QUrl(m_strNewExeUrl));
     slotUpdateLocalUpdateFile();
-
-    //DownLoadFileThread thread(m_strNewExeUrl, QApplication::applicationFilePath());
-    //thread.run();
+    ui->progressBar->setHidden(false);
 
     //杀掉正在运行的进程
-    //QProcess taskkill;
-    //taskkill.execute("taskkill", QStringList() << "-im" << QApplication::applicationName()+".exe" << "-f");
+    QProcess taskkill;
+    taskkill.execute("taskkill", QStringList() << "-im" << AutoUpdateWidget::skm_UpdateExeName << "-f");
 
-    //DownLoadProcess downLoadProcess(m_strNewExeUrl, QApplication::applicationDirPath() + "/" + QApplication::applicationName() + "temp.exe");
-    //
-    //downLoadProcess.show();
-    //downLoadProcess.exec();
+    CHttpDownLoadFile *pHttpdownload = new CHttpDownLoadFile(
+        m_strNewExeUrl,
+        AutoUpdateWidget::skm_UpdateExeName,
+        QApplication::applicationDirPath(),
+        this);
 
-    accept();
+    connect( pHttpdownload, SIGNAL(DownloadProcess(QString, qint64, qint64)), this, SLOT(slotUpdateProcessBar(QString, qint64, qint64)));
+    connect( pHttpdownload, SIGNAL(DownloadFinishedSignal()), this, SLOT(slotDownloadExeFinished()));
+
 }
 
 void AutoUpdateWidget::slotUpdateLocalUpdateFile()
 {
     if(QFile::exists(skm_LocalTempUpdateName) == false )
         return;
-
 
     if(QFile::rename(skm_LocalTempUpdateName, skm_UpdateFileName) == false)
     {
@@ -151,7 +147,7 @@ void AutoUpdateWidget::slotUpdateLocalUpdateFile()
     }
 }
 
-void AutoUpdateWidget::replyFinished(QNetworkReply *reply)
+void AutoUpdateWidget::replyJsonFinished(QNetworkReply *reply)
 {
 
     QFile file(skm_LocalTempUpdateName);
@@ -167,5 +163,21 @@ void AutoUpdateWidget::replyFinished(QNetworkReply *reply)
     file.close();
 
     ParserUpdateJson(array);
+}
+
+void AutoUpdateWidget::slotDownloadExeFinished()
+{
+    QMessageBox::information(this, "提示", "更新完成。");
+    QFile::remove(skm_LocalTempUpdateName);
+
+    QProcess process(this);
+    process.startDetached(AutoUpdateWidget::skm_UpdateExeName);
+
+    accept();
+}
+
+void AutoUpdateWidget::slotUpdateProcessBar(QString str, qint64 rec, qint64 tol)
+{
+    ui->progressBar->setValue(double(rec) / double(tol) * 100);
 }
 

@@ -8,6 +8,8 @@ CHttpDownLoadFile::CHttpDownLoadFile(const QString &url, const QString &fileName
     m_bIsFinished(false)
 {
     m_netAccessManager = new QNetworkAccessManager(this);
+
+    DownLoadFile();
 }
 
 CHttpDownLoadFile::~CHttpDownLoadFile()
@@ -72,7 +74,7 @@ void CHttpDownLoadFile::ReplyNewDataArrived()//响应m_netReply有新的数据�
     {
         // 写文件-形式为追加
         QFile file(m_strFileName);
-        if (file.open(QIODevice::Append))
+        if (file.open(QIODevice::OpenModeFlag::Append))
             file.write(m_netReply->readAll());
         file.close();
     }

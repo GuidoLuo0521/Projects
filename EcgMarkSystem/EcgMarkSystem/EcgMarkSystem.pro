@@ -19,27 +19,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    autoupdatewidget.cpp \
-    chttpdownloadfile.cpp \
-    downloadfilethread.cpp \
-    downloadprocess.cpp \
     ecgmarkdef.cpp \
     main.cpp \
     mainwindow.cpp \
     qcustomplot.cpp
 
 HEADERS += \
-    autoupdatewidget.h \
-    chttpdownloadfile.h \
-    downloadfilethread.h \
-    downloadprocess.h \
     ecgmarkdef.h \
     mainwindow.h \
     qcustomplot.h
 
 FORMS += \
-    autoupdatewidget.ui \
-    downloadprocess.ui \
     mainwindow.ui
 
 RC_FILE = logo.rc
