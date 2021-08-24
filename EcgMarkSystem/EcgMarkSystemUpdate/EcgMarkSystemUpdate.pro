@@ -21,16 +21,13 @@ SOURCES += \
     autoupdatewidget.cpp \
     chttpdownloadfile.cpp \
     main.cpp \
-    mainwindow.cpp
 
 HEADERS += \
     autoupdatewidget.h \
     chttpdownloadfile.h \
-    mainwindow.h
 
 FORMS += \
     autoupdatewidget.ui \
-    mainwindow.ui
 
 RC_FILE = logo.rc
 

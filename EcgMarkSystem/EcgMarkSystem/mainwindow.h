@@ -1,6 +1,7 @@
 ﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
 #include <QMainWindow>
 
 #include <QMenu>
@@ -21,6 +22,7 @@
 
 #include "ecgmarkdef.h"
 #include "qcustomplot.h"
+#include "chttpdownloadfile.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -94,6 +96,8 @@ private slots:
     void slotDeleteFile();
     void slotSetFillFileKeyWord();
 
+    void slotDownloadUpdateExeFinished();
+
 private:
     void ClearLastFile();
 
@@ -118,8 +122,8 @@ private:
     void InitListView();
     void BindSignalSlot();
 
-
 private:
+    QString GetCurrentVersion();
     bool CheckSaveCorrect();
 
     void AddMarkPoint(MarkPointType type);
@@ -191,6 +195,8 @@ private:
     QColor m_vColorSelected[GT_MARK_COUNT];
 
     bool m_bMousePressing = false;
+
+    CHttpDownLoadFile * m_pHttpdownload;
 
 };
 #endif // MAINWINDOW_H

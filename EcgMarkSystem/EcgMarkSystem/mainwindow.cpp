@@ -1,5 +1,11 @@
-﻿#include "mainwindow.h"
+﻿
+#include "mainwindow.h"
 #include "ui_mainwindow.h"
+
+
+static const QString skg_UpdateFileName = "update.json";
+static const QString skg_UpdateExeName = "EcgMarkSystemUpdate.exe";
+static const QString skg_UpdateUrl = "http://www.millet.fun/ECG/EcgMarkSystem/EcgMarkSystemUpdate.exe";
 
 #include <QSplitter>
 #include <QHBoxLayout>
@@ -11,9 +17,13 @@ MainWindow::MainWindow(QWidget *parent)
     , m_pModel(nullptr)
     , m_pSaveAction(nullptr)
     , m_pSetDirAction(nullptr)
+    , m_pHttpdownload(nullptr)
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(":/icon/Main.ico"));
+
+    QString strVersion = GetCurrentVersion();
+    setWindowTitle("EMS - " + strVersion);
 
     InitColor();
     InitLayout();
@@ -245,7 +255,9 @@ void MainWindow::slotOpenCurrentFile()
         return;
 
     ClearLastFile();
-    setWindowTitle(m_strCurrentFile);
+
+    QString strTitle = windowTitle();
+    setWindowTitle(strTitle + " " + m_strCurrentFile);
 
     QFile file(strFilePath);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -332,9 +344,23 @@ void MainWindow::slotSaveCurrentFile()
 void MainWindow::slotCheckUpdate()
 {
     // 可以单独写一个 update.exe 文件;
-    QString strUpdateExe = "EcgMarkSystemUpdate.exe";
-    QProcess process(this);
-    process.startDetached(strUpdateExe);
+    if( QFile::exists(skg_UpdateExeName) == false)
+    {
+        ShowStatusTips("更新文件：" + skg_UpdateExeName + " 不存在，正在下载。");
+
+        m_pHttpdownload = new CHttpDownLoadFile(
+            skg_UpdateUrl,
+            skg_UpdateExeName,
+            QApplication::applicationDirPath(),
+            this);
+
+        connect( m_pHttpdownload, SIGNAL(DownloadFinishedSignal()), this, SLOT(slotDownloadUpdateExeFinished()));
+
+    }
+    else
+    {
+        slotDownloadUpdateExeFinished();
+    }
 }
 
 void MainWindow::slotUpdataCustomplotMarkData()
@@ -544,6 +570,34 @@ void MainWindow::slotSetFillFileKeyWord()
     }
 
     emit signalFillFileList();
+}
+
+void MainWindow::slotDownloadUpdateExeFinished()
+{
+    QString strUpdateExePath = QApplication::applicationDirPath() + "/" + skg_UpdateExeName;
+    if( QFile::exists(strUpdateExePath) == false)
+    {
+        if(m_pHttpdownload != nullptr)
+        {
+            ShowStatusTips("更新文件，下载失败。");
+            delete m_pHttpdownload;
+            m_pHttpdownload = nullptr;
+            return;
+        }
+
+        ShowStatusTips("更新文件不存在，请联系管理员。");
+        return;
+    }
+
+    if(m_pHttpdownload != nullptr)
+    {
+        ShowStatusTips("更新文件，下载完成。");
+        delete m_pHttpdownload;
+        m_pHttpdownload = nullptr;
+    }
+
+    QProcess process(this);
+    process.startDetached(strUpdateExePath);
 }
 
 void MainWindow::ClearLastFile()
@@ -1027,3 +1081,29 @@ HitMarkPoint MainWindow::HitMark(double xpos, double ypos)
     return  bestpoint;
 }
 
+
+QString MainWindow::GetCurrentVersion()
+{
+    if(QFile::exists(skg_UpdateFileName) == false)
+    {
+        return  "V Unknow";
+    }
+
+    QFile file(skg_UpdateFileName);
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    QString value = file.readAll();
+    file.close();
+
+    QJsonParseError parseJsonErr;
+    QJsonDocument document = QJsonDocument::fromJson(value.toUtf8(),&parseJsonErr);
+    if(!(parseJsonErr.error == QJsonParseError::NoError))
+    {
+        //QMessageBox::information(nullptr, "提示", "本地文件更新文件错误！");
+        return "V Unknow";
+    }
+    QJsonObject jsonObject = document.object();
+    QJsonObject PulseValue = jsonObject.value("PulseSensor").toObject();
+    QString Version = PulseValue.value("LatestVersion").toString();  //V1.0
+
+    return  Version;
+}

@@ -15,6 +15,7 @@ const QString AutoUpdateWidget::skm_UpdateUrl = "http://www.millet.fun/ECG/EcgMa
 AutoUpdateWidget::AutoUpdateWidget(QDialog *parent) :
     QDialog(parent),
     ui(new Ui::AutoUpdateWidget)
+    , m_pHttpdownload(nullptr)
 {
     ui->setupUi(this);
     ui->progressBar->setHidden(true);
@@ -35,23 +36,25 @@ AutoUpdateWidget::AutoUpdateWidget(QDialog *parent) :
     QNetworkReply *reply = m_NetManager->get(quest);    //发送get网络请求
     connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotError(QNetworkReply::NetworkError)));
 
-    connect(ui->btnCancle, &QPushButton::clicked, this, &AutoUpdateWidget::close);
+    connect(ui->btnCancle, &QPushButton::clicked, this, &AutoUpdateWidget::slotCancleDownLoadNewExe);
     connect(ui->btnDownload, &QPushButton::clicked, this, &AutoUpdateWidget::slotDownLoadNewExe);
 
 }
 
 AutoUpdateWidget::~AutoUpdateWidget()
 {
+    QFile::remove(QApplication::applicationDirPath() + "/" + skm_LocalTempUpdateName);
+
     delete ui;
 }
 
 
 QString AutoUpdateWidget::GetCurrentVersion()
 {
-    if(QFile::exists(skm_UpdateFileName) == false)
+    if(QFile::exists(QApplication::applicationDirPath() + "/" + skm_UpdateFileName) == false)
         return  "V0.0";
 
-    QFile file(skm_UpdateFileName);
+    QFile file(QApplication::applicationDirPath() + "/" + skm_UpdateFileName);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QString value = file.readAll();
     file.close();
@@ -68,7 +71,6 @@ QString AutoUpdateWidget::GetCurrentVersion()
     QString Version = PulseValue.value("LatestVersion").toString();  //V1.0
 
     return  Version;
-
 }
 
 int AutoUpdateWidget::ParserUpdateJson(const QString& str)
@@ -78,7 +80,6 @@ int AutoUpdateWidget::ParserUpdateJson(const QString& str)
     QJsonDocument  root_Doc = QJsonDocument::fromJson(str.toUtf8(),&err_rpt);//字符串格式化为JSON
     if(err_rpt.error != QJsonParseError::NoError)
     {
-        //        qDebug() << "root格式错误";
         QMessageBox::critical(nullptr, "检查失败", "服务器地址错误或JSON格式错误!");
         return -1;
     }
@@ -115,6 +116,12 @@ void AutoUpdateWidget::slotError(QNetworkReply::NetworkError error)
     QMessageBox::warning(this, "警告", QString::number(error));
 }
 
+void AutoUpdateWidget::slotCancleDownLoadNewExe()
+{
+    QFile::remove(QApplication::applicationDirPath() + "/" + skm_LocalTempUpdateName);
+    close();
+}
+
 void AutoUpdateWidget::slotDownLoadNewExe()
 {
     slotUpdateLocalUpdateFile();
@@ -137,10 +144,14 @@ void AutoUpdateWidget::slotDownLoadNewExe()
 
 void AutoUpdateWidget::slotUpdateLocalUpdateFile()
 {
-    if(QFile::exists(skm_LocalTempUpdateName) == false )
+    if(QFile::exists(QApplication::applicationDirPath() + "/" + skm_LocalTempUpdateName) == false )
         return;
 
-    if(QFile::rename(skm_LocalTempUpdateName, skm_UpdateFileName) == false)
+    if(QFile::exists(QApplication::applicationDirPath() + "/" + skm_UpdateFileName) == true)
+        QFile::remove(QApplication::applicationDirPath() + "/" + skm_UpdateFileName);
+
+    if(QFile::rename(QApplication::applicationDirPath() + "/" + skm_LocalTempUpdateName,
+                      QApplication::applicationDirPath() + "/" + skm_UpdateFileName) == false)
     {
         QMessageBox::critical(this, "错误", "更新本地版本文件错误。");
         return;
@@ -149,7 +160,6 @@ void AutoUpdateWidget::slotUpdateLocalUpdateFile()
 
 void AutoUpdateWidget::replyJsonFinished(QNetworkReply *reply)
 {
-
     QFile file(skm_LocalTempUpdateName);
     if(file.open(QIODevice::Text | QIODevice::WriteOnly) == false)
     {
