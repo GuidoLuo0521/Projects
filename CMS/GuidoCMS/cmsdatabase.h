@@ -10,6 +10,7 @@
 
 #include "singleton.h"
 
+
 class CMSDatabase
 {
 public:

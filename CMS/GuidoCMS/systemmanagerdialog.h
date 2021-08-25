@@ -1,7 +1,8 @@
-#ifndef SYSTEMMANAGERDIALOG_H
+﻿#ifndef SYSTEMMANAGERDIALOG_H
 #define SYSTEMMANAGERDIALOG_H
 
 #include <QMainWindow>
+#include <QSqlTableModel>
 #include <QSqlQueryModel>
 #include <QTableView>
 
@@ -23,19 +24,40 @@ public:
     ~SystemManagerDialog();
 
 signals:
-    void signalQuery(QString);
+    void signalTableChange();
 
 private slots:
-    void slotShowStaffs();
-    void slotShowRole();
-    void slotShowDepartment();
-    void slotShowJob();
-
-    void slotQuery(QString);
+    void slotTableChange();
 
 private:
+    void InitLayout();
+    QWidget* InitToolBar();
+    QWidget* InitTableView();
+    QWidget* InitSearchView();
+
+    void InitSqlTableModel();
+    void InitSqlTableModelJob();
+    void InitSqlTableModelRole();
+    void InitSqlTableModelStaff();
+    void InitSqlTableModelDepartment();
+
+
+
+
+
+
+
+
+    void SetTableModelTableJob();
+    void SetTableModelTableRole();
+    void SetTableModelTableStaff();
+    void SetTableModelTableDepartment();
+
     void BindSlot();
     void ActionChecked(QAction * pAction);
+
+
+
 
     Ui::SystemManagerDialog *ui;
 
@@ -44,9 +66,12 @@ private:
     QAction * m_pDepartmentManager;
     QAction * m_pJobManager;
 
-    void InitLayout();
+    QSqlTableModel * m_pSqlTableModelStaff;
+    QSqlTableModel * m_pSqlTableModelDepartment;
+    QSqlTableModel * m_pSqlTableModelRole;
+    QSqlTableModel * m_pSqlTableModelJob;
 
-    QSqlQueryModel * m_pSqlQueryModel;
+    //QSqlQueryModel * m_pSqlQueryModel;
     QTableView * m_pTableView;
 
 };

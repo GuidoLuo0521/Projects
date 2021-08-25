@@ -1,7 +1,9 @@
-#include "systemmanagerdialog.h"
+﻿#include "systemmanagerdialog.h"
 #include "ui_systemmanagerdialog.h"
 #include "staffinfo.h"
 #include "cmsdatabase.h"
+#include "cmsdatebasedef.h"
+
 
 #include <QToolBar>
 #include <QHBoxLayout>
@@ -13,8 +15,7 @@
 #include <QSqlQueryModel>
 #include <QStandardItemModel>
 
-#include "datedelegate.h"
-#include "comboxdelegate.h"
+#include "ControlDelegate.h"
 
 SystemManagerDialog::SystemManagerDialog(QWidget *parent) :
     QMainWindow(parent),
@@ -22,10 +23,12 @@ SystemManagerDialog::SystemManagerDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
     InitLayout();
     BindSlot();
 
-    slotShowStaffs();
+    InitSqlTableModel();
+    slotTableChange();
 }
 
 SystemManagerDialog::~SystemManagerDialog()
@@ -33,56 +36,28 @@ SystemManagerDialog::~SystemManagerDialog()
     delete ui;
 }
 
-void SystemManagerDialog::slotShowStaffs()
+void SystemManagerDialog::slotTableChange()
 {
-    QString query = "select * from staff";
+    QAction * pAction = (QAction*)sender();
 
-    ActionChecked(m_pStaffManager);
-    emit signalQuery(query);
-}
+    if(pAction == m_pJobManager)
+        SetTableModelTableJob();
+    else if(pAction == m_pRoleManager)
+        SetTableModelTableRole();
+    else if(pAction == m_pDepartmentManager)
+        SetTableModelTableDepartment();
+    else
+        SetTableModelTableStaff();
 
-void SystemManagerDialog::slotShowRole()
-{
-    QString query = "select * from role";
-
-    ActionChecked(m_pRoleManager);
-    emit signalQuery(query);
-}
-
-void SystemManagerDialog::slotShowDepartment()
-{
-    QString query = "select * from department";
-
-    ActionChecked(m_pDepartmentManager);
-    emit signalQuery(query);
-}
-
-void SystemManagerDialog::slotShowJob()
-{
-    QString query = "select * from job";
-
-    ActionChecked(m_pJobManager);
-    emit signalQuery(query);
-}
-
-void SystemManagerDialog::slotQuery(QString query)
-{
-    CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
-    if(pDB->WDB_IsOpen())
-    {
-        m_pSqlQueryModel->setQuery( query, pDB->m_WebDatabase);
-        m_pTableView->setModel(m_pSqlQueryModel);
-    }
+    ActionChecked(pAction);
 }
 
 void SystemManagerDialog::BindSlot()
 {
-    connect( m_pStaffManager, &QAction::triggered, this, &SystemManagerDialog::slotShowStaffs);
-    connect( m_pRoleManager, &QAction::triggered, this, &SystemManagerDialog::slotShowRole);
-    connect( m_pJobManager, &QAction::triggered, this, &SystemManagerDialog::slotShowJob);
-    connect( m_pDepartmentManager, &QAction::triggered, this, &SystemManagerDialog::slotShowDepartment);
-
-    connect( this, &SystemManagerDialog::signalQuery, this, &SystemManagerDialog::slotQuery);
+    connect( m_pStaffManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
+    connect( m_pRoleManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
+    connect( m_pJobManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
+    connect( m_pDepartmentManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
 }
 
 void SystemManagerDialog::ActionChecked(QAction * pAction)
@@ -92,10 +67,129 @@ void SystemManagerDialog::ActionChecked(QAction * pAction)
     m_pDepartmentManager->setChecked(false);
     m_pJobManager->setChecked(false);
 
+    if(pAction == nullptr)
+        pAction = m_pStaffManager;
+
     pAction->setChecked(true);
 }
 
+void SystemManagerDialog::InitSqlTableModel()
+{
+    InitSqlTableModelJob();
+    InitSqlTableModelRole();
+    InitSqlTableModelStaff();
+    InitSqlTableModelDepartment();
+}
+
+void SystemManagerDialog::InitSqlTableModelJob()
+{
+    m_pSqlTableModelJob = new QSqlTableModel(this, CMSDatabaseSingleton::GetInstance()->m_WebDatabase);
+}
+void SystemManagerDialog::InitSqlTableModelRole()
+{
+    m_pSqlTableModelRole = new QSqlTableModel(this, CMSDatabaseSingleton::GetInstance()->m_WebDatabase);
+}
+void SystemManagerDialog::InitSqlTableModelStaff()
+{
+    m_pSqlTableModelStaff = new QSqlTableModel(this, CMSDatabaseSingleton::GetInstance()->m_WebDatabase);
+
+    m_pSqlTableModelStaff->setTable(CMSDB_Filed_Table_Staff::strTableName);
+
+    int i = 0;
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "编号");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "姓名");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "性别");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "生日");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "部门");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "职务");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "工资");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "工龄");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "籍贯");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "学历");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "专业");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "住址");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "邮件");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "电话");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "入职时间");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "离职时间");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "描述");
+    m_pSqlTableModelStaff->setHeaderData(i++, Qt::Orientation::Horizontal, "备注");
+
+    // 设置0列只读
+    ReadOnlyDelegate* readOnlyDelegate = new ReadOnlyDelegate(this);
+    m_pTableView->setItemDelegateForColumn(0, readOnlyDelegate);
+
+    DateDelegate * m_pBirthdayDelegate = new DateDelegate(this);
+    m_pTableView->setItemDelegateForColumn(3, m_pBirthdayDelegate);
+    m_pTableView->setSelectionMode(QAbstractItemView::SingleSelection);
+
+}
+void SystemManagerDialog::InitSqlTableModelDepartment()
+{
+    m_pSqlTableModelDepartment = new QSqlTableModel(this, CMSDatabaseSingleton::GetInstance()->m_WebDatabase);
+}
+
+
+void SystemManagerDialog::SetTableModelTableStaff()
+{
+    CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
+    if(pDB->WDB_IsOpen())
+    {
+        m_pSqlTableModelStaff->select();
+        m_pSqlTableModelStaff->removeColumn(2);
+    }
+
+    m_pTableView->setModel(m_pSqlTableModelStaff);
+}
+
+void SystemManagerDialog::SetTableModelTableDepartment()
+{
+    CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
+    if(pDB->WDB_IsOpen())
+    {
+        m_pSqlTableModelDepartment->select();
+    }
+
+    m_pTableView->setModel(m_pSqlTableModelDepartment);
+}
+
+void SystemManagerDialog::SetTableModelTableJob()
+{
+    CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
+    if(pDB->WDB_IsOpen())
+    {
+        m_pSqlTableModelJob->select();
+    }
+
+    m_pTableView->setModel(m_pSqlTableModelJob);
+}
+
+void SystemManagerDialog::SetTableModelTableRole()
+{
+    CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
+    if(pDB->WDB_IsOpen())
+    {
+        m_pSqlTableModelRole->select();
+    }
+
+    m_pTableView->setModel(m_pSqlTableModelRole);
+
+}
 void SystemManagerDialog::InitLayout()
+{
+    QWidget * ptoolbar = InitToolBar();
+    QWidget * ptableview = InitTableView();
+    QWidget * psearchview =InitSearchView();
+
+    QSplitter* pMainSplitter = new QSplitter(Qt::Orientation::Horizontal);
+    pMainSplitter->addWidget(ptableview);
+    pMainSplitter->addWidget(psearchview);
+
+    this->setCentralWidget(pMainSplitter);
+}
+
+
+QWidget* SystemManagerDialog::InitToolBar()
 {
     QToolBar* pToolbarMain =  this->addToolBar("管理");
 
@@ -109,11 +203,19 @@ void SystemManagerDialog::InitLayout()
     m_pDepartmentManager->setCheckable(true);
     m_pJobManager->setCheckable(true);
 
+    return  pToolbarMain;
+}
 
-    QSplitter* pMainSplitter = new QSplitter(Qt::Orientation::Horizontal);
+
+QWidget* SystemManagerDialog::InitTableView()
+{
     m_pTableView = new QTableView;
-    pMainSplitter->addWidget(m_pTableView);
 
+    return  m_pTableView;
+}
+
+QWidget* SystemManagerDialog::InitSearchView()
+{
     QWidget * pRightWidget = new QWidget;
 
     QHBoxLayout * pSearchLayout = new QHBoxLayout;
@@ -136,9 +238,9 @@ void SystemManagerDialog::InitLayout()
     pRightMainLayout->addStretch();
 
     pRightWidget->setLayout(pRightMainLayout);
-    pMainSplitter->addWidget(pRightWidget);
 
-    this->setCentralWidget(pMainSplitter);
-
-    m_pSqlQueryModel = new QSqlQueryModel(m_pTableView);
+    return  pRightWidget;
 }
+
+
+

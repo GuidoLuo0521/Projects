@@ -12,6 +12,7 @@ class ComboxDelegate : public QStyledItemDelegate
 
 public:
     ComboxDelegate(QObject * parent = 0);
+    ~ComboxDelegate();
 
 
     // 完成创建控件的工作
@@ -38,6 +39,11 @@ public:
         const QStyleOptionViewItem &option,
         const QModelIndex &index) const override;
 
+    // 增加 item
+    void PushItem(QString strItem);
+
+private:
+    QList<QString > m_listItems;
 };
 
 #endif // DATEDELEGATE_H

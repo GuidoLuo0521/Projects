@@ -5,14 +5,18 @@ ComboxDelegate::ComboxDelegate(QObject * parent)
 
 }
 
+ComboxDelegate::~ComboxDelegate()
+{
+    m_listItems.clear();
+}
+
 QWidget *ComboxDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QComboBox * pEditor = new QComboBox(parent);
-    pEditor->addItem("工人");
-    pEditor->addItem("农民");
-    pEditor->addItem("医生");
-    pEditor->addItem("军人");
-    pEditor->addItem("学生");
+    for(int i = 0; i < m_listItems.count(); ++i)
+    {
+        pEditor->addItem(m_listItems[i]);
+    }
 
     // 安装事件过滤器，使得 ComboxDelegate 能够捕获 QComboBox 的事件
     pEditor->installEventFilter(const_cast<ComboxDelegate*>(this));
@@ -37,4 +41,9 @@ void ComboxDelegate::setModelData(QWidget *pEditor, QAbstractItemModel *pModel, 
 void ComboxDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     editor->setGeometry(option.rect);
+}
+
+void ComboxDelegate::PushItem(QString strItem)
+{
+    m_listItems.push_back(strItem);
 }
