@@ -42,6 +42,7 @@ public:
     // 增加 item
     void PushItem(QString strItem);
 
+
 private:
     QList<QString > m_listItems;
 };

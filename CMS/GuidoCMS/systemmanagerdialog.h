@@ -5,6 +5,7 @@
 #include <QSqlTableModel>
 #include <QSqlQueryModel>
 #include <QTableView>
+#include <QStackedWidget>
 
 
 class QStandardItemModel;
@@ -19,6 +20,14 @@ class SystemManagerDialog : public QMainWindow
 {
     Q_OBJECT
 
+    enum StackedWidgetType
+    {
+        StaffWidget,
+        DepartmentWidget,
+        JobWidget,
+        RoleWidget,
+    };
+
 public:
     explicit SystemManagerDialog(QWidget *parent = nullptr);
     ~SystemManagerDialog();
@@ -32,7 +41,10 @@ private slots:
 private:
     void InitLayout();
     QWidget* InitToolBar();
-    QWidget* InitTableView();
+    QWidget* InitTableViewStaff();
+    QWidget* InitTableViewDepartment();
+    QWidget* InitTableViewRole();
+    QWidget* InitTableViewJob();
     QWidget* InitSearchView();
 
     void InitSqlTableModel();
@@ -42,18 +54,11 @@ private:
     void InitSqlTableModelDepartment();
 
 
-
-
-
-
-
-
     void SetTableModelTableJob();
     void SetTableModelTableRole();
     void SetTableModelTableStaff();
     void SetTableModelTableDepartment();
 
-    void BindSlot();
     void ActionChecked(QAction * pAction);
 
 
@@ -72,7 +77,12 @@ private:
     QSqlTableModel * m_pSqlTableModelJob;
 
     //QSqlQueryModel * m_pSqlQueryModel;
-    QTableView * m_pTableView;
+    QTableView * m_pTableViewStaff;
+    QTableView * m_pTableViewDepartment;
+    QTableView * m_pTableViewRole;
+    QTableView * m_pTableViewJob;
+
+    QStackedWidget * m_pStackedWidget;
 
 };
 

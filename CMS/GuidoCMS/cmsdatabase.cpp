@@ -52,9 +52,9 @@ int CMSDatabase::WDB_VerifyLogin(const QString& strUsername, const QString& strP
         QString strSQL = QString("SELECT %1 "
                                  "FROM %2 "
                                  "where %3 = '%4';")
-                             .arg(CMSDB_Filed_Table_Staff::strStaffPassword)
-                             .arg(CMSDB_Filed_Table_Staff::strStaffName)
-                             .arg(CMSDB_Filed_Table_Staff::strStaffID)
+                             .arg(g_listCMSDB_Table_Filed_Staff[Staff_StaffPassword])
+                             .arg(g_listCMSDB_Table_Filed_Staff[Staff_StaffTableName])
+                             .arg(g_listCMSDB_Table_Filed_Staff[Staff_StaffName])
                              .arg(strUsername);
 
         QSqlQuery query = m_WebDatabase.exec(strSQL);
@@ -81,7 +81,7 @@ void CMSDatabase::InitParams()
     m_strWebHostName = "127.0.0.1";
     m_strWebDatabaseName = "guidocms";
     m_strWebUserName = "root";
-    m_strWebPassword = "kangrulai";
+    m_strWebPassword = "4474ljx";
 
     m_strLocalType = "QSQLITE";
     m_strLocalConnectionName = "QSQLITE_LOCALDB";

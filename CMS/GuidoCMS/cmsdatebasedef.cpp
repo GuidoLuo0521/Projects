@@ -1,87 +1,149 @@
 ﻿#include "cmsdatebasedef.h"
 
-//////////////////////////////////////////////////////////////////////////////
-/// \brief CMSDB_Filed_Table_Staff
-///
-const QString CMSDB_Filed_Table_Staff::strTableName = "staff";
-const QString CMSDB_Filed_Table_Staff::strStaffID = "StaffID";
-const QString CMSDB_Filed_Table_Staff::strStaffName = "StaffName";
-const QString CMSDB_Filed_Table_Staff::strStaffPassword = "StaffPassword";
-const QString CMSDB_Filed_Table_Staff::strSex = "Sex";
-const QString CMSDB_Filed_Table_Staff::strBirthday = "Birthday";
-const QString CMSDB_Filed_Table_Staff::strDepartment = "Department";
-const QString CMSDB_Filed_Table_Staff::strJobName = "JobName";
-const QString CMSDB_Filed_Table_Staff::strWage = "Wage";
-const QString CMSDB_Filed_Table_Staff::strWorkingAge = "WorkingAge";
-const QString CMSDB_Filed_Table_Staff::strPlace = "Place";
-const QString CMSDB_Filed_Table_Staff::strEducation = "Education";
-const QString CMSDB_Filed_Table_Staff::strSpecialty = "Specialty";
-const QString CMSDB_Filed_Table_Staff::strAddress = "Address";
-const QString CMSDB_Filed_Table_Staff::strEmail = "Email";
-const QString CMSDB_Filed_Table_Staff::strPhone = "Phone";
-const QString CMSDB_Filed_Table_Staff::strEnterCompany = "EnterCompany";
-const QString CMSDB_Filed_Table_Staff::strLeaveCompany = "LeaveCompany";
-const QString CMSDB_Filed_Table_Staff::strIntroduction = "Introduction";
-const QString CMSDB_Filed_Table_Staff::strParams = "Params";
+const QStringList g_listCMSDB_Table_Filed_Staff =
+{
+    "StaffID",
+    "StaffName",
+    "StaffPassword",
+    "Sex",
+    "Birthday",
+    "Department",
+    "JobName",
+    "Wage",
+    "WorkingAge",
+    "Place",
+    "Education",
+    "Specialty",
+    "Address",
+    "Email",
+    "Phone",
+    "EnterCompany",
+    "LeaveCompany",
+    "Introduction",
+    "Param",
+    "staff"
+};
+
+const QStringList g_listCMSDB_Table_Filed_Department =
+{
+    "DepartmntID",
+    "DepartmentName",
+    "State",
+    "Description",
+    "Param",
+    "department",
+};
+
+const QStringList g_listCMSDB_Table_Filed_Job =
+{
+    "JobID",
+    "JobName",
+    "State",
+    "BasicWage",
+    "Description",
+    "Param",
+    "job"
+};
+
+const QStringList g_listCMSDB_Table_Filed_Permission =
+{
+    "PermissionID",
+    "PermissionName",
+    "Param",
+    "permission",
+};
+
+const QStringList g_listCMSDB_Table_Filed_Role =
+{
+    "RoleID",
+    "RoleName" ,
+    "Description" ,
+    "Param",
+    "role"
+};
+
+const QStringList g_listCMSDB_Table_Filed_RolePermission =
+{
+    "RoleID",
+    "PermissionID",
+    "Description",
+    "Param",
+    "rolepermission",
+};
+
+const QStringList g_listCMSDB_Table_Filed_StaffRole =
+{
+    "RoleID",
+    "StaffID",
+    "Param",
+    "staffrole"
+};
 
 
-//////////////////////////////////////////////////////////////////////////////
-/// \brief CMSDB_Filed_Table_Department
-///
-const QString CMSDB_Filed_Table_Department::strTableName = "department";
-const QString CMSDB_Filed_Table_Department::strDepartmntID = "DepartmntID";
-const QString CMSDB_Filed_Table_Department::strDepartmentName = "DepartmentName";
-const QString CMSDB_Filed_Table_Department::strDescription = "Description";
-const QString CMSDB_Filed_Table_Department::strParam = "Param";
+const QStringList g_strListDepartment = {
+    "董事部",
+    "秘书部",
+    "总务部",
+    "会计部",
+    "财务部",
+    "业务部",
+    "人事部",
+    "劳务部",
+    "企划部",
+    "管理部",
+    "法律部",
+    "设计部",
+    "生产部",
+    "质检部",
+    "研发部"
+};
 
+const QStringList g_strListPlace = {
+    "重庆市渝北区",
+    "重庆市渝中区",
+    "重庆市江北区",
+    "重庆市南岸区",
+    "重庆市北碚区",
+    "重庆市江津区",
+    "重庆市万盛区",
+    "重庆市綦江区",
+    "北京市朝阳区",
+    "北京市东城区",
+    "北京市海淀区",
+    "北京市丰台区",
+    "河北省武安县",
+    "河北省邯郸县",
+    "河北省成安县",
+    "河北省雄安县",
+    "河北省廊坊市",
+    "河北省大名县"
+};
 
-//////////////////////////////////////////////////////////////////////////////
-/// \brief CMSDB_Filed_Table_Job
-///
-const QString CMSDB_Filed_Table_Job::strTableName = "job";
-const QString CMSDB_Filed_Table_Job::strJobID = "JobID";
-const QString CMSDB_Filed_Table_Job::strJobName = "JobName";
-const QString CMSDB_Filed_Table_Job::strBasicWage = "BasicWage";
-const QString CMSDB_Filed_Table_Job::strDescription = "Description";
-const QString CMSDB_Filed_Table_Job::strParam = "Param";
+const QStringList g_strListEducation = {
+    "小学",
+    "初中",
+    "高中",
+    "大专",
+    "本科",
+    "硕士",
+    "博士",
+    "教授"
+};
 
-
-/////////////////////////////////////////////////////////////////////////////
-/// \brief CMSDB_Filed_Table_Permission
-///
-const QString CMSDB_Filed_Table_Permission::strTableName = "permission";
-const QString CMSDB_Filed_Table_Permission::strPermissionID = "PermissionID";
-const QString CMSDB_Filed_Table_Permission::strPermissionName = "PermissionName";
-const QString CMSDB_Filed_Table_Permission::strParam = "Param";
-
-
-/////////////////////////////////////////////////////////////////////////////
-/// \brief CMSDB_Filed_Table_Role
-///
-const QString CMSDB_Filed_Table_Role::strTableName = "role";
-const QString CMSDB_Filed_Table_Role::strRoleID = "RoleID";
-const QString CMSDB_Filed_Table_Role::strRoleName = "RoleName" ;
-const QString CMSDB_Filed_Table_Role::strDescription = "Description" ;
-const QString CMSDB_Filed_Table_Role::strParam = "Param" ;
-
-
-/////////////////////////////////////////////////////////////////////////////
-/// \brief CMSDB_Filed_Table_RolePermission
-///
-const QString CMSDB_Filed_Table_RolePermission::strTableName = "rolepermission";
-const QString CMSDB_Filed_Table_RolePermission::strRoleID = "RoleID";
-const QString CMSDB_Filed_Table_RolePermission::strPermissionID = "PermissionID";
-const QString CMSDB_Filed_Table_RolePermission::strDescription = "Description";
-const QString CMSDB_Filed_Table_RolePermission::strParam = "Param";
-
-
-/////////////////////////////////////////////////////////////////////////////
-/// \brief CMSDB_Filed_Table_StaffRole
-///
-const QString CMSDB_Filed_Table_StaffRole::strTableName = "staffrole";
-const QString CMSDB_Filed_Table_StaffRole::strRoleID = "RoleID";
-const QString CMSDB_Filed_Table_StaffRole::strStaffID = "StaffID";
-const QString CMSDB_Filed_Table_StaffRole::strParam = "Param";
-
+const QStringList g_strListSpecialty = {
+    "哲学",
+    "经济学",
+    "法学",
+    "教育学",
+    "文学",
+    "历史",
+    "科学",
+    "工程",
+    "农业",
+    "医学",
+    "管理",
+    "艺术",
+    "军事"
+};
 
 
