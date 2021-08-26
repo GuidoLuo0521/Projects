@@ -7,12 +7,14 @@
 #include <QSqlQuery>
 #include <QDebug>
 #include <QSqlError>
+#include <QDateTime>
 
 #include "singleton.h"
 
 
-class CMSDatabase
+class CMSDatabase : QObject
 {
+    Q_OBJECT
 public:
     CMSDatabase();
     ~CMSDatabase();
@@ -29,6 +31,18 @@ public:
 
     QSqlQuery LDB_Exec(const QString& strQuery);
     QSqlError LBD_LastError();
+
+
+    QSqlQuery LDB_StaffInfo_AddUser(const QString& strUserId, const QString& strPassword);
+
+    QSqlQuery LDB_Log(const QString& leave, const QString& context);
+    QSqlQuery LDB_Log_FATAL(const QString& context);
+    QSqlQuery LDB_Log_ERROR(const QString& context);
+    QSqlQuery LDB_Log_WARN(const QString& context);
+    QSqlQuery LDB_Log_INFO(const QString& context);
+    QSqlQuery LDB_Log_DEBUG(const QString& context);
+    QSqlQuery LDB_Log_TRACE(const QString& context);
+
 
     QSqlDatabase m_WebDatabase;
     QSqlDatabase m_LocalDatabase;
@@ -57,6 +71,12 @@ private:
     QString m_strLocalDatabaseName;
     QString m_strLocalUserName;
     QString m_strLocalPassword;
+
+signals:
+    void WriteLog();
+
+private slots:
+    QString slotReceiveTime(const QDateTime &dateTime);
 };
 
 typedef Singleton<CMSDatabase> CMSDatabaseSingleton;

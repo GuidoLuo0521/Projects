@@ -16,7 +16,7 @@ public:
     explicit LoginDialog(QWidget *parent = nullptr);
     ~LoginDialog();
 
-    QString GetUserName();
+    QString GetUserID();
     QString GetPassWord();
 
 private slots:

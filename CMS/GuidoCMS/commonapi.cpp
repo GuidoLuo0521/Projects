@@ -44,10 +44,9 @@ CStaffInfo* GetStaffInfo(const QString& strStaffID)
             pStaffInfo->SetAddress(query.value("Address").toString());
             pStaffInfo->SetEmail(query.value("Email").toString());
             pStaffInfo->SetPhone(query.value("Phone").toString());
-            pStaffInfo->SetEnterCampany(query.value("EnterCampany").toString());
-            pStaffInfo->SetLeaveCampany(query.value("LeaveCampany").toString());
+            pStaffInfo->SetEnterCompany(query.value("EnterCompany").toString());
+            pStaffInfo->SetLeaveCompany(query.value("LeaveCompany").toString());
             pStaffInfo->SetIntroduction(query.value("Introduction").toString());
-            pStaffInfo->SetResignation(query.value("Resignation").toInt());
             pStaffInfo->SetParam(query.value("Params").toString());
 
             return  pStaffInfo;

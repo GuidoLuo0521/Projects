@@ -163,6 +163,14 @@
   <zorder>labelSignUp</zorder>
   <zorder>labelInfo</zorder>
  </widget>
+ <tabstops>
+  <tabstop>leUserName</tabstop>
+  <tabstop>lePassword</tabstop>
+  <tabstop>checkBoxRmbPW</tabstop>
+  <tabstop>checkBoxAutoLogin</tabstop>
+  <tabstop>btnLogin</tabstop>
+  <tabstop>cbUserName</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

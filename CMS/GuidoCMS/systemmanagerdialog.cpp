@@ -15,6 +15,7 @@
 #include <QSqlQueryModel>
 #include <QStandardItemModel>
 #include <QStackedWidget>
+#include <QTimer>
 
 #include "ControlDelegate.h"
 
@@ -23,6 +24,9 @@ SystemManagerDialog::SystemManagerDialog(QWidget *parent) :
     ui(new Ui::SystemManagerDialog)
 {
     ui->setupUi(this);
+
+    CStaffInfo * pStaffInfo = StaffInfoSingleton::GetInstance();
+    setWindowTitle("系统管理 " + pStaffInfo->GetDepartment() + " " + pStaffInfo->GetStaffName());
 
     InitLayout();
 
@@ -51,6 +55,18 @@ void SystemManagerDialog::slotTableChange()
     ActionChecked(pAction);
 }
 
+void SystemManagerDialog::slotUpdateTime()
+{
+    //[1] 获取时间
+    QDateTime current_time = QDateTime::currentDateTime();
+    QString timestr = current_time.toString( "yyyy-MM-dd hh:mm:ss"); //设置显示的格式
+    m_pStatuTimeLabel->setText(timestr); //设置label的文本内容为时间
+}
+
+void SystemManagerDialog::slotExitLogin()
+{
+    emit signalExitCurrentAccount();
+}
 
 void SystemManagerDialog::ActionChecked(QAction * pAction)
 {
@@ -78,12 +94,11 @@ void SystemManagerDialog::InitSqlTableModelJob()
     m_pSqlTableModelJob = new QSqlTableModel(this, CMSDatabaseSingleton::GetInstance()->m_WebDatabase);
     m_pSqlTableModelJob->setTable(g_listCMSDB_Table_Filed_Job[Job_JobTableName]);
 
-
     int i = 0;
     m_pSqlTableModelJob->setHeaderData(i++, Qt::Orientation::Horizontal, "编号");
     m_pSqlTableModelJob->setHeaderData(i++, Qt::Orientation::Horizontal, "名称");
-    m_pSqlTableModelJob->setHeaderData(i++, Qt::Orientation::Horizontal, "状态");
     m_pSqlTableModelJob->setHeaderData(i++, Qt::Orientation::Horizontal, "基本工资");
+    m_pSqlTableModelJob->setHeaderData(i++, Qt::Orientation::Horizontal, "状态");
     m_pSqlTableModelJob->setHeaderData(i++, Qt::Orientation::Horizontal, "描述");
     m_pSqlTableModelJob->setHeaderData(i++, Qt::Orientation::Horizontal, "备注");
 
@@ -104,17 +119,44 @@ void SystemManagerDialog::InitSqlTableModelJob()
     pComboxDelegateState->PushItem("撤销");
     m_pTableViewJob->setItemDelegateForColumn(Job_State, pComboxDelegateState);
 
+    m_pSqlTableModelJob->select();
     m_pTableViewJob->setModel(m_pSqlTableModelJob);
 }
 void SystemManagerDialog::InitSqlTableModelRole()
 {
     m_pSqlTableModelRole = new QSqlTableModel(this, CMSDatabaseSingleton::GetInstance()->m_WebDatabase);
+    m_pSqlTableModelRole->setTable(g_listCMSDB_Table_Filed_Role[Role_TableName]);
+
+    int i = 0;
+    m_pSqlTableModelRole->setHeaderData(i++, Qt::Orientation::Horizontal, "编号");
+    m_pSqlTableModelRole->setHeaderData(i++, Qt::Orientation::Horizontal, "名称");
+    m_pSqlTableModelRole->setHeaderData(i++, Qt::Orientation::Horizontal, "状态");
+    m_pSqlTableModelRole->setHeaderData(i++, Qt::Orientation::Horizontal, "描述");
+    m_pSqlTableModelRole->setHeaderData(i++, Qt::Orientation::Horizontal, "备注");
+
+    ReadOnlyDelegate * readOnlyDelegate = new ReadOnlyDelegate(this);
+    m_pTableViewRole->setItemDelegateForColumn(Role_RoleID, readOnlyDelegate);
+
+    ComboxDelegate * pComboxDelegateJobName = new ComboxDelegate(this);
+    for(int i = 0; i < g_strListDepartment.size(); ++i)
+    {
+        QString str = g_strListDepartment[i];
+        str.remove("部");
+        pComboxDelegateJobName->PushItem(str);
+    }
+    m_pTableViewRole->setItemDelegateForColumn(Role_RoleName, pComboxDelegateJobName);
+
+    ComboxDelegate * pComboxDelegateState = new ComboxDelegate(this);
+    pComboxDelegateState->PushItem("正常");
+    pComboxDelegateState->PushItem("撤销");
+    m_pTableViewRole->setItemDelegateForColumn(Job_State, pComboxDelegateState);
+
+    m_pSqlTableModelRole->select();
     m_pTableViewRole->setModel(m_pSqlTableModelRole);
 }
 void SystemManagerDialog::InitSqlTableModelStaff()
 {
     m_pSqlTableModelStaff = new QSqlTableModel(this, CMSDatabaseSingleton::GetInstance()->m_WebDatabase);
-
     m_pSqlTableModelStaff->setTable(g_listCMSDB_Table_Filed_Staff[Staff_StaffTableName]);
 
     int i = 0;
@@ -143,9 +185,9 @@ void SystemManagerDialog::InitSqlTableModelStaff()
     m_pTableViewStaff->setItemDelegateForColumn(Staff_StaffID, readOnlyDelegate);
 
     ComboxDelegate * pComboxDelegateSex = new ComboxDelegate(this);
-    pComboxDelegateSex->PushItem("0");
-    pComboxDelegateSex->PushItem("1");
-    pComboxDelegateSex->PushItem("2");
+    pComboxDelegateSex->PushItem("男性");
+    pComboxDelegateSex->PushItem("女性");
+    pComboxDelegateSex->PushItem("未知");
     m_pTableViewStaff->setItemDelegateForColumn(Staff_Sex, pComboxDelegateSex);
 
     DateDelegate * pBirthdayDelegate = new DateDelegate(this);
@@ -186,7 +228,9 @@ void SystemManagerDialog::InitSqlTableModelStaff()
     DateDelegate * pDelegateLeave = new DateDelegate(this);
     m_pTableViewStaff->setItemDelegateForColumn(Staff_LeaveCompany, pDelegateLeave);
 
+    m_pSqlTableModelStaff->select();
     m_pTableViewStaff->setModel(m_pSqlTableModelStaff);
+
 }
 
 void SystemManagerDialog::InitSqlTableModelDepartment()
@@ -214,6 +258,7 @@ void SystemManagerDialog::InitSqlTableModelDepartment()
     pComboxDelegateState->PushItem("撤销");
     m_pTableViewDepartment->setItemDelegateForColumn(Department_State, pComboxDelegateState);
 
+    m_pSqlTableModelDepartment->select();
     m_pTableViewDepartment->setModel(m_pSqlTableModelDepartment);
 }
 
@@ -222,6 +267,7 @@ void SystemManagerDialog::SetTableModelTableStaff()
     CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
     if(pDB->WDB_IsOpen())
     {
+        pDB->LDB_Log_INFO("select Staff");
         m_pSqlTableModelStaff->select();
     }
 
@@ -233,6 +279,7 @@ void SystemManagerDialog::SetTableModelTableRole()
     CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
     if(pDB->WDB_IsOpen())
     {
+        pDB->LDB_Log_INFO("select Role");
         m_pSqlTableModelRole->select();
     }
     m_pStackedWidget->setCurrentIndex(RoleWidget);
@@ -243,6 +290,7 @@ void SystemManagerDialog::SetTableModelTableDepartment()
     CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
     if(pDB->WDB_IsOpen())
     {
+        pDB->LDB_Log_INFO("select Department");
         m_pSqlTableModelDepartment->select();
     }
 
@@ -254,7 +302,9 @@ void SystemManagerDialog::SetTableModelTableJob()
     CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
     if(pDB->WDB_IsOpen())
     {
+        pDB->LDB_Log_INFO("select Job");
         m_pSqlTableModelJob->select();
+        pDB->LDB_Log_ERROR(m_pSqlTableModelJob->lastError().text());
     }
 
     m_pStackedWidget->setCurrentIndex(JobWidget);
@@ -263,6 +313,7 @@ void SystemManagerDialog::SetTableModelTableJob()
 void SystemManagerDialog::InitLayout()
 {
     QWidget * ptoolbar = InitToolBar();
+    QWidget * pstatubar = InitStatuBar();
     QWidget * ptableviewStaff = InitTableViewStaff();
     QWidget * ptableviewDepartment = InitTableViewDepartment();
     QWidget * ptableviewRole = InitTableViewRole();
@@ -287,22 +338,38 @@ QWidget* SystemManagerDialog::InitToolBar()
 {
     QToolBar* pToolbarMain =  this->addToolBar("管理");
 
-    m_pStaffManager = pToolbarMain->addAction("用户管理");
-    m_pDepartmentManager = pToolbarMain->addAction("部门管理");
-    m_pJobManager = pToolbarMain->addAction("职务管理");
-    m_pRoleManager = pToolbarMain->addAction("角色管理");
+    m_pStaffManager =       pToolbarMain->addAction("用户管理");
+    m_pDepartmentManager =  pToolbarMain->addAction("部门管理");
+    m_pJobManager =         pToolbarMain->addAction("职务管理");
+    m_pRoleManager =        pToolbarMain->addAction("角色管理");
+    m_pExit =               pToolbarMain->addAction("退出登录");
 
-    m_pStaffManager->setCheckable(true);
-    m_pRoleManager->setCheckable(true);
-    m_pDepartmentManager->setCheckable(true);
     m_pJobManager->setCheckable(true);
+    m_pRoleManager->setCheckable(true);
+    m_pStaffManager->setCheckable(true);    
+    m_pDepartmentManager->setCheckable(true);
 
-    connect( m_pStaffManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
-    connect( m_pRoleManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
     connect( m_pJobManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
+    connect( m_pRoleManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
+    connect( m_pStaffManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
     connect( m_pDepartmentManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
 
+    connect( m_pExit, &QAction::triggered, this, &SystemManagerDialog::slotExitLogin);
+
     return  pToolbarMain;
+}
+
+QWidget *SystemManagerDialog::InitStatuBar()
+{
+    QStatusBar * pStatubar = this->statusBar();
+    m_pStatuTimeLabel = new QLabel(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+    pStatubar->addPermanentWidget(m_pStatuTimeLabel);
+
+    QTimer * pTimer = new QTimer(this);
+    pTimer->setInterval(1000);
+    connect(pTimer, &QTimer::timeout, this, &SystemManagerDialog::slotUpdateTime);
+    pTimer->start();
+
 }
 QWidget* SystemManagerDialog::InitTableViewStaff()
 {

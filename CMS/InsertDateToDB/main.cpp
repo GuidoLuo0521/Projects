@@ -97,12 +97,13 @@ void InsertDepartment(QSqlDatabase& guidocms)
         const int knCount = g_strListDepartment.size();
         for( int i = 0; i < knCount; ++i)
         {
-            int DepartmntID = 0, State = 1;
+            int DepartmntID = 0;
+            QString State = "正常";
             QString DepartmentName = g_strListDepartment[i], Description, Param;
 
             QString strSql = QString(" INSERT INTO department "
                                      "(DepartmntID, DepartmentName, State, Description, Param)"
-                                     "VALUES (%1,'%2', %3,'%4', '%5');")
+                                     "VALUES (%1,'%2','%3','%4','%5');")
                     .arg(DepartmntID).arg(DepartmentName).arg(State).arg(Description).arg(Param);
 
             guidocms.exec(strSql);
@@ -117,17 +118,43 @@ void InsertJob(QSqlDatabase& guidocms)
         const int knCount = g_strListDepartment.size();
         for( int i = 0; i < knCount; ++i)
         {
-            int JobID = 0, State = 1;
+            int JobID = 0;
+            QString State = "正常";
             float BasicWage = GetRandomWage();
             QString JobName = g_strListDepartment[i], Description, Param;
             JobName.remove("部");
             JobName.remove("科");
 
             QString strSql = QString(" INSERT INTO job "
-                                     "(JobID, JobName, State, BasicWage, Description, Param)"
-                                     "VALUES (%1,'%2', %3, %4,'%5','%6');")
-                    .arg(JobID).arg(JobName).arg(State).arg(BasicWage).arg(Description).arg(Param);
+                                     "(JobID, JobName, BasicWage, State, Description, Param)"
+                                     "VALUES (%1,'%2', %3, '%4', '%5', '%6');")
+                        .arg(JobID).arg(JobName).arg(BasicWage)
+                                 .arg(State).arg(Description).arg(Param);
 
+            guidocms.exec(strSql);
+        }
+    }
+}
+
+void InsertRole(QSqlDatabase& guidocms)
+{
+    if(guidocms.isOpen())
+    {
+        const int knCount = g_strListDepartment.size();
+        for( int i = 0; i < knCount; ++i)
+        {
+            int RoleID = 0;
+            QString State = "正常";
+            QString RoleName = g_strListDepartment[i], Description = "", Param = "";
+            RoleName.remove("部");
+            RoleName.remove("科");
+
+            QString strSql = QString(" INSERT INTO role "
+                                     " (RoleID, RoleName, State, Description, Param)"
+                                     " VALUES (%1, '%2', '%3', '%4','%5');")
+                                 .arg(RoleID).arg(RoleName).arg(State).arg(Description).arg(Param);
+
+            qDebug() << strSql;
             guidocms.exec(strSql);
         }
     }
@@ -142,15 +169,17 @@ int main(int argc, char *argv[])
     guidocms.setPort(3306);
     guidocms.setDatabaseName("guidocms");
     guidocms.setUserName("root");
-    guidocms.setPassword("");
+    guidocms.setPassword("kangrulai");
 
     guidocms.open();
 
     //InsertStaff(guidocms);
 
-    //InsertDepartment(guidocms);
+    InsertDepartment(guidocms);
 
-    //InsertJob(guidocms);
+    InsertJob(guidocms);
+
+    //InsertRole(guidocms);
 
     guidocms.close();
 

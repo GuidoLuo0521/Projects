@@ -46,8 +46,8 @@ enum CMSDB_Table_Filed_Job
 {
     Job_JobID ,
     Job_JobName ,
-    Job_State,
     Job_BasicWage ,
+    Job_State,
     Job_Description ,
     Job_Param ,
     Job_JobTableName

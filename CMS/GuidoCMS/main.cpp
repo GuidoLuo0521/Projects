@@ -14,19 +14,11 @@ int main(int argc, char *argv[])
 
     InitGlobalParams();
 
-    SystemManagerDialog w;
-    w.show();
-
-    return a.exec();
-
-
-
-
     LoginDialog logindlg;
     logindlg.show();
     if(logindlg.exec() == QDialog::Accepted)
     {
-        QString strStaffID = logindlg.GetUserName();
+        QString strStaffID = logindlg.GetUserID();
         StaffInfoSingleton::SetInstance(GetStaffInfo(strStaffID));
 
         SystemManagerDialog w;

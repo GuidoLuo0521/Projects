@@ -32,7 +32,7 @@ LoginDialog::~LoginDialog()
     delete ui;
 }
 
-QString LoginDialog::GetUserName()
+QString LoginDialog::GetUserID()
 {
     return ui->leUserName->text();
 }
@@ -50,12 +50,17 @@ void LoginDialog::on_btnLogin_clicked()
     int nRetInput = VerifyInput();
     if(nRetInput == 1)
     {
-        QString strUserName = GetUserName();
+        QString strUserID = GetUserID();
         QString strPassWord = GetPassWord();
 
-        int nRet = m_pCMSDatabase->WDB_VerifyLogin(strUserName, strPassWord);
+        int nRet = m_pCMSDatabase->WDB_VerifyLogin(strUserID, strPassWord);
         if(nRet == 1)
         {
+            if(ui->checkBoxRmbPW->isChecked())
+                m_pCMSDatabase->LDB_StaffInfo_AddUser(strUserID, strPassWord);
+            else
+                m_pCMSDatabase->LDB_StaffInfo_AddUser(strUserID, "");
+
             accept();
         }
         else if(nRet == -1)
@@ -85,9 +90,9 @@ void LoginDialog::on_btnLogin_clicked()
 
 int LoginDialog::VerifyInput()
 {
-    QString strUserName = GetUserName();
+    QString strUserID = GetUserID();
     QString strPassWord = GetPassWord();
-    if(strUserName.isEmpty())
+    if(strUserID.isEmpty())
     {
         return -1;
     }

@@ -38,8 +38,8 @@ const QStringList g_listCMSDB_Table_Filed_Job =
 {
     "JobID",
     "JobName",
-    "State",
     "BasicWage",
+    "State",
     "Description",
     "Param",
     "job"

@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT += sql
+QT += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -35,6 +36,7 @@ SOURCES += \
         logindialog.cpp \
         main.cpp \
         mainwindow.cpp \
+        ntpclient.cpp \
         readonlydelegate.cpp \
         singleton.cpp \
         staffinfo.cpp \
@@ -50,6 +52,7 @@ HEADERS += \
         datedelegate.h \
         logindialog.h \
         mainwindow.h \
+        ntpclient.h \
         readonlydelegate.h \
         singleton.h \
         staffinfo.h \

@@ -6,6 +6,7 @@
 #include <QSqlQueryModel>
 #include <QTableView>
 #include <QStackedWidget>
+#include <QLabel>
 
 
 class QStandardItemModel;
@@ -34,13 +35,17 @@ public:
 
 signals:
     void signalTableChange();
+    void signalExitCurrentAccount();
 
 private slots:
     void slotTableChange();
+    void slotUpdateTime();
+    void slotExitLogin();
 
 private:
     void InitLayout();
     QWidget* InitToolBar();
+    QWidget* InitStatuBar();
     QWidget* InitTableViewStaff();
     QWidget* InitTableViewDepartment();
     QWidget* InitTableViewRole();
@@ -61,15 +66,13 @@ private:
 
     void ActionChecked(QAction * pAction);
 
-
-
-
     Ui::SystemManagerDialog *ui;
 
     QAction * m_pStaffManager;
     QAction * m_pRoleManager;
     QAction * m_pDepartmentManager;
     QAction * m_pJobManager;
+    QAction * m_pExit;
 
     QSqlTableModel * m_pSqlTableModelStaff;
     QSqlTableModel * m_pSqlTableModelDepartment;
@@ -83,6 +86,8 @@ private:
     QTableView * m_pTableViewJob;
 
     QStackedWidget * m_pStackedWidget;
+
+    QLabel * m_pStatuTimeLabel;
 
 };
 

@@ -32,7 +32,6 @@ void CStaffInfo::InitParams()
     m_strEnterCampany = QDateTime::currentDateTime().toString();
     m_strLeaveCampany = "0000-00-00";
     m_strIntroduction="未知";
-    m_nResignation = 0;
     m_strParam = "无";
 }
 
@@ -101,11 +100,11 @@ void CStaffInfo::SetPhone(const QString& phone)
 {
     m_strPhone = phone;
 }
-void CStaffInfo::SetEnterCampany(const QString& date)
+void CStaffInfo::SetEnterCompany(const QString& date)
 {
     m_strEnterCampany = date;
 }
-void CStaffInfo::SetLeaveCampany(const QString& date)
+void CStaffInfo::SetLeaveCompany(const QString& date)
 {
     m_strLeaveCampany = date;
 }
@@ -113,10 +112,7 @@ void CStaffInfo::SetIntroduction(const QString& introduction)
 {
     m_strIntroduction = introduction;
 }
-void CStaffInfo::SetResignation(const int resignation)
-{
-    m_nResignation = resignation;
-}
+
 void CStaffInfo::SetParam(const QString& param)
 {
     m_strParam = param;
@@ -194,10 +190,6 @@ QString CStaffInfo::GetLeaveCampany()
 QString CStaffInfo::GetIntroduction()
 {
     return  m_strIntroduction;
-}
-int CStaffInfo::GetResignation()
-{
-    return  m_nResignation;
 }
 QString CStaffInfo::GetParam()
 {

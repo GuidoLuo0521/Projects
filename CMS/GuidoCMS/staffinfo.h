@@ -27,10 +27,9 @@ public:
     void SetAddress(const QString& address);
     void SetEmail(const QString& email);
     void SetPhone(const QString& phone);
-    void SetEnterCampany(const QString& date);
-    void SetLeaveCampany(const QString& date);
+    void SetEnterCompany(const QString& date);
+    void SetLeaveCompany(const QString& date);
     void SetIntroduction(const QString& introduction);
-    void SetResignation(const int resignation);
     void SetParam(const QString& param);
 
 
@@ -74,7 +73,6 @@ private:
         m_strAddress, m_strEMail, m_strPhone,
         m_strEnterCampany, m_strLeaveCampany, m_strIntroduction;
 
-    int m_nResignation;
     QString m_strParam;
 };
 
