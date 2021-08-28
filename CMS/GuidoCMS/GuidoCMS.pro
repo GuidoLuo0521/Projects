@@ -27,6 +27,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        Form/staffinfodialog.cpp \
         common/commonapi.cpp \
         common/ntpclient.cpp \
         common/singleton.cpp \
@@ -36,12 +37,13 @@ SOURCES += \
         delegate/datedelegate.cpp \
         delegate/readonlydelegate.cpp \
         delegate/comboboxdelegate.cpp \
-        Form/logindialog.cpp \
-        Form/mainwindow.cpp \
-        Form/systemmanagerdialog.cpp\
+        form/logindialog.cpp \
+        form/mainwindow.cpp \
+        form/systemmanagerdialog.cpp\
         main.cpp
 
 HEADERS += \
+        Form/staffinfodialog.h \
         common/commonapi.h \
         common/staffinfo.h \
         common/ntpclient.h \
@@ -52,14 +54,15 @@ HEADERS += \
         delegate/comboboxdelegate.h \
         delegate/controldelegate.h \
         delegate/datedelegate.h \
-        Form/logindialog.h \
-        Form/mainwindow.h \
-        Form/systemmanagerdialog.h
+        form/logindialog.h \
+        form/mainwindow.h \
+        form/systemmanagerdialog.h
 
 FORMS += \
-        Form/logindialog.ui \
-        Form/mainwindow.ui \
-        Form/systemmanagerdialog.ui
+        form/logindialog.ui \
+        form/mainwindow.ui \
+        form/staffinfodialog.ui \
+        form/systemmanagerdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

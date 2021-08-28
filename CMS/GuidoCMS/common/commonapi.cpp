@@ -32,6 +32,7 @@ CStaffInfo* GetStaffInfo(const QString& strStaffID)
             pStaffInfo->SetStaffName(query.value("StaffName").toString());
             pStaffInfo->SetStaffPassword(query.value("StaffPassword").toString());
             pStaffInfo->SetBirthday(query.value("Birthday").toString());
+            pStaffInfo->SetSex(query.value("Sex").toString());
 
             pStaffInfo->SetDepartment(query.value("Department").toString());
             pStaffInfo->SetJobName(query.value("JobName").toString());

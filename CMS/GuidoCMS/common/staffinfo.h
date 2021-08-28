@@ -1,9 +1,8 @@
 ﻿#ifndef STAFFINFO_H
 #define STAFFINFO_H
 
-#include "common/singleton.h"
+#include "singleton.h"
 #include <QString>
-
 
 
 class CStaffInfo
@@ -15,7 +14,7 @@ public:
     void SetStaffID(const QString id);
     void SetStaffName(const QString& name);
     void SetStaffPassword(const QString& password);
-    void SetSex(const int sex);
+    void SetSex(const QString& sex);
     void SetBirthday(const QString& date);
     void SetDepartment(const QString& department);
     void SetJobName(const QString& jobname);
@@ -36,7 +35,7 @@ public:
     QString GetStaffID();
     QString GetStaffName();
     QString GetStaffPassword();
-    int GetSex();
+    QString GetSex();
     QString GetBirthday();
     QString GetDepartment();
     QString GetJobName();
@@ -61,10 +60,8 @@ private:
     QString m_strStaffID;
     QString m_strStaffName, m_strStaffPassword;
 
-    // 性别（0 未知，1 男，2 女）
-    int m_nSex;
+    // 未知 男性 女性）
     QString m_strSex;
-
     QString m_strBirthday, m_strDepartment, m_strJobName;
     float m_fWage;
     int m_nWorkingAge;

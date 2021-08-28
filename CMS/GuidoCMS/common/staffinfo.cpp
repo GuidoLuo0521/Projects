@@ -16,7 +16,6 @@ void CStaffInfo::InitParams()
     m_strStaffID = "-000001";
     m_strStaffName = "";
     m_strStaffPassword = "";
-    m_nSex = 3;
     m_strSex = "未知";
     m_strBirthday = "0000-00-00";
     m_strDepartment = "未知";
@@ -47,14 +46,9 @@ void CStaffInfo::SetStaffPassword(const QString& password)
 {
     m_strStaffPassword = password;
 }
-void CStaffInfo::SetSex(const int sex)
+void CStaffInfo::SetSex(const QString& sex)
 {
-    m_nSex = sex;
-    switch (sex) {
-    case 0: m_strSex = "男"; break;
-    case 1: m_strSex = "女"; break;
-    default: m_strSex = "未知"; break;
-    }
+    m_strSex = sex;
 }
 void CStaffInfo::SetBirthday(const QString& date)
 {
@@ -131,9 +125,9 @@ QString CStaffInfo::GetStaffPassword()
 {
     return  m_strStaffPassword;
 }
-int CStaffInfo::GetSex()
+QString CStaffInfo::GetSex()
 {
-    return m_nSex;
+    return m_strSex;
 }
 QString CStaffInfo::GetBirthday()
 {

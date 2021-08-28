@@ -296,4 +296,10 @@ void LoginDialog::on_leUserName_textChanged(const QString &arg1)
     ui->lePassword->setText("");
     ui->checkBoxAutoLogin->setChecked(false);
     ui->checkBoxRmbPW->setChecked(false);
+
+    QString strProfile = QString("Profile/%1.png").arg(arg1);
+    if(QFile::exists(strProfile) == false)
+        strProfile = QString("Profile/000000.png");
+
+    ui->labelProfile->setPixmap(QPixmap(strProfile));
 }
