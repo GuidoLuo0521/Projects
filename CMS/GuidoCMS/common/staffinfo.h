@@ -1,7 +1,7 @@
 ﻿#ifndef STAFFINFO_H
 #define STAFFINFO_H
 
-#include "singleton.h"
+#include "common/singleton.h"
 #include <QString>
 
 

@@ -2,7 +2,7 @@
 #define CONTROLDELEGATE_H
 
 #include "datedelegate.h"
-#include "comboxdelegate.h"
+#include "comboboxdelegate.h"
 #include "readonlydelegate.h"
 
 

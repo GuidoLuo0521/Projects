@@ -33,6 +33,11 @@ public:
     explicit SystemManagerDialog(QWidget *parent = nullptr);
     ~SystemManagerDialog();
 
+
+public slots:
+    void slotExitLogin();
+    void slotShowWindow();
+
 signals:
     void signalTableChange();
     void signalExitCurrentAccount();
@@ -40,7 +45,7 @@ signals:
 private slots:
     void slotTableChange();
     void slotUpdateTime();
-    void slotExitLogin();
+
 
 private:
     void InitLayout();

@@ -9,14 +9,14 @@
 #include <QSqlError>
 #include <QDateTime>
 
-#include "singleton.h"
+#include "common/singleton.h"
 
 
 class CMSDatabase : QObject
 {
     Q_OBJECT
 public:
-    CMSDatabase();
+    CMSDatabase(QObject *parent = nullptr);
     ~CMSDatabase();
 
     bool WDB_IsOpen();
@@ -31,9 +31,6 @@ public:
 
     QSqlQuery LDB_Exec(const QString& strQuery);
     QSqlError LBD_LastError();
-
-
-    QSqlQuery LDB_StaffInfo_AddUser(const QString& strUserId, const QString& strPassword);
 
     QSqlQuery LDB_Log(const QString& leave, const QString& context);
     QSqlQuery LDB_Log_FATAL(const QString& context);

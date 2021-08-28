@@ -16,7 +16,7 @@ void InsertStaff( QSqlDatabase& guidocms)
     if(guidocms.isOpen())
     {
         QStringList strListName;
-        QString strFilePath = "D:/github/Projects/CMS/DevRecords/MySQL/name.txt";
+        QString strFilePath = "E:/github/Projects/CMS/DevRecords/MySQL/name.txt";
         QFile file(strFilePath);
         if( file.open(QIODevice::ReadOnly | QIODevice::Text) )
         {
@@ -71,13 +71,15 @@ void InsertStaff( QSqlDatabase& guidocms)
                                      "VALUES (%1,'%2','%3',%4,'%5',"
                                      "'%6','%7',%8,%9,'%10',"
                                      "'%11','%12','%13','%14','%15',"
-                                     "'%16','%17','%18',%19,'%20');")
+                                     "'%16','%17','%18','%19');")
                     .arg(StaffID).arg(StaffName).arg(StaffPassword).arg(Sex).arg(Birthday)
                     .arg(Department).arg(JobName).arg(Wage).arg(WorkingAge).arg(Place)
                     .arg(Education).arg(Specialty).arg(Address).arg(EMail).arg(Phone)
-                    .arg(EnterCampany).arg(LeaveCampany).arg(Introduction).arg(Resignation).arg(Param);
+                    .arg(EnterCampany).arg(LeaveCampany).arg(Introduction).arg(Param);
 
             guidocms.exec(strSql);
+            qDebug() << guidocms.lastError().text();
+
             strSql = "SELECT last_insert_id() AS 'Account';";
             QSqlQuery query = guidocms.exec(strSql);
 
@@ -169,17 +171,17 @@ int main(int argc, char *argv[])
     guidocms.setPort(3306);
     guidocms.setDatabaseName("guidocms");
     guidocms.setUserName("root");
-    guidocms.setPassword("kangrulai");
+    guidocms.setPassword("4474ljx");
 
     guidocms.open();
 
-    //InsertStaff(guidocms);
+    InsertStaff(guidocms);
 
     InsertDepartment(guidocms);
 
     InsertJob(guidocms);
 
-    //InsertRole(guidocms);
+    InsertRole(guidocms);
 
     guidocms.close();
 

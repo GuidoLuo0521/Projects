@@ -1,4 +1,4 @@
-﻿#include "staffinfo.h"
+﻿#include "common/staffinfo.h"
 
 #include <QDateTime>
 

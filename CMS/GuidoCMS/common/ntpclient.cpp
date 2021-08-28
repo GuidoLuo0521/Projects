@@ -1,4 +1,4 @@
-﻿#include "ntpclient.h"
+﻿#include "common/ntpclient.h"
 #include "qmutex.h"
 #include "qudpsocket.h"
 #include "qdebug.h"

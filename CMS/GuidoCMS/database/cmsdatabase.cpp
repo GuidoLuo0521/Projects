@@ -4,7 +4,7 @@
 #include <QDateTime>
 #include <QTcpSocket>
 
-#include <ntpclient.h>
+#include "common/ntpclient.h"
 
 /*
 const QString CMSDatabase::m_strWebType = "QMYSQL";
@@ -32,7 +32,7 @@ void CMSDatabase::InitParams()
     m_strWebHostName = "127.0.0.1";
     m_strWebDatabaseName = "guidocms";
     m_strWebUserName = "root";
-    m_strWebPassword = "kangrulai";
+    m_strWebPassword = "4474ljx";
 
     m_strLocalType = "QSQLITE";
     m_strLocalConnectionName = "QSQLITE_LOCALDB";
@@ -43,7 +43,8 @@ void CMSDatabase::InitParams()
 }
 
 
-CMSDatabase::CMSDatabase()
+CMSDatabase::CMSDatabase(QObject *parent)
+    : QObject(parent)
 {
     InitParams();
     LoadDatabase();
@@ -155,7 +156,11 @@ void CMSDatabase::LoadLocalDatabase()
 
         QString strCTStaffinfo = "CREATE TABLE IF NOT EXISTS StaffInfo(   "
                                     "StaffID TEXT PRIMARY KEY  NOT NULL,   "
-                                    "StaffPassword           TEXT    NOT NULL);";
+                                    "StaffPassword     TEXT    NOT NULL,"
+                                    "RemenmberPW BOOL NOT NULL DEFAULT FALSE,"
+                                    "AutoLogin BOOL NOT NULL DEFAULT FALSE,"
+                                    "ActiveState BOOL NOT NULL DEFAULT TRUE,"
+                                    "SelectState BOOL NOT NULL DEFAULT FALSE);";
 
         LDB_Exec(strCTStaffinfo);
 
@@ -201,28 +206,6 @@ QSqlQuery CMSDatabase::LDB_Exec(const QString& strQuery)
 QSqlError CMSDatabase::LBD_LastError()
 {
     return m_LocalDatabase.lastError();
-}
-
-QSqlQuery CMSDatabase::LDB_StaffInfo_AddUser(const QString &strUserId, const QString &strPassword)
-{
-    QString strQuery = QString("SELECT StaffID FROM StaffInfo "
-                               "WHERE StaffID = '%1'").arg(strUserId);
-
-    QSqlQuery query = LDB_Exec(strQuery);
-    if(query.next())
-    {
-        strQuery = QString("UPDATE Staffinfo SET "
-                           "StaffPassword = '%2'  "
-                           "WHERE StaffID = '%1'")
-                       .arg(strUserId).arg(strPassword);
-        return LDB_Exec(strQuery);
-    }
-
-    strQuery = QString("INSERT INTO Staffinfo(StaffID, StaffPassword) "
-                               "VALUES('%1', '%2')")
-                           .arg(strUserId).arg(strPassword);
-
-    return LDB_Exec(strQuery);
 }
 
 QSqlQuery CMSDatabase::LDB_Log(const QString &leave, const QString &context)

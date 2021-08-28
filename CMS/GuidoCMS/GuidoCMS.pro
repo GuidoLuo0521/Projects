@@ -27,41 +27,39 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        cmsdatabase.cpp \
-        cmsdatebasedef.cpp \
-        comboxdelegate.cpp \
-        commonapi.cpp \
-        cusernamectrl.cpp \
-        datedelegate.cpp \
-        logindialog.cpp \
-        main.cpp \
-        mainwindow.cpp \
-        ntpclient.cpp \
-        readonlydelegate.cpp \
-        singleton.cpp \
-        staffinfo.cpp \
-        systemmanagerdialog.cpp
+        common/commonapi.cpp \
+        common/ntpclient.cpp \
+        common/singleton.cpp \
+        common/staffinfo.cpp \
+        database/cmsdatabase.cpp \
+        database/cmsdatebasedef.cpp \
+        delegate/datedelegate.cpp \
+        delegate/readonlydelegate.cpp \
+        delegate/comboboxdelegate.cpp \
+        Form/logindialog.cpp \
+        Form/mainwindow.cpp \
+        Form/systemmanagerdialog.cpp\
+        main.cpp
 
 HEADERS += \
-        ControlDelegate.h \
-        cmsdatabase.h \
-        cmsdatebasedef.h \
-        comboxdelegate.h \
-        commonapi.h \
-        cusernamectrl.h \
-        datedelegate.h \
-        logindialog.h \
-        mainwindow.h \
-        ntpclient.h \
-        readonlydelegate.h \
-        singleton.h \
-        staffinfo.h \
-        systemmanagerdialog.h
+        common/commonapi.h \
+        common/staffinfo.h \
+        common/ntpclient.h \
+        common/singleton.h \
+        database/cmsdatabase.h \
+        database/cmsdatebasedef.h \
+        delegate/readonlydelegate.h \
+        delegate/comboboxdelegate.h \
+        delegate/controldelegate.h \
+        delegate/datedelegate.h \
+        Form/logindialog.h \
+        Form/mainwindow.h \
+        Form/systemmanagerdialog.h
 
 FORMS += \
-        logindialog.ui \
-        mainwindow.ui \
-        systemmanagerdialog.ui
+        Form/logindialog.ui \
+        Form/mainwindow.ui \
+        Form/systemmanagerdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

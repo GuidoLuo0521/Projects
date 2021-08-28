@@ -1,8 +1,8 @@
 ﻿#include "systemmanagerdialog.h"
 #include "ui_systemmanagerdialog.h"
-#include "staffinfo.h"
-#include "cmsdatabase.h"
-#include "cmsdatebasedef.h"
+#include "common/staffinfo.h"
+#include "database/cmsdatabase.h"
+#include "database/cmsdatebasedef.h"
 
 
 #include <QToolBar>
@@ -17,16 +17,13 @@
 #include <QStackedWidget>
 #include <QTimer>
 
-#include "ControlDelegate.h"
+#include "delegate/controldelegate.h"
 
 SystemManagerDialog::SystemManagerDialog(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SystemManagerDialog)
 {
     ui->setupUi(this);
-
-    CStaffInfo * pStaffInfo = StaffInfoSingleton::GetInstance();
-    setWindowTitle("系统管理 " + pStaffInfo->GetDepartment() + " " + pStaffInfo->GetStaffName());
 
     InitLayout();
 
@@ -66,6 +63,15 @@ void SystemManagerDialog::slotUpdateTime()
 void SystemManagerDialog::slotExitLogin()
 {
     emit signalExitCurrentAccount();
+    close();
+}
+
+void SystemManagerDialog::slotShowWindow()
+{
+    CStaffInfo * pStaffInfo = StaffInfoSingleton::GetInstance();
+    setWindowTitle("系统管理 " + pStaffInfo->GetDepartment() + " " + pStaffInfo->GetStaffID() + " " + pStaffInfo->GetStaffName());
+
+    this->show();
 }
 
 void SystemManagerDialog::ActionChecked(QAction * pAction)
@@ -105,7 +111,7 @@ void SystemManagerDialog::InitSqlTableModelJob()
     ReadOnlyDelegate * readOnlyDelegate = new ReadOnlyDelegate(this);
     m_pTableViewJob->setItemDelegateForColumn(Job_JobID, readOnlyDelegate);
 
-    ComboxDelegate * pComboxDelegateJobName = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegateJobName = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListDepartment.size(); ++i)
     {
         QString str = g_strListDepartment[i];
@@ -114,7 +120,7 @@ void SystemManagerDialog::InitSqlTableModelJob()
     }
     m_pTableViewJob->setItemDelegateForColumn(Job_JobName, pComboxDelegateJobName);
 
-    ComboxDelegate * pComboxDelegateState = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegateState = new ComboboxDelegate(this);
     pComboxDelegateState->PushItem("正常");
     pComboxDelegateState->PushItem("撤销");
     m_pTableViewJob->setItemDelegateForColumn(Job_State, pComboxDelegateState);
@@ -137,7 +143,7 @@ void SystemManagerDialog::InitSqlTableModelRole()
     ReadOnlyDelegate * readOnlyDelegate = new ReadOnlyDelegate(this);
     m_pTableViewRole->setItemDelegateForColumn(Role_RoleID, readOnlyDelegate);
 
-    ComboxDelegate * pComboxDelegateJobName = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegateJobName = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListDepartment.size(); ++i)
     {
         QString str = g_strListDepartment[i];
@@ -146,10 +152,10 @@ void SystemManagerDialog::InitSqlTableModelRole()
     }
     m_pTableViewRole->setItemDelegateForColumn(Role_RoleName, pComboxDelegateJobName);
 
-    ComboxDelegate * pComboxDelegateState = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegateState = new ComboboxDelegate(this);
     pComboxDelegateState->PushItem("正常");
     pComboxDelegateState->PushItem("撤销");
-    m_pTableViewRole->setItemDelegateForColumn(Job_State, pComboxDelegateState);
+    m_pTableViewRole->setItemDelegateForColumn(Role_State, pComboxDelegateState);
 
     m_pSqlTableModelRole->select();
     m_pTableViewRole->setModel(m_pSqlTableModelRole);
@@ -184,7 +190,7 @@ void SystemManagerDialog::InitSqlTableModelStaff()
     ReadOnlyDelegate * readOnlyDelegate = new ReadOnlyDelegate(this);
     m_pTableViewStaff->setItemDelegateForColumn(Staff_StaffID, readOnlyDelegate);
 
-    ComboxDelegate * pComboxDelegateSex = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegateSex = new ComboboxDelegate(this);
     pComboxDelegateSex->PushItem("男性");
     pComboxDelegateSex->PushItem("女性");
     pComboxDelegateSex->PushItem("未知");
@@ -193,27 +199,27 @@ void SystemManagerDialog::InitSqlTableModelStaff()
     DateDelegate * pBirthdayDelegate = new DateDelegate(this);
     m_pTableViewStaff->setItemDelegateForColumn(Staff_Birthday, pBirthdayDelegate);
 
-    ComboxDelegate * pComboxDelegateDepartment = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegateDepartment = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListDepartment.size(); ++i)
         pComboxDelegateDepartment->PushItem(g_strListDepartment[i]);
     m_pTableViewStaff->setItemDelegateForColumn(Staff_Department, pComboxDelegateDepartment);
 
-    ComboxDelegate * pComboxDelegatePlace = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegatePlace = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListPlace.size(); ++i)
         pComboxDelegatePlace->PushItem(g_strListPlace[i]);
     m_pTableViewStaff->setItemDelegateForColumn(Staff_Place, pComboxDelegatePlace);
 
-    ComboxDelegate * pComboxDelegateEducation = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegateEducation = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListEducation.size(); ++i)
         pComboxDelegateEducation->PushItem(g_strListEducation[i]);
     m_pTableViewStaff->setItemDelegateForColumn(Staff_Education, pComboxDelegateEducation);
 
-    ComboxDelegate * pComboxDelegateSpecialty = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegateSpecialty = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListSpecialty.size(); ++i)
         pComboxDelegateSpecialty->PushItem(g_strListSpecialty[i]);
     m_pTableViewStaff->setItemDelegateForColumn(Staff_Specialty, pComboxDelegateSpecialty);
 
-    ComboxDelegate * pComboxDelegateJobName = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegateJobName = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListDepartment.size(); ++i)
     {
         QString str = g_strListDepartment[i];
@@ -248,12 +254,12 @@ void SystemManagerDialog::InitSqlTableModelDepartment()
     ReadOnlyDelegate * readOnlyDelegate = new ReadOnlyDelegate(this);
     m_pTableViewDepartment->setItemDelegateForColumn(Department_DepartmntID, readOnlyDelegate);
 
-    ComboxDelegate * pComboxDelegateDepartment = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegateDepartment = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListDepartment.size(); ++i)
         pComboxDelegateDepartment->PushItem(g_strListDepartment[i]);
     m_pTableViewDepartment->setItemDelegateForColumn(Department_DepartmentName, pComboxDelegateDepartment);
 
-    ComboxDelegate * pComboxDelegateState = new ComboxDelegate(this);
+    ComboboxDelegate * pComboxDelegateState = new ComboboxDelegate(this);
     pComboxDelegateState->PushItem("正常");
     pComboxDelegateState->PushItem("撤销");
     m_pTableViewDepartment->setItemDelegateForColumn(Department_State, pComboxDelegateState);
@@ -330,6 +336,11 @@ void SystemManagerDialog::InitLayout()
     //pMainSplitter->addWidget(ptableview);
     //pMainSplitter->addWidget(psearchview);
 
+    m_pTableViewStaff->setSortingEnabled(true);
+    m_pTableViewDepartment->setSortingEnabled(true);
+    m_pTableViewRole->setSortingEnabled(true);
+    m_pTableViewJob->setSortingEnabled(true);
+
     this->setCentralWidget(m_pStackedWidget);
 }
 
@@ -342,7 +353,14 @@ QWidget* SystemManagerDialog::InitToolBar()
     m_pDepartmentManager =  pToolbarMain->addAction("部门管理");
     m_pJobManager =         pToolbarMain->addAction("职务管理");
     m_pRoleManager =        pToolbarMain->addAction("角色管理");
-    m_pExit =               pToolbarMain->addAction("退出登录");
+
+    //2011-11-23-QTooBar中最右一个图标的靠右对齐方式
+    QWidget *spacer = new QWidget(this);
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    //toolBar is a pointer to an existing toolbar
+    pToolbarMain->addWidget(spacer);
+    pToolbarMain->setFloatable(false);
+    m_pExit =  pToolbarMain->addAction("退出登录");
 
     m_pJobManager->setCheckable(true);
     m_pRoleManager->setCheckable(true);
@@ -369,6 +387,8 @@ QWidget *SystemManagerDialog::InitStatuBar()
     pTimer->setInterval(1000);
     connect(pTimer, &QTimer::timeout, this, &SystemManagerDialog::slotUpdateTime);
     pTimer->start();
+
+    return pStatubar;
 
 }
 QWidget* SystemManagerDialog::InitTableViewStaff()

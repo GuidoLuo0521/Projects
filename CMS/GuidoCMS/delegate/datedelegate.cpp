@@ -2,6 +2,7 @@
 
 
 DateDelegate::DateDelegate(QObject *parent)
+    : QItemDelegate(parent)
 {
 
 }

@@ -1,4 +1,4 @@
-﻿#include "commonapi.h"
+﻿#include "common/commonapi.h"
 
 void InitGlobalParams()
 {
@@ -9,7 +9,7 @@ void InitGlobalParams()
 
 void LoadDatabaseSingleton()
 {
-    CMSDatabaseSingleton::SetInstance(new CMSDatabase);
+    CMSDatabaseSingleton::SetInstance(new CMSDatabase());
 }
 
 void CreateCurrentStaffInfoSingleton()

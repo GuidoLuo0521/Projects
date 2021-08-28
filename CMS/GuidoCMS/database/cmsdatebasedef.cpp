@@ -57,6 +57,7 @@ const QStringList g_listCMSDB_Table_Filed_Role =
 {
     "RoleID",
     "RoleName" ,
+    "State",
     "Description" ,
     "Param",
     "role"

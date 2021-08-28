@@ -4,7 +4,7 @@ CREATE TABLE Staff(
 	StaffID int(11) NOT NULL COMMENT '职工编号（主键）' AUTO_INCREMENT,
 	StaffName VARCHAR(20) NOT NULL COMMENT '职工姓名',
 	StaffPassword VARCHAR(30) NOT NULL COMMENT '密码',
-	Sex int(1) NOT NULL COMMENT '性别（0 未知，1 男，2 女）',
+	Sex VARCHAR(3) NOT NULL COMMENT '性别（男性，女性，未知）',
 	Brithday TIMESTAMP NOT NULL COMMENT '出生日期 YYYYMMDD',
 	Department VARCHAR(30) NOT NULL DEFAULT '未分配' COMMENT '部门',
 	JobName VARCHAR(30) NOT NULL DEFAULT '未分配' COMMENT '职务',
@@ -16,10 +16,9 @@ CREATE TABLE Staff(
 	Address VARCHAR(100) DEFAULT '未知' COMMENT '住址',
 	Email VARCHAR(20) DEFAULT '未知' COMMENT '邮件',
 	Phone VARCHAR(20) DEFAULT '未知' COMMENT '电话',
-	EnterCampany TIMESTAMP NOT NULL DEFAULT NOW() COMMENT '入职时间 YYYY-MM-DD',
-	LeaveCampany TIMESTAMP NOT NULL DEFAULT '0000-00-00' COMMENT '离职时间 YYYY-MM-DD',
+	EnterCompany TIMESTAMP NOT NULL DEFAULT NOW() COMMENT '入职时间 YYYY-MM-DD',
+	LeaveCompany TIMESTAMP NOT NULL DEFAULT '0000-00-00' COMMENT '离职时间 YYYY-MM-DD',
 	Introduction VARCHAR(100) DEFAULT '暂无' COMMENT '描述',
-	Resignation int(1) NOT NULL COMMENT '是否离职 0:就职，1：办理入职，2，办理离职，3：离职',
 	Params VARCHAR(10) COMMENT '预留字段',
 	PRIMARY KEY(StaffID)
 	);
@@ -28,8 +27,9 @@ CREATE TABLE Staff(
 ########### Permission 	
 DROP TABLE IF EXISTS Permission;
 CREATE TABLE Permission (
-	PermissionID int(11) NOT NULL COMMENT '权限编号（主键）',
+	PermissionID int(11) NOT NULL COMMENT '权限编号（主键）' AUTO_INCREMENT,
 	PermissionName VARCHAR(20) NOT NULL COMMENT '权限名称',
+	State VARCHAR(10) COMMENT '状态',
 	Param VARCHAR(10) COMMENT '预留字段',
 	PRIMARY KEY(PermissionID)
 	);
@@ -38,8 +38,9 @@ CREATE TABLE Permission (
 ########### Department 	
 DROP TABLE IF EXISTS Department;
 CREATE TABLE Department (
-	DepartmntID INT(11) NOT NULL COMMENT '部门编号（主键）',
+	DepartmntID INT(11) NOT NULL COMMENT '部门编号（主键）' AUTO_INCREMENT,
 	DepartmentName VARCHAR(30) NOT NULL COMMENT '部门名称',
+	State VARCHAR(10) COMMENT '状态',
 	Description VARCHAR(80) COMMENT '说明',
 	Param VARCHAR(10) COMMENT '预留字段',
 	PRIMARY KEY(DepartmntID)
@@ -49,9 +50,10 @@ CREATE TABLE Department (
 ########### Job 	
 DROP TABLE IF EXISTS Job;
 CREATE TABLE Job (
-	JobID INT(11) NOT NULL COMMENT '职务编号（主键）',
+	JobID INT(11) NOT NULL COMMENT '职务编号（主键）' AUTO_INCREMENT,
 	JobName VARCHAR(30) NOT NULL COMMENT '职务名称',
 	BasicWage FLOAT  COMMENT '基本工资',
+	State VARCHAR(10) COMMENT '状态',
 	Description VARCHAR(80) COMMENT '说明',
 	Param VARCHAR(10) COMMENT '预留字段',
 	PRIMARY KEY(JobID)	
@@ -61,12 +63,14 @@ CREATE TABLE Job (
 ########### Role 	
 DROP TABLE IF EXISTS Role;
 CREATE TABLE Role (
-	RoleID INT(11) NOT NULL COMMENT '角色编号（主键）',
+	RoleID INT(11) NOT NULL COMMENT '角色编号（主键）' AUTO_INCREMENT,
 	RoleName VARCHAR(20) NOT NULL COMMENT '角色名称',
+	State VARCHAR(10) COMMENT '状态',
 	Description VARCHAR(80) NOT NULL COMMENT '说明',
 	Param VARCHAR(10) COMMENT '预留字段',
 	PRIMARY KEY(RoleID)
 	);
+
 
 
 ########### StaffRole 	

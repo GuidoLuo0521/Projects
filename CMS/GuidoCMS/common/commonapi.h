@@ -1,7 +1,7 @@
 ﻿#ifndef COMMONAPI_H
 #define COMMONAPI_H
 
-#include "cmsdatabase.h"
+#include "database/cmsdatabase.h"
 #include "staffinfo.h"
 
 /**********************************************************************/

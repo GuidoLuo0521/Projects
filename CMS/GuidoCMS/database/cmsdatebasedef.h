@@ -69,6 +69,7 @@ enum CMSDB_Table_Filed_Role
 {
     Role_RoleID ,
     Role_RoleName ,
+    Role_State ,
     Role_Description ,
     Role_Param,
     Role_TableName

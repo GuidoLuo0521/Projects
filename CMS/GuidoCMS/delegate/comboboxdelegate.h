@@ -1,18 +1,18 @@
 ﻿#ifndef COMBOXDELEGATE_H
-#define COMBOXDELEGATE_H
+#define COMBOBOXDELEGATE_H
 
 #include <QObject>
 #include <QItemDelegate>
 #include <QComboBox>
 #include <QStyledItemDelegate>
 
-class ComboxDelegate : public QStyledItemDelegate
+class ComboboxDelegate : public QItemDelegate
 {
     Q_OBJECT
 
 public:
-    ComboxDelegate(QObject * parent = 0);
-    ~ComboxDelegate();
+    ComboboxDelegate(QObject * parent = 0);
+    ~ComboboxDelegate();
 
 
     // 完成创建控件的工作
