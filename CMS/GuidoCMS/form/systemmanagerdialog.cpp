@@ -252,7 +252,7 @@ void SystemManagerDialog::InitSqlTableModelDepartment()
     m_pSqlTableModelDepartment->setHeaderData(i++, Qt::Orientation::Horizontal, "备注");
 
     ReadOnlyDelegate * readOnlyDelegate = new ReadOnlyDelegate(this);
-    m_pTableViewDepartment->setItemDelegateForColumn(Department_DepartmntID, readOnlyDelegate);
+    m_pTableViewDepartment->setItemDelegateForColumn(Department_DepartmentID, readOnlyDelegate);
 
     ComboboxDelegate * pComboxDelegateDepartment = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListDepartment.size(); ++i)

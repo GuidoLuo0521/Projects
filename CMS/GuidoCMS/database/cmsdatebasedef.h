@@ -32,7 +32,7 @@ extern const QStringList g_listCMSDB_Table_Filed_Staff;
 
 enum CMSDB_Table_Filed_Department
 {
-    Department_DepartmntID ,
+    Department_DepartmentID ,
     Department_DepartmentName ,
     Department_State ,
     Department_Description ,

@@ -37,14 +37,17 @@ SOURCES += \
         delegate/datedelegate.cpp \
         delegate/readonlydelegate.cpp \
         delegate/comboboxdelegate.cpp \
+        form/departmentinfodialog.cpp \
         form/logindialog.cpp \
         form/mainwindow.cpp \
         form/systemmanagerdialog.cpp\
+        form/tableinfodialog.cpp \
         main.cpp
 
 HEADERS += \
         Form/staffinfodialog.h \
         common/commonapi.h \
+        common/controlinclude.h \
         common/staffinfo.h \
         common/ntpclient.h \
         common/singleton.h \
@@ -54,15 +57,19 @@ HEADERS += \
         delegate/comboboxdelegate.h \
         delegate/controldelegate.h \
         delegate/datedelegate.h \
+        form/departmentinfodialog.h \
         form/logindialog.h \
         form/mainwindow.h \
-        form/systemmanagerdialog.h
+        form/systemmanagerdialog.h \
+        form/tableinfodialog.h
 
 FORMS += \
+        form/departmentinfodialog.ui \
         form/logindialog.ui \
         form/mainwindow.ui \
         form/staffinfodialog.ui \
-        form/systemmanagerdialog.ui
+        form/systemmanagerdialog.ui \
+        form/tableinfodialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

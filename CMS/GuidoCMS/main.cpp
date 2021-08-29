@@ -4,6 +4,9 @@
 #include "form/logindialog.h"
 #include "form/systemmanagerdialog.h"
 #include "form/staffinfodialog.h"
+#include "form/departmentinfodialog.h"
+
+#include "form/tableinfodialog.h"
 
 #include <QApplication>
 
@@ -24,8 +27,15 @@ int main(int argc, char *argv[])
     //logindlg.show();
 
 
-    StaffInfoSingleton::SetInstance(GetStaffInfo("000001"));
-    StaffInfoDialog w(StaffInfoSingleton::GetInstance());
+    //StaffInfoSingleton::SetInstance(GetStaffInfo("000001"));
+    StaffInfoDialog w;
+    //w.show();
+
+
+    //DepartmentInfoDialog w;
+
+    //TableInfoDialog w;
+
     w.show();
 
     return a.exec();

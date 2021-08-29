@@ -3,6 +3,7 @@
 
 #include <QComboBox>
 #include <QDialog>
+#include <QSqlTableModel>
 #include "common/staffinfo.h"
 #include "database/cmsdatabase.h"
 
@@ -16,7 +17,7 @@ class StaffInfoDialog : public QDialog
 
 public:
     // 如果为空，则为增加，不为空，则为修改
-    explicit StaffInfoDialog(CStaffInfo * pStaffInfo = nullptr, QWidget *parent = nullptr);
+    explicit StaffInfoDialog(QWidget *parent = nullptr);
     ~StaffInfoDialog();
 
 
@@ -34,6 +35,10 @@ private:
     void InitPlace();
     // 职务
     void InitJob();
+    // 列表
+    void InitTableView();
+    // 模型
+    void InitSqlModel();
 
 
     void InsertStaff();
@@ -44,8 +49,8 @@ private:
 private:
     Ui::StaffInfoDialog *ui;
     CMSDatabase * m_pCMSDatabase;
-    CStaffInfo * m_pStaffInfo;
 
+    QSqlTableModel * m_pSqlTableModel;
 };
 
 #endif // STAFFINFODIALOG_H
