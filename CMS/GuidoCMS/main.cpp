@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
     StaffInfoDialog w;
     //w.show();
 
-
     //DepartmentInfoDialog w;
 
     //TableInfoDialog w;

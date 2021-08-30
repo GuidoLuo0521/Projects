@@ -24,6 +24,50 @@ StaffInfoDialog::~StaffInfoDialog()
     delete ui;
 }
 
+void StaffInfoDialog::slotAdd()
+{
+    if(CheckParams() == false || CheckExist() == true)
+        return;
+
+    QString StaffName = m_pLineEditName->Text().toUtf8();
+    QString StaffPassword = m_pLineEditPassword->Text().toUtf8();
+    QString Sex = m_pComboBoxSex->CurrentText().toUtf8();
+    QString Birthday = m_pDateEditBirthday->Date().toUtf8();
+    QString Department = m_pComboBoxDepartment->CurrentText().toUtf8();
+    QString JobName = m_pComboBoxJob->CurrentText().toUtf8();
+    float Wage = m_pLineEditWage->Text().toFloat();
+    int WorkingAge = m_pLineEditWorkingAge->Text().toInt();;
+    QString Place = m_pComboBoxPlace->CurrentText().toUtf8();
+    QString Education = m_pComboBoxEducation->CurrentText().toUtf8();
+    QString Specialty = m_pComboBoxSpecialty->CurrentText().toUtf8();
+    QString Address = m_pLineEditAddress->Text().toUtf8();
+    QString EMail = m_pLineEditEmail->Text().toUtf8();
+    QString Phone = m_pLineEditPhone->Text().toUtf8();
+    QString EnterCampany = m_pDateEditEnterCompany->Date().toUtf8();
+    QString LeaveCampany = m_pDateEditLeaveCompany->Date().toUtf8();
+    QString Introduction = m_pPlainTextEditDesc->PlainText();
+    QString Param = "";
+
+    QString strSql = QString(" INSERT INTO staff "
+                              "VALUES (%1,'%2','%3','%4','%5',"
+                              "'%6','%7',%8,%9,'%10',"
+                              "'%11','%12','%13','%14','%15',"
+                              "'%16','%17','%18','%19');")
+             .arg(0).arg(StaffName).arg(StaffPassword).arg(Sex).arg(Birthday)
+             .arg(Department).arg(JobName).arg(Wage).arg(WorkingAge).arg(Place)
+             .arg(Education).arg(Specialty).arg(Address).arg(EMail).arg(Phone)
+             .arg(EnterCampany).arg(LeaveCampany).arg(Introduction).arg(Param);
+
+    qDebug() << strSql;
+    m_pCMSDatabase->WDB_Exec(strSql);
+    QMessageBox::information(this, "提示", "插入成功");
+
+    m_pSqlTableModel->select();
+    m_pTableView->scrollToBottom();
+
+    ClearAddControl();
+}
+
 void StaffInfoDialog::InitLayout()
 {
     setWindowTitle("人员信息");
@@ -44,7 +88,8 @@ void StaffInfoDialog::InitLayout()
 
     /// Name
     m_pLineEditName = new StanderLineEdit("名称：", "");
-    m_pLineEditPassword = new StanderLineEdit("密码：", "");
+    m_pLineEditPassword = new StanderLineEdit("密码：", "666666");
+    m_pLineEditPassword->LineEdit()->setEchoMode(QLineEdit::Password);
     m_pLineEditWorkingAge = new StanderLineEdit("工龄：", "");
     m_pLineEditWage = new StanderLineEdit("工资：", "");
     m_pLineEditPhone = new StanderLineEdit("电话：", "");
@@ -69,7 +114,7 @@ void StaffInfoDialog::InitLayout()
     m_pComboBoxEducation = new StanderComboBox( "学历：", GetEducationList());
     m_pComboBoxSpecialty = new StanderComboBox( "专业：", GetSpecialtyList());
 
-    nRow = 0, nColumn = 1;
+    nRow = 0, nColumn++;
     pGridLayoutAdd->addLayout(m_pComboBoxSex->Layout(), nRow++, nColumn);
     pGridLayoutAdd->addLayout(m_pComboBoxPlace->Layout(), nRow++, nColumn);
     pGridLayoutAdd->addLayout(m_pComboBoxDepartment->Layout(), nRow++, nColumn);
@@ -77,25 +122,25 @@ void StaffInfoDialog::InitLayout()
     pGridLayoutAdd->addLayout(m_pComboBoxEducation->Layout(), nRow++, nColumn);
     pGridLayoutAdd->addLayout(m_pComboBoxSpecialty->Layout(), nRow++, nColumn);
 
-    nRow = 0, nColumn = 2;
-    m_pDateEditBirthday = new StanderDateEdit("出生日期：", "2000-01-01");
+    nRow = 0, nColumn++;
+    m_pDateEditBirthday = new StanderDateEdit("出生日期：", "1965-01-01");
     m_pDateEditEnterCompany = new StanderDateEdit("入职时间：", QDate::currentDate().toString("yyyy-MM-dd"));
     m_pDateEditLeaveCompany = new StanderDateEdit("出生日期：", "9999-12-31");
     pGridLayoutAdd->addLayout(m_pDateEditBirthday->Layout(), nRow++, nColumn);
     pGridLayoutAdd->addLayout(m_pDateEditEnterCompany->Layout(), nRow++, nColumn);
     pGridLayoutAdd->addLayout(m_pDateEditLeaveCompany->Layout(), nRow++, nColumn);
 
-    nRow = 0, nColumn = 3;
-    pGridLayoutAdd->addItem( new QSpacerItem(40, 20), nRow++, nColumn);
+    //nRow = 0, nColumn++;
+    //pGridLayoutAdd->addItem( new QSpacerItem(40, 20), nRow++, nColumn);
 
-    nRow = 9, nColumn = 4;
+    nRow = 8;
     QHBoxLayout * pHBoxLayoutButton = new QHBoxLayout;
     QPushButton * pButtonAdd = new QPushButton("增加");
     QPushButton * pButtonCancle = new QPushButton("退出");
     pHBoxLayoutButton->addWidget(pButtonAdd);
     pHBoxLayoutButton->addWidget(pButtonCancle);
 
-    //connect(pButtonAdd, &QPushButton::clicked, this, &DepartmentInfoDialog::slotAdd);
+    connect(pButtonAdd, &QPushButton::clicked, this, &StaffInfoDialog::slotAdd);
     connect(pButtonCancle, &QPushButton::clicked, this, &QDialog::close);    
     pGridLayoutAdd->addLayout(pHBoxLayoutButton, nRow, nColumn);
 
@@ -193,45 +238,6 @@ void StaffInfoDialog::InitTableModel()
     m_pSqlTableModel->select();
 }
 
-void StaffInfoDialog::InsertStaff()
-{
-    QString StaffName = m_pLineEditName->Text().toUtf8();
-    QString StaffPassword = m_pLineEditPassword->Text().toUtf8();
-    QString Sex = m_pComboBoxSex->CurrentText().toUtf8();
-    QString Birthday = m_pDateEditBirthday->Date().toUtf8();
-    QString Department = m_pComboBoxDepartment->CurrentText().toUtf8();
-    QString JobName = m_pComboBoxJob->CurrentText().toUtf8();
-    float Wage = m_pLineEditWage->Text().toFloat();
-    int WorkingAge = m_pLineEditWorkingAge->Text().toInt();;
-    QString Place = m_pComboBoxPlace->CurrentText().toUtf8();
-    QString Education = m_pComboBoxEducation->CurrentText().toUtf8();
-    QString Specialty = m_pComboBoxSpecialty->CurrentText().toUtf8();
-    QString Address = m_pLineEditAddress->Text().toUtf8();
-    QString EMail = m_pLineEditEmail->Text().toUtf8();
-    QString Phone = m_pLineEditPhone->Text().toUtf8();
-    QString EnterCampany = m_pDateEditEnterCompany->Date().toUtf8();
-    QString LeaveCampany = m_pDateEditLeaveCompany->Date().toUtf8();
-    QString Introduction = m_pPlainTextEditDesc->PlainText();
-    QString Param = "";
-
-    QString strSql = QString(" INSERT INTO staff "
-                              "VALUES (%1,'%2','%3','%4','%5',"
-                              "'%6','%7',%8,%9,'%10',"
-                              "'%11','%12','%13','%14','%15',"
-                              "'%16','%17','%18','%19');")
-             .arg(0).arg(StaffName).arg(StaffPassword).arg(Sex).arg(Birthday)
-             .arg(Department).arg(JobName).arg(Wage).arg(WorkingAge).arg(Place)
-             .arg(Education).arg(Specialty).arg(Address).arg(EMail).arg(Phone)
-             .arg(EnterCampany).arg(LeaveCampany).arg(Introduction).arg(Param);
-
-    qDebug() << strSql;
-    m_pCMSDatabase->WDB_Exec(strSql);
-    QMessageBox::information(this, "提示", "插入成功");
-
-    m_pSqlTableModel->select();
-    m_pTableView->selectRow(m_pSqlTableModel->rowCount() - 1);
-}
-
 bool StaffInfoDialog::CheckParams()
 {
     if(m_pLineEditName->Text() == "")
@@ -256,5 +262,50 @@ bool StaffInfoDialog::CheckParams()
     }
 
     return true;
+}
+
+bool StaffInfoDialog::CheckExist()
+{
+    QString StaffName = m_pLineEditName->Text().toUtf8();
+    QString Sex = m_pComboBoxSex->CurrentText().toUtf8();
+    QString Birthday = m_pDateEditBirthday->Date().toUtf8();
+
+    QString strSql = QString(" SELECT StaffName, Sex, Birthday FROM staff "
+                             "WHERE StaffName = '%1' AND Sex = '%2' AND Birthday = '%3';")
+             .arg(StaffName).arg(Sex).arg(Birthday);
+
+    qDebug() << strSql;
+    QSqlQuery query = m_pCMSDatabase->WDB_Exec(strSql);
+
+    if(query.next())
+    {
+        if( QMessageBox::warning(
+                    this,
+                    "警告",
+                    QString("已经存在名为%1，生日为%3的%2，是否还要添加?").arg(StaffName).arg(Sex).arg(Birthday),
+                    QMessageBox::Yes,
+                    QMessageBox::No) == QMessageBox::Yes )
+            return false;
+        else
+            return true;
+    }
+    return false;
+}
+
+void StaffInfoDialog::ClearAddControl()
+{
+    m_pLineEditName->LineEdit()->clear();
+    m_pLineEditPassword->LineEdit()->clear();
+    m_pLineEditWorkingAge->LineEdit()->clear();
+    m_pLineEditWage->LineEdit()->clear();
+    m_pLineEditPhone->LineEdit()->clear();
+    m_pLineEditEmail->LineEdit()->clear();
+    m_pLineEditAddress->LineEdit()->clear();
+    m_pPlainTextEditDesc->PlainTextEdit()->clear();
+
+
+    m_pDateEditBirthday->DateEdit()->setDate(QDate::fromString("1965-01-01", Qt::ISODate));
+    m_pDateEditEnterCompany->DateEdit()->setDate(QDate::currentDate());
+    m_pDateEditLeaveCompany->DateEdit()->setDate(QDate::fromString("9999-12-31", Qt::ISODate));
 }
 

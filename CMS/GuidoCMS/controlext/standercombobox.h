@@ -21,7 +21,6 @@ public:
     QComboBox * ComboBox() const;
 
 private:
-    QLabel * m_pLabel;
     QComboBox * m_pCombobox;
 };
 

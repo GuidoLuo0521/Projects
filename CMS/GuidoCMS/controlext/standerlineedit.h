@@ -15,13 +15,10 @@ public:
         const QString& lineedit,
         Qt::Orientation orient = Qt::Horizontal);
 
-
     QString Text() const;
-    QLabel * Label() const;
     QLineEdit * LineEdit() const;
 
 private:
-    QLabel * m_pLabel;
     QLineEdit * m_pLineEdit;
 };
 

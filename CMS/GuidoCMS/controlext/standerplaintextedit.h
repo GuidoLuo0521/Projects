@@ -15,12 +15,9 @@ public:
         const Qt::Orientation orient = Qt::Horizontal);
 
     QString PlainText() const;
-
-    QLabel * Label() const;
     QPlainTextEdit * PlainTextEdit() const;
 
 private:
-    QLabel * m_pLabel;
     QPlainTextEdit * m_pPlainTextEdit;
 };
 

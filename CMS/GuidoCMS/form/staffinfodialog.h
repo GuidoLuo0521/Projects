@@ -22,6 +22,9 @@ public:
     explicit StaffInfoDialog(QWidget *parent = nullptr);
     ~StaffInfoDialog();
 
+private slots:
+    void slotAdd();
+
 protected:
     virtual void InitLayout() override;
     virtual void InitTableView() override;
@@ -31,11 +34,14 @@ protected:
 private:    
     void InsertStaff();
     bool CheckParams();
+    bool CheckExist();
 
 private:
     Ui::StaffInfoDialog *ui;
 
 private:
+    void ClearAddControl();
+
     StanderLineEdit * m_pLineEditName;
     StanderLineEdit * m_pLineEditPassword;
     StanderLineEdit * m_pLineEditWorkingAge;

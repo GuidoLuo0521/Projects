@@ -16,8 +16,8 @@ public:
 
     QString Date(QString format = "yyyy-MM-dd");
 
+    QDateEdit* DateEdit () const;
 private:
-    QLabel * m_pLabel;
     QDateEdit * m_pDateEdit;
 
 };
