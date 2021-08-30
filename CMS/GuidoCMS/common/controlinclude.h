@@ -1,4 +1,4 @@
-#ifndef CONTROLINCLUDE_H
+﻿#ifndef CONTROLINCLUDE_H
 #define CONTROLINCLUDE_H
 
 
@@ -18,5 +18,6 @@
 #include <QTableView>
 
 #include "delegate/controldelegate.h"
+#include "controlext/controlext.h"
 
 #endif // CONTROLINCLUDE_H

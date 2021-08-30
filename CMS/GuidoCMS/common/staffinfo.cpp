@@ -13,7 +13,7 @@ CStaffInfo::~CStaffInfo()
 
 void CStaffInfo::InitParams()
 {
-    m_strStaffID = "-000001";
+    m_strStaffID = "000001";
     m_strStaffName = "";
     m_strStaffPassword = "";
     m_strSex = "未知";

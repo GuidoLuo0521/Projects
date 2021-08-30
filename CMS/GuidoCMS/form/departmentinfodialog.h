@@ -1,4 +1,4 @@
-#ifndef DEPARTMENTINFODIALOG_H
+﻿#ifndef DEPARTMENTINFODIALOG_H
 #define DEPARTMENTINFODIALOG_H
 
 #include <QDialog>
@@ -26,17 +26,18 @@ protected slots:
 protected:
     virtual void InitLayout() override;
     virtual void InitTableModel() override;
+    virtual void InitTableView() override;
 
 private:
-    void InitTableView();
+
     void InitDelegate();
     bool CheckParams();
 
 private:
     Ui::DepartmentInfoDialog *ui;
 
-    QLineEdit * m_pLineEditName;
-    QComboBox * m_pComboBoxState;
+    StanderLineEdit * m_pLineEditName;
+    StanderComboBox * m_pComboBoxState;
     QPlainTextEdit * m_pPlainTextEditDesc;
 };
 

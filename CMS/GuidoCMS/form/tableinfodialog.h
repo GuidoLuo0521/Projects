@@ -1,4 +1,4 @@
-#ifndef TABLEINFODIALOG_H
+﻿#ifndef TABLEINFODIALOG_H
 #define TABLEINFODIALOG_H
 
 #include <QDialog>
@@ -8,6 +8,7 @@
 #include <QSqlTableModel>
 
 #include "database/cmsdatabase.h"
+#include "common/controlinclude.h"
 
 namespace Ui {
 class TableInfoDialog;
@@ -22,23 +23,35 @@ public:
     ~TableInfoDialog();
 
 protected:
+
     void InitDepartment(QComboBox & combobox);
     void InitSpecialty(QComboBox & combobox);
     void InitEducation(QComboBox & combobox);
     void InitPlace(QComboBox & combobox);
     void InitJob(QComboBox & combobox);
 
-    QTableView * m_pTableView;
-    QSqlTableModel * m_pSqlTableModel;
-    CMSDatabase * m_pCMSDatabase;
 
-protected:
+    static QStringList GetDepartmentList();
+    static QStringList GetSpecialtyList();
+    static QStringList GetEducationList();
+    static QStringList GetPlaceList();
+    static QStringList GetJobList();
+    static QStringList GetStateList();
+    static QStringList GetSexList();
+
+
+
     virtual void InitLayout();
     virtual void InitTableView();
     virtual void InitTableModel();
 
 private:
     Ui::TableInfoDialog *ui;
+
+protected:
+    QTableView * m_pTableView;
+    QSqlTableModel * m_pSqlTableModel;
+    CMSDatabase * m_pCMSDatabase;
 };
 
 #endif // TABLEINFODIALOG_H

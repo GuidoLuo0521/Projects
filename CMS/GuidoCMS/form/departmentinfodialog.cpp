@@ -1,4 +1,4 @@
-#include "departmentinfodialog.h"
+﻿#include "departmentinfodialog.h"
 #include "ui_departmentinfodialog.h"
 
 
@@ -23,8 +23,8 @@ void DepartmentInfoDialog::slotAdd()
     if(CheckParams() == false)
         return;
 
-    QString strName = m_pLineEditName->text();
-    QString strState = m_pComboBoxState->currentText();
+    QString strName = m_pLineEditName->LineEdit()->text();
+    QString strState = m_pComboBoxState->ComboBox()->currentText();
     QString strDesc = m_pPlainTextEditDesc->toPlainText();
 
     QString strQuery = QString("INSERT INTO department "
@@ -36,7 +36,6 @@ void DepartmentInfoDialog::slotAdd()
     m_pSqlTableModel->select();
     m_pTableView->scrollToBottom();
 }
-
 
 void DepartmentInfoDialog::InitTableModel()
 {
@@ -65,7 +64,7 @@ void DepartmentInfoDialog::InitTableModel()
 
 bool DepartmentInfoDialog::CheckParams()
 {
-    QString strName = m_pLineEditName->text();
+    QString strName = m_pLineEditName->LineEdit()->text();
     if(strName == "")
     {
         QMessageBox::warning(this, "警告", "名称不能为空。");
@@ -78,6 +77,8 @@ bool DepartmentInfoDialog::CheckParams()
     if (query.next())
     {
         QMessageBox::warning(this, "警告", QString("%1已经存在").arg(strName));
+        m_pSqlTableModel->select();
+        m_pTableView->scrollToBottom();
         return false;
     }
 
@@ -112,23 +113,14 @@ void DepartmentInfoDialog::InitLayout()
     QVBoxLayout * pVAddMainLayout = new QVBoxLayout;
 
     QHBoxLayout * pHBoxLayout0 = new QHBoxLayout;
-    QHBoxLayout * pHBoxLayout1 = new QHBoxLayout;
-    QLabel * pLabelDptName = new QLabel("名称：");
-    m_pLineEditName = new QLineEdit;
-    m_pLineEditName->setPlaceholderText("名称");
-    pHBoxLayout1->addWidget(pLabelDptName);
-    pHBoxLayout1->addWidget(m_pLineEditName);
+    m_pLineEditName = new StanderLineEdit("名称：", "", Qt::Horizontal);
+    m_pLineEditName->LineEdit()->setPlaceholderText("名称");
 
-    QHBoxLayout * pHBoxLayout2 = new QHBoxLayout;
-    QLabel * pLabelCbState = new QLabel("状态：");
-    m_pComboBoxState = new QComboBox;
-    m_pComboBoxState->insertItem(0, "正常");
-    m_pComboBoxState->insertItem(1, "撤销");
-    pHBoxLayout2->addWidget(pLabelCbState);
-    pHBoxLayout2->addWidget(m_pComboBoxState);
+    QStringList strList = {"正常", "撤销"};
+    m_pComboBoxState = new StanderComboBox("状态：", strList, Qt::Horizontal);
 
-    pHBoxLayout0->addLayout(pHBoxLayout1);
-    pHBoxLayout0->addLayout(pHBoxLayout2);
+    pHBoxLayout0->addLayout(m_pLineEditName->Layout());
+    pHBoxLayout0->addLayout(m_pComboBoxState->Layout());
     pHBoxLayout0->addStretch();
 
     QVBoxLayout * pVBoxLayout = new QVBoxLayout;
@@ -146,7 +138,6 @@ void DepartmentInfoDialog::InitLayout()
 
     connect(pButtonAdd, &QPushButton::clicked, this, &DepartmentInfoDialog::slotAdd);
     connect(pButtonCancle, &QPushButton::clicked, this, &QDialog::close);
-
 
     pVAddMainLayout->addLayout(pHBoxLayout0);
     pVAddMainLayout->addLayout(pVBoxLayout);

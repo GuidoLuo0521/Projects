@@ -1,4 +1,4 @@
-#include "tableinfodialog.h"
+﻿#include "tableinfodialog.h"
 #include "ui_tableinfodialog.h"
 
 
@@ -7,8 +7,8 @@
 TableInfoDialog::TableInfoDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TableInfoDialog),
-    m_pSqlTableModel(nullptr),
     m_pTableView(nullptr),
+    m_pSqlTableModel(nullptr),
     m_pCMSDatabase(nullptr)
 {
     ui->setupUi(this);
@@ -136,6 +136,88 @@ void TableInfoDialog::InitJob(QComboBox & combobox)
             nIndex++;
         }
     }
+}
+
+QStringList TableInfoDialog::GetDepartmentList()
+{
+    QString strQuery = "SELECT DepartmentName FROM department";
+    QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
+
+    QStringList strList;
+    while (query.next())
+    {
+        strList.push_back( query.value("DepartmentName").toString());
+    }
+
+    return  strList;
+}
+
+QStringList TableInfoDialog::GetSpecialtyList()
+{
+    QString strQuery = "SELECT Name FROM Specialty";
+    QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
+
+    QStringList strList;
+    while (query.next())
+    {
+        strList.push_back( query.value("Name").toString());
+    }
+
+    return  strList;
+}
+
+QStringList TableInfoDialog::GetEducationList()
+{
+    QString strQuery = "SELECT Name FROM education";
+    QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
+
+    QStringList strList;
+    while (query.next())
+    {
+        strList.push_back( query.value("Name").toString());
+    }
+
+    return  strList;
+}
+
+QStringList TableInfoDialog::GetPlaceList()
+{
+    QString strQuery = "SELECT Province, City FROM place";
+    QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
+
+    QStringList strList;
+    while (query.next())
+    {
+        QString province = query.value("Province").toString();
+        QString city = query.value("City").toString();
+        strList.push_back( province + city);
+    }
+
+    return  strList;
+}
+
+QStringList TableInfoDialog::GetJobList()
+{
+    QString strQuery = "SELECT JobName FROM job";
+    QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
+
+    QStringList strList;
+    while (query.next())
+    {
+        strList.push_back( query.value("JobName").toString());
+    }
+
+    return  strList;
+}
+
+QStringList TableInfoDialog::GetStateList()
+{
+    return {"正常", "撤销"};
+}
+
+QStringList TableInfoDialog::GetSexList()
+{
+    return {"男性", "女性", "未知"};
 }
 
 void TableInfoDialog::InitLayout()

@@ -1,36 +1,22 @@
-#include "staffinfodialog.h"
+﻿#include "staffinfodialog.h"
 #include "ui_staffinfodialog.h"
 
 #include "database/cmsdatebasedef.h"
 #include "delegate/controldelegate.h"
+#include "controlext/controlext.h"
 
 #include <QString>
 
-
 StaffInfoDialog::StaffInfoDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::StaffInfoDialog),
-    m_pCMSDatabase(nullptr)
+    TableInfoDialog(parent),
+    ui(new Ui::StaffInfoDialog)
 {
     ui->setupUi(this);
 
-    m_pCMSDatabase = CMSDatabaseSingleton::GetInstance();
-
-    setWindowTitle("人员管理");
-    ui->btnAdd->setText("增加");
-    ui->lePassword->setText("666666");
-    ui->deLeaveDate->setDate(QDate::fromString("9999-12-31", Qt::ISODate));
-
-    InitSqlModel();
+    InitLayout();
+    InitTableModel();
     InitTableView();
 
-    InitDepartment();
-    InitSpecialty();
-    InitEducation();
-    InitPlace();
-    InitJob();
-
-    connect( ui->btnCancle, &QPushButton::clicked, this, &StaffInfoDialog::close);
 }
 
 StaffInfoDialog::~StaffInfoDialog()
@@ -38,117 +24,99 @@ StaffInfoDialog::~StaffInfoDialog()
     delete ui;
 }
 
-void StaffInfoDialog::InitDepartment()
+void StaffInfoDialog::InitLayout()
 {
-    if(m_pCMSDatabase && m_pCMSDatabase->WDB_IsOpen())
-    {
-        ui->cbDepartment->clear();
+    setWindowTitle("人员信息");
 
-        QString strQuery = "SELECT DepartmentName FROM department";
-        QSqlQuery query = m_pCMSDatabase->WDB_Exec(strQuery);
+    ////////////////////////////////////////////////////////////
+    // 已经存在的部门
+    QGroupBox * pGroupBoxExist = new QGroupBox("已有人员");
+    QHBoxLayout * pLayoutTableView = new QHBoxLayout;
+    m_pTableView = new QTableView;
+    m_pTableView->verticalHeader()->hide();
+    pLayoutTableView->addWidget(m_pTableView);
+    pGroupBoxExist->setLayout(pLayoutTableView);
 
-        int nIndex = 0;
-        QString name = "";
-        while (query.next())
-        {
-            name = query.value("DepartmentName").toString();
-            ui->cbDepartment->insertItem(nIndex, name);
+    ////////////////////////////////////////////////////////////
+    // 添加人员
+    QGroupBox * pGroupBoxAdd = new QGroupBox("添加人员");
+    QGridLayout * pGridLayoutAdd = new QGridLayout;
 
-            nIndex++;
-        }
-    }
+    /// Name
+    m_pLineEditName = new StanderLineEdit("名称：", "");
+    m_pLineEditPassword = new StanderLineEdit("密码：", "");
+    m_pLineEditWorkingAge = new StanderLineEdit("工龄：", "");
+    m_pLineEditWage = new StanderLineEdit("工资：", "");
+    m_pLineEditPhone = new StanderLineEdit("电话：", "");
+    m_pLineEditEmail = new StanderLineEdit("邮箱：", "");
+    m_pLineEditAddress = new StanderLineEdit("住址：", "");
+    m_pPlainTextEditDesc = new StanderPlainTextEdit("备注：", "", Qt::Vertical);
+
+    int nRow = 0, nColumn = 0;
+    pGridLayoutAdd->addLayout(m_pLineEditName->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pLineEditPassword->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pLineEditWorkingAge->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pLineEditWage->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pLineEditPhone->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pLineEditEmail->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pLineEditAddress->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pPlainTextEditDesc->Layout(), nRow++, nColumn, 1, 5);
+
+    m_pComboBoxSex = new StanderComboBox( "性别：", GetSexList());
+    m_pComboBoxPlace = new StanderComboBox( "籍贯：", GetPlaceList());
+    m_pComboBoxDepartment = new StanderComboBox( "部门：", GetDepartmentList());
+    m_pComboBoxJob = new StanderComboBox( "职务：", GetJobList());
+    m_pComboBoxEducation = new StanderComboBox( "学历：", GetEducationList());
+    m_pComboBoxSpecialty = new StanderComboBox( "专业：", GetSpecialtyList());
+
+    nRow = 0, nColumn = 1;
+    pGridLayoutAdd->addLayout(m_pComboBoxSex->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pComboBoxPlace->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pComboBoxDepartment->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pComboBoxJob->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pComboBoxEducation->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pComboBoxSpecialty->Layout(), nRow++, nColumn);
+
+    nRow = 0, nColumn = 2;
+    m_pDateEditBirthday = new StanderDateEdit("出生日期：", "2000-01-01");
+    m_pDateEditEnterCompany = new StanderDateEdit("入职时间：", QDate::currentDate().toString("yyyy-MM-dd"));
+    m_pDateEditLeaveCompany = new StanderDateEdit("出生日期：", "9999-12-31");
+    pGridLayoutAdd->addLayout(m_pDateEditBirthday->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pDateEditEnterCompany->Layout(), nRow++, nColumn);
+    pGridLayoutAdd->addLayout(m_pDateEditLeaveCompany->Layout(), nRow++, nColumn);
+
+    nRow = 0, nColumn = 3;
+    pGridLayoutAdd->addItem( new QSpacerItem(40, 20), nRow++, nColumn);
+
+    nRow = 9, nColumn = 4;
+    QHBoxLayout * pHBoxLayoutButton = new QHBoxLayout;
+    QPushButton * pButtonAdd = new QPushButton("增加");
+    QPushButton * pButtonCancle = new QPushButton("退出");
+    pHBoxLayoutButton->addWidget(pButtonAdd);
+    pHBoxLayoutButton->addWidget(pButtonCancle);
+
+    //connect(pButtonAdd, &QPushButton::clicked, this, &DepartmentInfoDialog::slotAdd);
+    connect(pButtonCancle, &QPushButton::clicked, this, &QDialog::close);    
+    pGridLayoutAdd->addLayout(pHBoxLayoutButton, nRow, nColumn);
+
+    pGroupBoxAdd->setLayout(pGridLayoutAdd);
+
+    QVBoxLayout * pMainLayout = new QVBoxLayout;
+    pMainLayout->addWidget(pGroupBoxExist);
+    pMainLayout->addWidget(pGroupBoxAdd);
+
+    this->setLayout(pMainLayout);
+
 }
 
-void StaffInfoDialog::InitSpecialty()
-{
-    if(m_pCMSDatabase && m_pCMSDatabase->WDB_IsOpen())
-    {
-        ui->cbSpecialty->clear();
-
-        QString strQuery = "SELECT Name FROM Specialty";
-        QSqlQuery query = m_pCMSDatabase->WDB_Exec(strQuery);
-
-        int nIndex = 0;
-        QString name = "";
-        while (query.next())
-        {
-            name = query.value("Name").toString();
-            ui->cbSpecialty->insertItem(nIndex, name);
-            nIndex++;
-        }
-    }
-}
-
-void StaffInfoDialog::InitEducation()
-{
-    if(m_pCMSDatabase && m_pCMSDatabase->WDB_IsOpen())
-    {
-        ui->cbEducation->clear();
-
-        QString strQuery = "SELECT Name FROM education";
-        QSqlQuery query = m_pCMSDatabase->WDB_Exec(strQuery);
-
-        int nIndex = 0;
-        QString name = "";
-        while (query.next())
-        {
-            name = query.value("Name").toString();
-            ui->cbEducation->insertItem(nIndex, name);
-            nIndex++;
-        }
-    }
-}
-
-void StaffInfoDialog::InitPlace()
-{
-    if(m_pCMSDatabase && m_pCMSDatabase->WDB_IsOpen())
-    {
-        ui->cbPlace->clear();
-
-        QString strQuery = "SELECT Province, City FROM place";
-        QSqlQuery query = m_pCMSDatabase->WDB_Exec(strQuery);
-
-        int nIndex = 0;
-        QString place, Province = "",  City = "";
-        while (query.next())
-        {
-            Province = query.value("Province").toString();
-            City = query.value("City").toString();
-
-            place = Province+City;
-            ui->cbPlace->insertItem(nIndex, place);
-            nIndex++;
-        }
-    }
-}
-
-void StaffInfoDialog::InitJob()
-{
-    if(m_pCMSDatabase && m_pCMSDatabase->WDB_IsOpen())
-    {
-        ui->cbJob->clear();
-
-        QString strQuery = "SELECT JobName FROM job";
-        QSqlQuery query = m_pCMSDatabase->WDB_Exec(strQuery);
-
-        int nIndex = 0;
-        QString name = "";
-        while (query.next())
-        {
-            name = query.value("JobName").toString();
-            ui->cbJob->insertItem(nIndex, name);
-            nIndex++;
-        }
-    }
-}
 
 void StaffInfoDialog::InitTableView()
 {
-    ui->tableView->setModel(m_pSqlTableModel);
-    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    m_pTableView->setModel(m_pSqlTableModel);
+    m_pTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
-void StaffInfoDialog::InitSqlModel()
+void StaffInfoDialog::InitTableModel()
 {
     m_pSqlTableModel = new QSqlTableModel(this, CMSDatabaseSingleton::GetInstance()->m_WebDatabase);
     m_pSqlTableModel->setTable(g_listCMSDB_Table_Filed_Staff[Staff_StaffTableName]);
@@ -176,36 +144,36 @@ void StaffInfoDialog::InitSqlModel()
 
     // 设置0列只读
     ReadOnlyDelegate * readOnlyDelegate = new ReadOnlyDelegate(this);
-    ui->tableView->setItemDelegateForColumn(Staff_StaffID, readOnlyDelegate);
+    m_pTableView->setItemDelegateForColumn(Staff_StaffID, readOnlyDelegate);
 
     ComboboxDelegate * pComboxDelegateSex = new ComboboxDelegate(this);
     pComboxDelegateSex->PushItem("男性");
     pComboxDelegateSex->PushItem("女性");
     pComboxDelegateSex->PushItem("未知");
-    ui->tableView->setItemDelegateForColumn(Staff_Sex, pComboxDelegateSex);
+    m_pTableView->setItemDelegateForColumn(Staff_Sex, pComboxDelegateSex);
 
     DateDelegate * pBirthdayDelegate = new DateDelegate(this);
-    ui->tableView->setItemDelegateForColumn(Staff_Birthday, pBirthdayDelegate);
+    m_pTableView->setItemDelegateForColumn(Staff_Birthday, pBirthdayDelegate);
 
     ComboboxDelegate * pComboxDelegateDepartment = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListDepartment.size(); ++i)
         pComboxDelegateDepartment->PushItem(g_strListDepartment[i]);
-    ui->tableView->setItemDelegateForColumn(Staff_Department, pComboxDelegateDepartment);
+    m_pTableView->setItemDelegateForColumn(Staff_Department, pComboxDelegateDepartment);
 
     ComboboxDelegate * pComboxDelegatePlace = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListPlace.size(); ++i)
         pComboxDelegatePlace->PushItem(g_strListPlace[i]);
-    ui->tableView->setItemDelegateForColumn(Staff_Place, pComboxDelegatePlace);
+    m_pTableView->setItemDelegateForColumn(Staff_Place, pComboxDelegatePlace);
 
     ComboboxDelegate * pComboxDelegateEducation = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListEducation.size(); ++i)
         pComboxDelegateEducation->PushItem(g_strListEducation[i]);
-    ui->tableView->setItemDelegateForColumn(Staff_Education, pComboxDelegateEducation);
+    m_pTableView->setItemDelegateForColumn(Staff_Education, pComboxDelegateEducation);
 
     ComboboxDelegate * pComboxDelegateSpecialty = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListSpecialty.size(); ++i)
         pComboxDelegateSpecialty->PushItem(g_strListSpecialty[i]);
-    ui->tableView->setItemDelegateForColumn(Staff_Specialty, pComboxDelegateSpecialty);
+    m_pTableView->setItemDelegateForColumn(Staff_Specialty, pComboxDelegateSpecialty);
 
     ComboboxDelegate * pComboxDelegateJobName = new ComboboxDelegate(this);
     for(int i = 0; i < g_strListDepartment.size(); ++i)
@@ -214,36 +182,36 @@ void StaffInfoDialog::InitSqlModel()
         str.remove("部");
         pComboxDelegateJobName->PushItem(str);
     }
-    ui->tableView->setItemDelegateForColumn(Staff_JobName, pComboxDelegateJobName);
+    m_pTableView->setItemDelegateForColumn(Staff_JobName, pComboxDelegateJobName);
 
     DateDelegate * pDelegateEnter = new DateDelegate(this);
-    ui->tableView->setItemDelegateForColumn(Staff_EnterCompany, pDelegateEnter);
+    m_pTableView->setItemDelegateForColumn(Staff_EnterCompany, pDelegateEnter);
 
     DateDelegate * pDelegateLeave = new DateDelegate(this);
-    ui->tableView->setItemDelegateForColumn(Staff_LeaveCompany, pDelegateLeave);
+    m_pTableView->setItemDelegateForColumn(Staff_LeaveCompany, pDelegateLeave);
 
     m_pSqlTableModel->select();
 }
 
 void StaffInfoDialog::InsertStaff()
 {
-    QString StaffName = ui->leName->text().toUtf8();
-    QString StaffPassword = ui->lePassword->text().toUtf8();
-    QString Sex = ui->cbSex->currentText().toUtf8();
-    QString Birthday = ui->dateTimeEditBirthday->date().toString("yyyy-MM-dd").toUtf8();
-    QString Department = ui->cbDepartment->currentText().toUtf8();
-    QString JobName = ui->cbJob->currentText().toUtf8();
-    float Wage = ui->leWage->text().toFloat();
-    int WorkingAge = ui->leWorkingAge->text().toInt();;
-    QString Place = ui->cbPlace->currentText().toUtf8();
-    QString Education = ui->cbEducation->currentText().toUtf8();
-    QString Specialty = ui->cbSpecialty->currentText().toUtf8();
-    QString Address = ui->leAddress->text().toUtf8();
-    QString EMail = ui->leEmail->text().toUtf8();
-    QString Phone = ui->lePhone->text().toUtf8();
-    QString EnterCampany = ui->deEnterDate->date().toString("yyyy-MM-dd").toUtf8();
-    QString LeaveCampany = ui->deLeaveDate->date().toString("yyyy-MM-dd").toUtf8();
-    QString Introduction = ui->teIntroduce->toPlainText();
+    QString StaffName = m_pLineEditName->Text().toUtf8();
+    QString StaffPassword = m_pLineEditPassword->Text().toUtf8();
+    QString Sex = m_pComboBoxSex->CurrentText().toUtf8();
+    QString Birthday = m_pDateEditBirthday->Date().toUtf8();
+    QString Department = m_pComboBoxDepartment->CurrentText().toUtf8();
+    QString JobName = m_pComboBoxJob->CurrentText().toUtf8();
+    float Wage = m_pLineEditWage->Text().toFloat();
+    int WorkingAge = m_pLineEditWorkingAge->Text().toInt();;
+    QString Place = m_pComboBoxPlace->CurrentText().toUtf8();
+    QString Education = m_pComboBoxEducation->CurrentText().toUtf8();
+    QString Specialty = m_pComboBoxSpecialty->CurrentText().toUtf8();
+    QString Address = m_pLineEditAddress->Text().toUtf8();
+    QString EMail = m_pLineEditEmail->Text().toUtf8();
+    QString Phone = m_pLineEditPhone->Text().toUtf8();
+    QString EnterCampany = m_pDateEditEnterCompany->Date().toUtf8();
+    QString LeaveCampany = m_pDateEditLeaveCompany->Date().toUtf8();
+    QString Introduction = m_pPlainTextEditDesc->PlainText();
     QString Param = "";
 
     QString strSql = QString(" INSERT INTO staff "
@@ -261,27 +229,27 @@ void StaffInfoDialog::InsertStaff()
     QMessageBox::information(this, "提示", "插入成功");
 
     m_pSqlTableModel->select();
-    ui->tableView->selectRow(m_pSqlTableModel->rowCount() - 1);
+    m_pTableView->selectRow(m_pSqlTableModel->rowCount() - 1);
 }
 
 bool StaffInfoDialog::CheckParams()
 {
-    if(ui->leName->text() == "")
+    if(m_pLineEditName->Text() == "")
     {
         QMessageBox::warning(this, "提示", "姓名不能为空");
         return false;
     }
-    if(ui->lePassword->text() == "")
+    if(m_pLineEditPassword->Text() == "")
     {
         QMessageBox::warning(this, "提示", "密码不能为空");
         return false;
     }
-    if(ui->leWorkingAge->text() == "")
+    if(m_pLineEditWorkingAge->Text() == "")
     {
         QMessageBox::warning(this, "提示", "工龄不能为空");
         return false;
     }
-    if(ui->leWage->text() == "")
+    if(m_pLineEditWage->Text() == "")
     {
         QMessageBox::warning(this, "提示", "工资不能为空");
         return false;
@@ -290,11 +258,3 @@ bool StaffInfoDialog::CheckParams()
     return true;
 }
 
-
-void StaffInfoDialog::on_btnAdd_clicked()
-{
-    if(CheckParams())
-    {
-        InsertStaff();
-    }
-}

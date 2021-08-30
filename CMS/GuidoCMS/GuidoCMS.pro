@@ -27,41 +27,52 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
-        Form/staffinfodialog.cpp \
         common/commonapi.cpp \
         common/ntpclient.cpp \
         common/singleton.cpp \
         common/staffinfo.cpp \
+        controlext/standerdateedit.cpp \
+        controlext/standerinputstructer.cpp \
+        controlext/standerplaintextedit.cpp \
         database/cmsdatabase.cpp \
         database/cmsdatebasedef.cpp \
         delegate/datedelegate.cpp \
         delegate/readonlydelegate.cpp \
         delegate/comboboxdelegate.cpp \
         form/departmentinfodialog.cpp \
+        form/staffinfodialog.cpp \
         form/logindialog.cpp \
         form/mainwindow.cpp \
         form/systemmanagerdialog.cpp\
         form/tableinfodialog.cpp \
+        controlext/standerlineedit.cpp \
+        controlext/standercombobox.cpp \
         main.cpp
 
 HEADERS += \
-        Form/staffinfodialog.h \
         common/commonapi.h \
         common/controlinclude.h \
         common/staffinfo.h \
         common/ntpclient.h \
         common/singleton.h \
+        controlext/controlext.h \
+        controlext/standerdateedit.h \
+        controlext/standerinputstructer.h \
+        controlext/standerplaintextedit.h \
         database/cmsdatabase.h \
         database/cmsdatebasedef.h \
         delegate/readonlydelegate.h \
         delegate/comboboxdelegate.h \
         delegate/controldelegate.h \
         delegate/datedelegate.h \
+        form/staffinfodialog.h \
         form/departmentinfodialog.h \
         form/logindialog.h \
         form/mainwindow.h \
         form/systemmanagerdialog.h \
-        form/tableinfodialog.h
+        form/tableinfodialog.h  \
+        controlext/standerlineedit.h \
+        controlext/standercombobox.h
 
 FORMS += \
         form/departmentinfodialog.ui \
