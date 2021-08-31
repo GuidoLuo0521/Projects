@@ -10,6 +10,8 @@
 #include "database/cmsdatabase.h"
 #include "common/controlinclude.h"
 
+#include <QSplitter>
+
 namespace Ui {
 class TableInfoDialog;
 }
@@ -22,15 +24,6 @@ public:
     explicit TableInfoDialog(QWidget *parent = nullptr);
     ~TableInfoDialog();
 
-protected:
-
-    void InitDepartment(QComboBox & combobox);
-    void InitSpecialty(QComboBox & combobox);
-    void InitEducation(QComboBox & combobox);
-    void InitPlace(QComboBox & combobox);
-    void InitJob(QComboBox & combobox);
-
-
     static QStringList GetDepartmentList();
     static QStringList GetSpecialtyList();
     static QStringList GetEducationList();
@@ -39,7 +32,12 @@ protected:
     static QStringList GetStateList();
     static QStringList GetSexList();
 
-
+protected:
+    void InitDepartment(QComboBox & combobox);
+    void InitSpecialty(QComboBox & combobox);
+    void InitEducation(QComboBox & combobox);
+    void InitPlace(QComboBox & combobox);
+    void InitJob(QComboBox & combobox);
 
     virtual void InitLayout();
     virtual void InitTableView();

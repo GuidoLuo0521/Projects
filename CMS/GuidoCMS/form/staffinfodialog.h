@@ -30,7 +30,6 @@ protected:
     virtual void InitTableView() override;
     virtual void InitTableModel() override;
 
-
 private:    
     void InsertStaff();
     bool CheckParams();

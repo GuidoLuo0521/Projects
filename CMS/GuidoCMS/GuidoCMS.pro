@@ -34,12 +34,14 @@ SOURCES += \
         controlext/standerdateedit.cpp \
         controlext/standerinputstructer.cpp \
         controlext/standerplaintextedit.cpp \
+        controlext/standerrangeedit.cpp \
         database/cmsdatabase.cpp \
         database/cmsdatebasedef.cpp \
         delegate/datedelegate.cpp \
         delegate/readonlydelegate.cpp \
         delegate/comboboxdelegate.cpp \
         form/departmentinfodialog.cpp \
+        form/searchdialog.cpp \
         form/staffinfodialog.cpp \
         form/logindialog.cpp \
         form/mainwindow.cpp \
@@ -59,12 +61,14 @@ HEADERS += \
         controlext/standerdateedit.h \
         controlext/standerinputstructer.h \
         controlext/standerplaintextedit.h \
+        controlext/standerrangeedit.h \
         database/cmsdatabase.h \
         database/cmsdatebasedef.h \
         delegate/readonlydelegate.h \
         delegate/comboboxdelegate.h \
         delegate/controldelegate.h \
         delegate/datedelegate.h \
+        form/searchdialog.h \
         form/staffinfodialog.h \
         form/departmentinfodialog.h \
         form/logindialog.h \
@@ -78,6 +82,7 @@ FORMS += \
         form/departmentinfodialog.ui \
         form/logindialog.ui \
         form/mainwindow.ui \
+        form/searchdialog.ui \
         form/staffinfodialog.ui \
         form/systemmanagerdialog.ui \
         form/tableinfodialog.ui

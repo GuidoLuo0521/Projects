@@ -1,6 +1,8 @@
 ﻿#ifndef SYSTEMMANAGERDIALOG_H
 #define SYSTEMMANAGERDIALOG_H
 
+#include "searchdialog.h"
+
 #include <QMainWindow>
 #include <QSqlTableModel>
 #include <QSqlQueryModel>
@@ -44,8 +46,9 @@ signals:
 
 private slots:
     void slotTableChange();
-    void slotUpdateTime();
+    void slotUpdateTime();  
 
+    void slotSetJobFilter(QString str);
 
 private:
     void InitLayout();
@@ -63,7 +66,7 @@ private:
     void InitSqlTableModelStaff();
     void InitSqlTableModelDepartment();
 
-
+    QSqlTableModel * GetCurrentSqlTableModel();
     void SetTableModelTableJob();
     void SetTableModelTableRole();
     void SetTableModelTableStaff();
@@ -84,15 +87,17 @@ private:
     QSqlTableModel * m_pSqlTableModelRole;
     QSqlTableModel * m_pSqlTableModelJob;
 
-    //QSqlQueryModel * m_pSqlQueryModel;
     QTableView * m_pTableViewStaff;
     QTableView * m_pTableViewDepartment;
     QTableView * m_pTableViewRole;
     QTableView * m_pTableViewJob;
 
     QStackedWidget * m_pStackedWidget;
+    QDockWidget * m_pSearchDockWidget;
+    SearchDialog * m_pSearchDialog;
 
     QLabel * m_pStatuTimeLabel;
+    QLabel * m_pStatuAccountLabel;
 
 };
 

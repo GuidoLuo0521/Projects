@@ -16,26 +16,25 @@ int main(int argc, char *argv[])
 
     InitGlobalParams();
 
-    //LoginDialog logindlg;
-    //SystemManagerDialog sysMgrDlg;
-    //
-    ////点击登录对话框的登录按钮; 进入主界面
-    //QObject::connect(&logindlg, SIGNAL(signalShowMainWindow()), &sysMgrDlg, SLOT(slotShowWindow()));
-    ////点击主界面的注销; 返回登录对话框
-    //QObject::connect(&sysMgrDlg, SIGNAL(signalExitCurrentAccount()), &logindlg, SLOT(slotShowMainWindow()));
-    //
-    //logindlg.show();
+    LoginDialog logindlg;
+    SystemManagerDialog sysMgrDlg;
+
+    //点击登录对话框的登录按钮; 进入主界面
+    QObject::connect(&logindlg, SIGNAL(signalShowMainWindow()), &sysMgrDlg, SLOT(slotShowWindow()));
+    //点击主界面的注销; 返回登录对话框
+    QObject::connect(&sysMgrDlg, SIGNAL(signalExitCurrentAccount()), &logindlg, SLOT(slotShowMainWindow()));
+
+    logindlg.show();
 
 
     //StaffInfoSingleton::SetInstance(GetStaffInfo("000001"));
-    StaffInfoDialog w;
-    //w.show();
+    //StaffInfoDialog w;
 
     //DepartmentInfoDialog w;
 
     //TableInfoDialog w;
 
-    w.show();
+    //w.show();
 
     return a.exec();
 

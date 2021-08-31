@@ -1,8 +1,12 @@
-﻿#include "systemmanagerdialog.h"
+﻿#include "searchdialog.h"
+#include "systemmanagerdialog.h"
 #include "ui_systemmanagerdialog.h"
 #include "common/staffinfo.h"
 #include "database/cmsdatabase.h"
 #include "database/cmsdatebasedef.h"
+
+#include "form/staffinfodialog.h"
+#include "form/departmentinfodialog.h"
 
 
 #include <QToolBar>
@@ -16,6 +20,7 @@
 #include <QStandardItemModel>
 #include <QStackedWidget>
 #include <QTimer>
+#include <QDockWidget>
 
 #include "delegate/controldelegate.h"
 
@@ -60,17 +65,38 @@ void SystemManagerDialog::slotUpdateTime()
     m_pStatuTimeLabel->setText(timestr); //设置label的文本内容为时间
 }
 
+void SystemManagerDialog::slotSetJobFilter(QString str)
+{
+    int nMode = m_pSearchDialog->SearchMode();
+    if(nMode == STT_JOB)
+    {
+        QString strQuery = QString( "JobName = '%1'").arg(str);
+        m_pSqlTableModelJob->setFilter(strQuery);
+        m_pSqlTableModelJob->select();
+    }
+    else if (nMode == STT_STAFF)
+    {
+        QString strQuery = QString( "JobName = '%1'").arg(str);
+        m_pSqlTableModelStaff->setFilter(strQuery);
+        m_pSqlTableModelStaff->select();
+    }
+
+}
+
 void SystemManagerDialog::slotExitLogin()
 {
-    emit signalExitCurrentAccount();
-    close();
+    emit signalExitCurrentAccount(); close();
 }
 
 void SystemManagerDialog::slotShowWindow()
 {
     CStaffInfo * pStaffInfo = StaffInfoSingleton::GetInstance();
-    setWindowTitle("系统管理 " + pStaffInfo->GetDepartment() + " " + pStaffInfo->GetStaffID() + " " + pStaffInfo->GetStaffName());
+    QString str = QString("当前登录人员：%1 %2 %3")
+                      .arg(pStaffInfo->GetDepartment())
+                      .arg(pStaffInfo->GetStaffID())
+                      .arg(pStaffInfo->GetStaffName());
 
+    m_pStatuAccountLabel->setText(str);
     this->show();
 }
 
@@ -268,6 +294,19 @@ void SystemManagerDialog::InitSqlTableModelDepartment()
     m_pTableViewDepartment->setModel(m_pSqlTableModelDepartment);
 }
 
+QSqlTableModel *SystemManagerDialog::GetCurrentSqlTableModel()
+{
+    int nIndex = m_pStackedWidget->currentIndex();
+    if(nIndex == DepartmentWidget)
+        return m_pSqlTableModelDepartment;
+    else if(nIndex == JobWidget)
+        return m_pSqlTableModelJob;
+    else if(nIndex == RoleWidget)
+        return m_pSqlTableModelJob;
+
+    return  m_pSqlTableModelStaff;
+}
+
 void SystemManagerDialog::SetTableModelTableStaff()
 {
     CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
@@ -277,6 +316,7 @@ void SystemManagerDialog::SetTableModelTableStaff()
         m_pSqlTableModelStaff->select();
     }
 
+    m_pSearchDialog->SetSearchMode(STT_STAFF);
     m_pStackedWidget->setCurrentIndex(StaffWidget);
 }
 
@@ -288,7 +328,10 @@ void SystemManagerDialog::SetTableModelTableRole()
         pDB->LDB_Log_INFO("select Role");
         m_pSqlTableModelRole->select();
     }
+
+    m_pSearchDialog->SetSearchMode(STT_ROLE);
     m_pStackedWidget->setCurrentIndex(RoleWidget);
+
 }
 
 void SystemManagerDialog::SetTableModelTableDepartment()
@@ -300,6 +343,7 @@ void SystemManagerDialog::SetTableModelTableDepartment()
         m_pSqlTableModelDepartment->select();
     }
 
+    m_pSearchDialog->SetSearchMode(STT_DEPARTMENT);
     m_pStackedWidget->setCurrentIndex(DepartmentWidget);
 }
 
@@ -313,11 +357,14 @@ void SystemManagerDialog::SetTableModelTableJob()
         pDB->LDB_Log_ERROR(m_pSqlTableModelJob->lastError().text());
     }
 
-    m_pStackedWidget->setCurrentIndex(JobWidget);
+    m_pSearchDialog->SetSearchMode(STT_JOB);
+    m_pStackedWidget->setCurrentIndex(JobWidget);    
 }
 
 void SystemManagerDialog::InitLayout()
 {
+    setWindowTitle("系统管理");
+
     QWidget * ptoolbar = InitToolBar();
     QWidget * pstatubar = InitStatuBar();
     QWidget * ptableviewStaff = InitTableViewStaff();
@@ -325,6 +372,18 @@ void SystemManagerDialog::InitLayout()
     QWidget * ptableviewRole = InitTableViewRole();
     QWidget * ptableviewJob = InitTableViewJob();
     //QWidget * psearchview =InitSearchView();
+
+    //////////////////////////////////////////////////////
+    // 查询
+    m_pSearchDockWidget = new QDockWidget("查询信息", this);
+    m_pSearchDialog = new SearchDialog;
+
+    connect(m_pSearchDialog, &SearchDialog::signalJobChange, this, &SystemManagerDialog::slotSetJobFilter);
+
+
+    m_pSearchDockWidget->setWidget(m_pSearchDialog);
+    m_pSearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pSearchDockWidget);
 
     m_pStackedWidget = new QStackedWidget;
     m_pStackedWidget->addWidget(ptableviewStaff);
@@ -348,11 +407,13 @@ void SystemManagerDialog::InitLayout()
 QWidget* SystemManagerDialog::InitToolBar()
 {
     QToolBar* pToolbarMain =  this->addToolBar("管理");
+    pToolbarMain->setMovable(false);
+    pToolbarMain->setFloatable(false);
 
-    m_pStaffManager =       pToolbarMain->addAction("用户管理");
-    m_pDepartmentManager =  pToolbarMain->addAction("部门管理");
-    m_pJobManager =         pToolbarMain->addAction("职务管理");
-    m_pRoleManager =        pToolbarMain->addAction("角色管理");
+    m_pStaffManager =       pToolbarMain->addAction("用户");
+    m_pDepartmentManager =  pToolbarMain->addAction("部门");
+    m_pJobManager =         pToolbarMain->addAction("职务");
+    m_pRoleManager =        pToolbarMain->addAction("角色");
 
     //2011-11-23-QTooBar中最右一个图标的靠右对齐方式
     QWidget *spacer = new QWidget(this);
@@ -387,6 +448,9 @@ QWidget *SystemManagerDialog::InitStatuBar()
     pTimer->setInterval(1000);
     connect(pTimer, &QTimer::timeout, this, &SystemManagerDialog::slotUpdateTime);
     pTimer->start();
+
+    m_pStatuAccountLabel = new QLabel("当前登录人员：");
+    pStatubar->addWidget(m_pStatuAccountLabel);
 
     return pStatubar;
 

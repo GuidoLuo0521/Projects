@@ -5,8 +5,6 @@
 #include "delegate/controldelegate.h"
 #include "controlext/controlext.h"
 
-#include <QString>
-
 StaffInfoDialog::StaffInfoDialog(QWidget *parent) :
     TableInfoDialog(parent),
     ui(new Ui::StaffInfoDialog)
