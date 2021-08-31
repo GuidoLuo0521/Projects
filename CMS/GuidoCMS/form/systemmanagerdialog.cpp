@@ -65,22 +65,72 @@ void SystemManagerDialog::slotUpdateTime()
     m_pStatuTimeLabel->setText(timestr); //设置label的文本内容为时间
 }
 
-void SystemManagerDialog::slotSetJobFilter(QString str)
+void SystemManagerDialog::slotFilter(QStringList listFilter)
 {
+    QString strQuery = "";
     int nMode = m_pSearchDialog->SearchMode();
-    if(nMode == STT_JOB)
+    if(nMode == SearchDialog::STT_JOB)
     {
-        QString strQuery = QString( "JobName = '%1'").arg(str);
+        if(listFilter[SearchDialog::FILTER_NAME] != "")
+            strQuery = QString("(JobName LIKE '%%1%')").arg(listFilter[SearchDialog::FILTER_NAME]);
+
         m_pSqlTableModelJob->setFilter(strQuery);
         m_pSqlTableModelJob->select();
     }
-    else if (nMode == STT_STAFF)
+    else if (nMode == SearchDialog::STT_STAFF)
     {
-        QString strQuery = QString( "JobName = '%1'").arg(str);
+        if(listFilter[SearchDialog::FILTER_NAME] != "")
+            strQuery = QString("(StaffName LIKE '%%1%')").arg(listFilter[SearchDialog::FILTER_NAME]);
+
+        if(listFilter[SearchDialog::FILTER_SEX] != "")
+        {
+            if(strQuery != "") strQuery += " AND ";
+            strQuery += QString("(Sex = '%1')").arg(listFilter[SearchDialog::FILTER_SEX]);
+        }
+
+        if(listFilter[SearchDialog::FILTER_DEPARTMENT] != "")
+        {
+            if(strQuery != "") strQuery += " AND ";
+            strQuery += QString("(Department = '%1')").arg(listFilter[SearchDialog::FILTER_DEPARTMENT]);
+        }
+
+        if(listFilter[SearchDialog::FILTER_JOB] != "")
+        {
+            if(strQuery != "") strQuery += " AND ";
+            strQuery += QString("(JobName = '%1')").arg(listFilter[SearchDialog::FILTER_JOB]);
+        }
+
+        if(listFilter[SearchDialog::FILTER_WAGE_L] != "")
+        {
+            if(strQuery != "") strQuery += " AND ";
+            strQuery += QString("(Wage >= '%1')").arg(listFilter[SearchDialog::FILTER_WAGE_L]);
+        }
+
+        if(listFilter[SearchDialog::FILTER_WAGE_H] != "")
+        {
+            if(strQuery != "") strQuery += " AND ";
+            strQuery += QString("(Wage <= '%1')").arg(listFilter[SearchDialog::FILTER_WAGE_H]);
+        }
+
         m_pSqlTableModelStaff->setFilter(strQuery);
         m_pSqlTableModelStaff->select();
     }
+    else if (nMode == SearchDialog::STT_ROLE)
+    {
+        if(listFilter[SearchDialog::FILTER_NAME] != "")
+            strQuery = QString("(RoleName LIKE '%%1%')").arg(listFilter[SearchDialog::FILTER_NAME]);
 
+        m_pSqlTableModelRole->setFilter(strQuery);
+        m_pSqlTableModelRole->select();
+    }
+    else if (nMode == SearchDialog::STT_DEPARTMENT)
+    {
+        if(listFilter[SearchDialog::FILTER_NAME] != "")
+            strQuery = QString("(DepartmentName LIKE '%%1%')").arg(listFilter[SearchDialog::FILTER_NAME]);
+
+        m_pSqlTableModelDepartment->setFilter("");
+        m_pSqlTableModelDepartment->select();
+    }
 }
 
 void SystemManagerDialog::slotExitLogin()
@@ -138,12 +188,10 @@ void SystemManagerDialog::InitSqlTableModelJob()
     m_pTableViewJob->setItemDelegateForColumn(Job_JobID, readOnlyDelegate);
 
     ComboboxDelegate * pComboxDelegateJobName = new ComboboxDelegate(this);
-    for(int i = 0; i < g_strListDepartment.size(); ++i)
-    {
-        QString str = g_strListDepartment[i];
-        str.remove("部");
-        pComboxDelegateJobName->PushItem(str);
-    }
+    QStringList listDepartments = TableInfoDialog::GetDepartmentList();
+
+    for(int i = 0; i < listDepartments.size(); ++i)
+        pComboxDelegateJobName->PushItem(listDepartments[i]);
     m_pTableViewJob->setItemDelegateForColumn(Job_JobName, pComboxDelegateJobName);
 
     ComboboxDelegate * pComboxDelegateState = new ComboboxDelegate(this);
@@ -170,12 +218,9 @@ void SystemManagerDialog::InitSqlTableModelRole()
     m_pTableViewRole->setItemDelegateForColumn(Role_RoleID, readOnlyDelegate);
 
     ComboboxDelegate * pComboxDelegateJobName = new ComboboxDelegate(this);
-    for(int i = 0; i < g_strListDepartment.size(); ++i)
-    {
-        QString str = g_strListDepartment[i];
-        str.remove("部");
-        pComboxDelegateJobName->PushItem(str);
-    }
+    QStringList listJobs = TableInfoDialog::GetDepartmentList();
+    for(int i = 0; i < listJobs.size(); ++i)
+        pComboxDelegateJobName->PushItem(listJobs[i]);
     m_pTableViewRole->setItemDelegateForColumn(Role_RoleName, pComboxDelegateJobName);
 
     ComboboxDelegate * pComboxDelegateState = new ComboboxDelegate(this);
@@ -302,7 +347,7 @@ QSqlTableModel *SystemManagerDialog::GetCurrentSqlTableModel()
     else if(nIndex == JobWidget)
         return m_pSqlTableModelJob;
     else if(nIndex == RoleWidget)
-        return m_pSqlTableModelJob;
+        return m_pSqlTableModelRole;
 
     return  m_pSqlTableModelStaff;
 }
@@ -316,7 +361,7 @@ void SystemManagerDialog::SetTableModelTableStaff()
         m_pSqlTableModelStaff->select();
     }
 
-    m_pSearchDialog->SetSearchMode(STT_STAFF);
+    m_pSearchDialog->SetSearchMode(SearchDialog::STT_STAFF);
     m_pStackedWidget->setCurrentIndex(StaffWidget);
 }
 
@@ -329,7 +374,7 @@ void SystemManagerDialog::SetTableModelTableRole()
         m_pSqlTableModelRole->select();
     }
 
-    m_pSearchDialog->SetSearchMode(STT_ROLE);
+    m_pSearchDialog->SetSearchMode(SearchDialog::STT_ROLE);
     m_pStackedWidget->setCurrentIndex(RoleWidget);
 
 }
@@ -343,7 +388,7 @@ void SystemManagerDialog::SetTableModelTableDepartment()
         m_pSqlTableModelDepartment->select();
     }
 
-    m_pSearchDialog->SetSearchMode(STT_DEPARTMENT);
+    m_pSearchDialog->SetSearchMode(SearchDialog::STT_DEPARTMENT);
     m_pStackedWidget->setCurrentIndex(DepartmentWidget);
 }
 
@@ -357,7 +402,7 @@ void SystemManagerDialog::SetTableModelTableJob()
         pDB->LDB_Log_ERROR(m_pSqlTableModelJob->lastError().text());
     }
 
-    m_pSearchDialog->SetSearchMode(STT_JOB);
+    m_pSearchDialog->SetSearchMode(SearchDialog::STT_JOB);
     m_pStackedWidget->setCurrentIndex(JobWidget);    
 }
 
@@ -378,8 +423,7 @@ void SystemManagerDialog::InitLayout()
     m_pSearchDockWidget = new QDockWidget("查询信息", this);
     m_pSearchDialog = new SearchDialog;
 
-    connect(m_pSearchDialog, &SearchDialog::signalJobChange, this, &SystemManagerDialog::slotSetJobFilter);
-
+    connect(m_pSearchDialog, &SearchDialog::signalFilterChange, this, &SystemManagerDialog::slotFilter);
 
     m_pSearchDockWidget->setWidget(m_pSearchDialog);
     m_pSearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
@@ -388,8 +432,8 @@ void SystemManagerDialog::InitLayout()
     m_pStackedWidget = new QStackedWidget;
     m_pStackedWidget->addWidget(ptableviewStaff);
     m_pStackedWidget->addWidget(ptableviewDepartment);
-    m_pStackedWidget->addWidget(ptableviewRole);
     m_pStackedWidget->addWidget(ptableviewJob);
+    m_pStackedWidget->addWidget(ptableviewRole);
 
     //QSplitter* pMainSplitter = new QSplitter(Qt::Orientation::Horizontal);
     //pMainSplitter->addWidget(ptableview);
@@ -483,34 +527,5 @@ QWidget* SystemManagerDialog::InitTableViewJob()
 
     return  m_pTableViewJob;
 }
-
-QWidget* SystemManagerDialog::InitSearchView()
-{
-    QWidget * pRightWidget = new QWidget;
-
-    QHBoxLayout * pSearchLayout = new QHBoxLayout;
-    QLineEdit * pSearchKey = new QLineEdit;
-    pSearchKey->setPlaceholderText("搜索内容");
-    QPushButton * pBtnSearch = new QPushButton("搜索");
-    pSearchLayout->addWidget(pSearchKey);
-    pSearchLayout->addWidget(pBtnSearch);
-
-    QHBoxLayout * pAddLayout = new QHBoxLayout;
-    QLineEdit * pAddKey = new QLineEdit;
-    pAddKey->setPlaceholderText("增加内容");
-    QPushButton * pBtnAdd = new QPushButton("增加");
-    pAddLayout->addWidget(pAddKey);
-    pAddLayout->addWidget(pBtnAdd);
-
-    QVBoxLayout * pRightMainLayout = new QVBoxLayout;
-    pRightMainLayout->addLayout(pSearchLayout, 1);
-    pRightMainLayout->addLayout(pAddLayout, 5);
-    pRightMainLayout->addStretch();
-
-    pRightWidget->setLayout(pRightMainLayout);
-
-    return  pRightWidget;
-}
-
 
 

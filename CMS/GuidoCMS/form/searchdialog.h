@@ -7,18 +7,33 @@ namespace Ui {
 class SearchDialog;
 }
 
-enum SearchTableType
-{
-    STT_NULL,
-    STT_STAFF,
-    STT_DEPARTMENT,
-    STT_JOB,
-    STT_ROLE
-};
+
+
+
+
 
 class SearchDialog : public QDialog
 {
     Q_OBJECT
+
+public:
+    enum SearchTableType
+    {
+        STT_STAFF,
+        STT_DEPARTMENT,
+        STT_JOB,
+        STT_ROLE
+    };
+
+    enum FilterIndex
+    {
+        FILTER_NAME,
+        FILTER_SEX,
+        FILTER_DEPARTMENT,
+        FILTER_JOB,
+        FILTER_WAGE_L,
+        FILTER_WAGE_H
+    };
 
 public:
     explicit SearchDialog(QWidget *parent = nullptr);
@@ -28,13 +43,7 @@ public:
     SearchTableType SearchMode();
 
 signals:
-    void signalNameChange(QString str);
-    void signalSexChange(QString str);
-    void signalDepartmentChange(QString str);
-    void signalJobChange(QString str);
-    void signalRangeChange(double lower, double higher);
-
-    void signalClear();
+    void signalFilterChange(QStringList listFilter);
 
 private slots:
     void on_leName_textChanged(const QString &arg1);
@@ -52,10 +61,13 @@ private slots:
     void on_cbJob_currentTextChanged(const QString &arg1);
 
 private:
+
+    QStringList GetFilter();
     void InitLayout();
     void HideAll(bool hide);
 
     void ShowJob();
+    void ShowRole();
     void ShowStaff();
     void ShowDepartment();
 

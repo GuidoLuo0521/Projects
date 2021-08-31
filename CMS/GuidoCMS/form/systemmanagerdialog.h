@@ -48,7 +48,8 @@ private slots:
     void slotTableChange();
     void slotUpdateTime();  
 
-    void slotSetJobFilter(QString str);
+    void slotFilter(QStringList);
+
 
 private:
     void InitLayout();
@@ -58,7 +59,6 @@ private:
     QWidget* InitTableViewDepartment();
     QWidget* InitTableViewRole();
     QWidget* InitTableViewJob();
-    QWidget* InitSearchView();
 
     void InitSqlTableModel();
     void InitSqlTableModelJob();
