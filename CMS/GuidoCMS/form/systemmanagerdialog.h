@@ -46,28 +46,17 @@ signals:
 
 private slots:
     void slotTableChange();
-    void slotUpdateTable();
     void slotUpdateTime();  
-
-    void slotFilter(QStringList);
-
 
 private:
     void InitLayout();
     QWidget* InitToolBar();
     QWidget* InitStatuBar();
-    QWidget* InitTableViewStaff();
-    QWidget* InitTableViewDepartment();
-    QWidget* InitTableViewRole();
-    QWidget* InitTableViewJob();
+    QWidget* InitTableInfoManagerStaff();
+    QWidget* InitTableInfoManagerDepartment();
+    QWidget* InitTableInfoManagerRole();
+    QWidget* InitTableInfoManagerJob();
 
-    void InitSqlTableModel();
-    void InitSqlTableModelJob();
-    void InitSqlTableModelRole();
-    void InitSqlTableModelStaff();
-    void InitSqlTableModelDepartment();
-
-    QSqlTableModel * GetCurrentSqlTableModel();
     void SetTableModelTableJob();
     void SetTableModelTableRole();
     void SetTableModelTableStaff();
@@ -75,28 +64,13 @@ private:
 
     void ActionChecked(QAction * pAction);
 
-    Ui::SystemManagerDialog *ui;
-
     QAction * m_pStaffManager;
     QAction * m_pRoleManager;
     QAction * m_pDepartmentManager;
     QAction * m_pJobManager;
     QAction * m_pExit;
 
-    QSqlTableModel * m_pSqlTableModelStaff;
-    QSqlTableModel * m_pSqlTableModelDepartment;
-    QSqlTableModel * m_pSqlTableModelRole;
-    QSqlTableModel * m_pSqlTableModelJob;
-
-    QTableView * m_pTableViewStaff;
-    QTableView * m_pTableViewDepartment;
-    QTableView * m_pTableViewRole;
-    QTableView * m_pTableViewJob;
-
     QStackedWidget * m_pStackedWidget;
-    QDockWidget * m_pSearchDockWidget;
-    SearchDialog * m_pSearchDialog;
-
     QLabel * m_pStatuTimeLabel;
     QLabel * m_pStatuAccountLabel;
 

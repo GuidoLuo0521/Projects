@@ -1,18 +1,18 @@
-﻿#include "addtableinfodepartmentdialog.h"
+#include "addtableinforoledialog.h"
 
 
-AddTableInfoDepartmentDialog::AddTableInfoDepartmentDialog(QWidget *parent) :
+AddTableInfoRoleDialog::AddTableInfoRoleDialog(QWidget *parent) :
     AddTableInfoDialog(parent)
 {
     InitLayout();
 }
 
-AddTableInfoDepartmentDialog::~AddTableInfoDepartmentDialog()
+AddTableInfoRoleDialog::~AddTableInfoRoleDialog()
 {
 
 }
 
-void AddTableInfoDepartmentDialog::slotAdd()
+void AddTableInfoRoleDialog::slotAdd()
 {
     if(CheckParams() == false)
         return;
@@ -21,7 +21,7 @@ void AddTableInfoDepartmentDialog::slotAdd()
     QString strState = m_pComboBoxState->ComboBox()->currentText();
     QString strDesc = m_pPlainTextEditDesc->PlainText();
 
-    QString strQuery = QString("INSERT INTO department "
+    QString strQuery = QString("INSERT INTO role "
                                "VALUES (0, '%1', '%2', '%3', '')")
             .arg(strName).arg(strState).arg(strDesc);
 
@@ -30,37 +30,16 @@ void AddTableInfoDepartmentDialog::slotAdd()
     emit signalAddSuccess(true);
 }
 
-void AddTableInfoDepartmentDialog::slotClear()
+void AddTableInfoRoleDialog::slotClear()
 {
     m_pLineEditName->LineEdit()->clear();
     m_pComboBoxState->ComboBox()->setCurrentIndex(0);
     m_pPlainTextEditDesc->PlainTextEdit()->clear();
 }
 
-bool AddTableInfoDepartmentDialog::CheckParams()
+void AddTableInfoRoleDialog::InitLayout()
 {
-    QString strName = m_pLineEditName->LineEdit()->text();
-    if(strName == "")
-    {
-        QMessageBox::warning(this, "警告", "名称不能为空。");
-        return false;
-    }
-
-    QString strQuery = QString("SELECT DepartmentName FROM department WHERE DepartmentName = '%1'").arg(strName);
-    QSqlQuery query = m_pCMSDatabase->WDB_Exec(strQuery);
-
-    if (query.next())
-    {
-        QMessageBox::warning(this, "警告", QString("%1已经存在").arg(strName));
-        return false;
-    }
-
-    return true;
-}
-
-void AddTableInfoDepartmentDialog::InitLayout()
-{
-    setWindowTitle("部门信息");
+    setWindowTitle("角色信息");
     QVBoxLayout * pVAddMainLayout = new QVBoxLayout;
 
     QHBoxLayout * pHBoxLayout0 = new QHBoxLayout;
@@ -82,4 +61,25 @@ void AddTableInfoDepartmentDialog::InitLayout()
     pVAddMainLayout->addStretch();
 
     this->setLayout(pVAddMainLayout);
+}
+
+bool AddTableInfoRoleDialog::CheckParams()
+{
+    QString strName = m_pLineEditName->LineEdit()->text();
+    if(strName == "")
+    {
+        QMessageBox::warning(this, "警告", "名称不能为空。");
+        return false;
+    }
+
+    QString strQuery = QString("SELECT RoleName FROM role WHERE RoleName = '%1'").arg(strName);
+    QSqlQuery query = m_pCMSDatabase->WDB_Exec(strQuery);
+
+    if (query.next())
+    {
+        QMessageBox::warning(this, "警告", QString("%1已经存在").arg(strName));
+        return false;
+    }
+
+    return true;
 }

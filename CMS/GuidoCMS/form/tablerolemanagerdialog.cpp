@@ -1,0 +1,90 @@
+#include "tablerolemanagerdialog.h"
+
+#include "addtableinforoledialog.h"
+
+TableRoleManagerDialog::TableRoleManagerDialog(QMainWindow * parent) :
+    TableManagerDialog(parent)
+{
+    CreateSpecialDialog();
+
+    InitLayout();
+
+    InitTableView();
+    InitSqlTableModel();
+
+    InitSearchDialog();
+    InitAddTableInfoDialog();
+}
+
+TableRoleManagerDialog::~TableRoleManagerDialog()
+{
+
+}
+
+void TableRoleManagerDialog::CreateSpecialDialog()
+{
+    m_pAddTableInfoDialog = new AddTableInfoRoleDialog(this);
+}
+
+void TableRoleManagerDialog::InitLayout()
+{
+    m_pSearchDockWidget->setWindowTitle("查询角色");
+    m_pSearchDockWidget->setWidget(m_pSearchDialog);
+    //m_pSearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pSearchDockWidget);
+
+    m_pAddDockWidget->setWindowTitle("增加角色");
+    m_pAddDockWidget->setWidget(m_pAddTableInfoDialog);
+    //pAddDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pAddDockWidget);
+
+    this->setCentralWidget(m_pTableView);
+}
+
+void TableRoleManagerDialog::InitSqlTableModel()
+{
+    m_pSqlTableModel->setTable(g_listCMSDB_Table_Filed_Role[Role_TableName]);
+
+    int i = 0;
+    m_pSqlTableModel->setHeaderData(i++, Qt::Orientation::Horizontal, "编号");
+    m_pSqlTableModel->setHeaderData(i++, Qt::Orientation::Horizontal, "名称");
+    m_pSqlTableModel->setHeaderData(i++, Qt::Orientation::Horizontal, "状态");
+    m_pSqlTableModel->setHeaderData(i++, Qt::Orientation::Horizontal, "描述");
+    m_pSqlTableModel->setHeaderData(i++, Qt::Orientation::Horizontal, "备注");
+
+    ReadOnlyDelegate * readOnlyDelegate = new ReadOnlyDelegate(this);
+    m_pTableView->setItemDelegateForColumn(Role_RoleID, readOnlyDelegate);
+
+    ComboboxDelegate * pComboxDelegateDepartment = new ComboboxDelegate(this);
+    QStringList listRole = AddTableInfoDialog::GetRoleList();
+    for(int i = 0; i < listRole.size(); ++i)
+        pComboxDelegateDepartment->PushItem(listRole[i]);
+    m_pTableView->setItemDelegateForColumn(Role_RoleName, pComboxDelegateDepartment);
+
+    ComboboxDelegate * pComboxDelegateState = new ComboboxDelegate(this);
+    pComboxDelegateState->PushItem("正常");
+    pComboxDelegateState->PushItem("撤销");
+    m_pTableView->setItemDelegateForColumn(Role_State, pComboxDelegateState);
+
+    m_pSqlTableModel->select();
+}
+
+void TableRoleManagerDialog::InitSearchDialog()
+{
+    m_pSearchDialog->SetSearchMode(SearchDialog::STT_ROLE);
+}
+
+void TableRoleManagerDialog::InitAddTableInfoDialog()
+{
+    connect(m_pAddTableInfoDialog, SIGNAL(signalAddSuccess(bool)), this, SLOT(slotUpdateTable(bool)));
+}
+
+void TableRoleManagerDialog::slotFilter(QStringList listFilter)
+{
+    QString strQuery;
+    if(listFilter[SearchDialog::FILTER_NAME] != "")
+        strQuery = QString("(RoleName LIKE '%%1%')").arg(listFilter[SearchDialog::FILTER_NAME]);
+
+    m_pSqlTableModel->setFilter(strQuery);
+    m_pSqlTableModel->select();
+}

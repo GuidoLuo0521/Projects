@@ -6,6 +6,7 @@
 #include <QSqlQueryModel>
 #include <QTableView>
 #include <QMainWindow>
+#include <QDockWidget>
 
 #include "database/cmsdatabase.h"
 #include "database/cmsdatebasedef.h"
@@ -22,10 +23,10 @@ public:
 
 protected:
 
-    virtual void CreateAddInforDialog() = 0;
+    virtual void CreateSpecialDialog() = 0;
 
+    virtual void InitTableView();
     virtual void InitLayout() = 0;
-    virtual void InitTableView() = 0;
     virtual void InitSqlTableModel() = 0;
     virtual void InitSearchDialog() = 0;
     virtual void InitAddTableInfoDialog() = 0;
@@ -37,6 +38,9 @@ protected slots:
     virtual void slotFilter(QStringList) = 0;
 
 protected:
+    QDockWidget * m_pSearchDockWidget;
+    QDockWidget * m_pAddDockWidget;
+
     SearchDialog * m_pSearchDialog;
     AddTableInfoDialog * m_pAddTableInfoDialog;
 

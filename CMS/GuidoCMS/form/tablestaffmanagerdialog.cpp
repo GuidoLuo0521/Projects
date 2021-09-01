@@ -7,7 +7,7 @@
 TableStaffManagerDialog::TableStaffManagerDialog(QMainWindow * parent ) :
     TableManagerDialog(parent)
 {
-    CreateAddInforDialog();
+    CreateSpecialDialog();
 
     InitLayout();
 
@@ -18,13 +18,9 @@ TableStaffManagerDialog::TableStaffManagerDialog(QMainWindow * parent ) :
     InitAddTableInfoDialog();
 }
 
-void TableStaffManagerDialog::CreateAddInforDialog()
+void TableStaffManagerDialog::CreateSpecialDialog()
 {
     m_pAddTableInfoDialog = new AddTableInfoStaffDialog(this);
-    connect(m_pAddTableInfoDialog, SIGNAL(signalAddSuccess(bool)), this, SLOT(slotUpdateTable(bool)));
-
-    //connect(m_pAddTableInfoDialog, &AddTableInfoDialog::signalAddSuccess, this, &TableManagerDialog::slotUpdateTable);
-    //connect(m_pAddTableInfoDialog, &AddTableInfoStaffDialog::signalAddSuccess, this, &TableManagerDialog::slotUpdateTable);
 }
 
 void TableStaffManagerDialog::InitLayout()
@@ -44,24 +40,19 @@ void TableStaffManagerDialog::InitLayout()
     pMainLayout->addWidget(pMainSpltter);
 
 #else
-    this->setCentralWidget(m_pTableView);
-
-    QDockWidget * m_pSearchDockWidget = new QDockWidget("查询信息", this);
+    m_pSearchDockWidget->setWindowTitle("查询职工");
     m_pSearchDockWidget->setWidget(m_pSearchDialog);
-    m_pSearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    //m_pSearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
     this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pSearchDockWidget);
 
-    QDockWidget *pAddDockWidget = new QDockWidget("添加人员", this);
-    pAddDockWidget->setWidget(m_pAddTableInfoDialog);
-    pAddDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, pAddDockWidget);
+    m_pAddDockWidget->setWindowTitle("增加职工");
+    m_pAddDockWidget->setWidget(m_pAddTableInfoDialog);
+    //pAddDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pAddDockWidget);
+
+    this->setCentralWidget(m_pTableView);
 #endif
 
-}
-
-void TableStaffManagerDialog::InitTableView()
-{
-    m_pTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
 void TableStaffManagerDialog::InitSqlTableModel()
@@ -147,7 +138,10 @@ void TableStaffManagerDialog::InitSearchDialog()
 
 void TableStaffManagerDialog::InitAddTableInfoDialog()
 {
+    connect(m_pAddTableInfoDialog, SIGNAL(signalAddSuccess(bool)), this, SLOT(slotUpdateTable(bool)));
 
+    //connect(m_pAddTableInfoDialog, &AddTableInfoDialog::signalAddSuccess, this, &TableManagerDialog::slotUpdateTable);
+    //connect(m_pAddTableInfoDialog, &AddTableInfoStaffDialog::signalAddSuccess, this, &TableManagerDialog::slotUpdateTable);
 }
 
 void TableStaffManagerDialog::slotFilter(QStringList listFilter)

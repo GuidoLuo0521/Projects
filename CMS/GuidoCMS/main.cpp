@@ -8,8 +8,13 @@
 
 #include "form/addtableinfodialog.h"
 #include "form/tablestaffmanagerdialog.h"
+#include "form/tabledepartmentmanagerdialog.h"
+#include "form/tablejobmanagerdialog.h"
+#include "form/tablerolemanagerdialog.h"
 
 #include <QApplication>
+
+
 
 int main(int argc, char *argv[])
 {
@@ -17,15 +22,15 @@ int main(int argc, char *argv[])
 
     InitGlobalParams();
 
-    //LoginDialog logindlg;
-    //SystemManagerDialog sysMgrDlg;
-    //
-    ////点击登录对话框的登录按钮; 进入主界面
-    //QObject::connect(&logindlg, SIGNAL(signalShowMainWindow()), &sysMgrDlg, SLOT(slotShowWindow()));
-    ////点击主界面的注销; 返回登录对话框
-    //QObject::connect(&sysMgrDlg, SIGNAL(signalExitCurrentAccount()), &logindlg, SLOT(slotShowMainWindow()));
-    //
-    //logindlg.show();
+    LoginDialog logindlg;
+    SystemManagerDialog sysMgrDlg;
+
+    //点击登录对话框的登录按钮; 进入主界面
+    QObject::connect(&logindlg, SIGNAL(signalShowMainWindow()), &sysMgrDlg, SLOT(slotShowWindow()));
+    //点击主界面的注销; 返回登录对话框
+    QObject::connect(&sysMgrDlg, SIGNAL(signalExitCurrentAccount()), &logindlg, SLOT(slotShowMainWindow()));
+
+    logindlg.show();
 
 
     //StaffInfoSingleton::SetInstance(GetStaffInfo("000001"));
@@ -35,9 +40,12 @@ int main(int argc, char *argv[])
 
     //TableInfoDialog w;
 
-    TableStaffManagerDialog w;
+    //TableStaffManagerDialog w;
+    //TableDepartmentManagerDialog w;
+    //TableJobManagerDialog w;
+    //TableRoleManagerDialog w;
 
-    w.show();
+    //w.show();
 
     return a.exec();
 

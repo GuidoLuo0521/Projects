@@ -1,12 +1,13 @@
-﻿#ifndef TABLESTAFFMANAGERDIALOG_H
-#define TABLESTAFFMANAGERDIALOG_H
+#ifndef TABLEDEPARTMENTMANAGERDIALOG_H
+#define TABLEDEPARTMENTMANAGERDIALOG_H
 
 #include "tablemanagerdialog.h"
 
-class TableStaffManagerDialog : public TableManagerDialog
+class TableDepartmentManagerDialog : public TableManagerDialog
 {
 public:
-    TableStaffManagerDialog(QMainWindow * parent = 0);
+    TableDepartmentManagerDialog(QMainWindow * parent = 0);
+    ~TableDepartmentManagerDialog();
 
 protected:
     virtual void CreateSpecialDialog() override;
@@ -18,6 +19,7 @@ protected:
 
 protected slots:
     virtual void slotFilter(QStringList) override;
+
 };
 
-#endif // TABLESTAFFMANAGERDIALOG_H
+#endif // TABLEDEPARTMENTMANAGERDIALOG_H

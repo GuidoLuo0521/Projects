@@ -96,6 +96,20 @@ QStringList AddTableInfoDialog::GetJobList()
     return  strList;
 }
 
+QStringList AddTableInfoDialog::GetRoleList()
+{
+    QString strQuery = "SELECT RoleName FROM role";
+    QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
+
+    QStringList strList;
+    while (query.next())
+    {
+        strList.push_back( query.value("RoleName").toString());
+    }
+
+    return  strList;
+}
+
 QStringList AddTableInfoDialog::GetStateList()
 {
     return {"正常", "撤销"};

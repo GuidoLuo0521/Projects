@@ -25,6 +25,7 @@ public:
     static QStringList GetEducationList();
     static QStringList GetPlaceList();
     static QStringList GetJobList();
+    static QStringList GetRoleList();
     static QStringList GetStateList();
     static QStringList GetSexList();
 

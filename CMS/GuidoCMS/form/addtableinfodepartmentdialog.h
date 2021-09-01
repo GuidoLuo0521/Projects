@@ -17,9 +17,6 @@ public:
     explicit AddTableInfoDepartmentDialog(QWidget *parent = nullptr);
     ~AddTableInfoDepartmentDialog();
 
-signals:
-    void signalAddSuccess(bool);
-
 protected slots:
     virtual void slotAdd() override;
     virtual void slotClear() override;
@@ -28,8 +25,6 @@ protected:
     virtual void InitLayout() override;
 
 private:
-
-    void InitDelegate();
     bool CheckParams();
 
 private:
