@@ -5,8 +5,8 @@
 #include "database/cmsdatabase.h"
 #include "database/cmsdatebasedef.h"
 
-#include "form/staffinfodialog.h"
-#include "form/departmentinfodialog.h"
+#include "form/addtableinfostaffdialog.h"
+#include "form/addtableinfodepartmentdialog.h"
 
 
 #include <QToolBar>
@@ -55,6 +55,35 @@ void SystemManagerDialog::slotTableChange()
         SetTableModelTableStaff();
 
     ActionChecked(pAction);
+}
+
+void SystemManagerDialog::slotUpdateTable()
+{
+    int nIndex = m_pStackedWidget->currentIndex();
+    QSqlTableModel * pSqlTableModel = nullptr;
+    QTableView * pTableView = nullptr;
+
+    switch (nIndex) {
+    case JobWidget:
+        pTableView = m_pTableViewJob;
+        pSqlTableModel = m_pSqlTableModelJob;
+        break;
+    case RoleWidget:
+        pTableView = m_pTableViewRole;
+        pSqlTableModel = m_pSqlTableModelRole;
+        break;
+    case DepartmentWidget:
+        pTableView = m_pTableViewDepartment;
+        pSqlTableModel = m_pSqlTableModelDepartment;
+        break;
+    default:
+        pTableView = m_pTableViewStaff;
+        pSqlTableModel = m_pSqlTableModelStaff;
+        break;
+    }
+
+    pSqlTableModel->select();
+    pTableView->scrollToBottom();
 }
 
 void SystemManagerDialog::slotUpdateTime()
@@ -128,7 +157,7 @@ void SystemManagerDialog::slotFilter(QStringList listFilter)
         if(listFilter[SearchDialog::FILTER_NAME] != "")
             strQuery = QString("(DepartmentName LIKE '%%1%')").arg(listFilter[SearchDialog::FILTER_NAME]);
 
-        m_pSqlTableModelDepartment->setFilter("");
+        m_pSqlTableModelDepartment->setFilter(strQuery);
         m_pSqlTableModelDepartment->select();
     }
 }
@@ -188,7 +217,7 @@ void SystemManagerDialog::InitSqlTableModelJob()
     m_pTableViewJob->setItemDelegateForColumn(Job_JobID, readOnlyDelegate);
 
     ComboboxDelegate * pComboxDelegateJobName = new ComboboxDelegate(this);
-    QStringList listDepartments = TableInfoDialog::GetDepartmentList();
+    QStringList listDepartments = AddTableInfoDialog::GetDepartmentList();
 
     for(int i = 0; i < listDepartments.size(); ++i)
         pComboxDelegateJobName->PushItem(listDepartments[i]);
@@ -218,7 +247,7 @@ void SystemManagerDialog::InitSqlTableModelRole()
     m_pTableViewRole->setItemDelegateForColumn(Role_RoleID, readOnlyDelegate);
 
     ComboboxDelegate * pComboxDelegateJobName = new ComboboxDelegate(this);
-    QStringList listJobs = TableInfoDialog::GetDepartmentList();
+    QStringList listJobs = AddTableInfoDialog::GetDepartmentList();
     for(int i = 0; i < listJobs.size(); ++i)
         pComboxDelegateJobName->PushItem(listJobs[i]);
     m_pTableViewRole->setItemDelegateForColumn(Role_RoleName, pComboxDelegateJobName);
@@ -429,6 +458,13 @@ void SystemManagerDialog::InitLayout()
     m_pSearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
     this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pSearchDockWidget);
 
+    QDockWidget *pSearchDockWidget = new QDockWidget("添加人员", this);
+    AddTableInfoStaffDialog * pStaffInfoDialog = new AddTableInfoStaffDialog;
+    pSearchDockWidget->setWidget(pStaffInfoDialog);
+    pSearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, pSearchDockWidget);
+    connect(pStaffInfoDialog, &AddTableInfoStaffDialog::signalAddSuccess, this, &SystemManagerDialog::slotUpdateTable);
+
     m_pStackedWidget = new QStackedWidget;
     m_pStackedWidget->addWidget(ptableviewStaff);
     m_pStackedWidget->addWidget(ptableviewDepartment);
@@ -446,7 +482,6 @@ void SystemManagerDialog::InitLayout()
 
     this->setCentralWidget(m_pStackedWidget);
 }
-
 
 QWidget* SystemManagerDialog::InitToolBar()
 {

@@ -1,34 +1,32 @@
-﻿#ifndef STAFFINFODIALOG_H
-#define STAFFINFODIALOG_H
+﻿#ifndef ADDTABLEINFOSTAFFDIALOG_H
+#define ADDTABLEINFOSTAFFDIALOG_H
 
 #include <QComboBox>
 #include <QDialog>
 #include <QSqlTableModel>
 #include "common/staffinfo.h"
 #include "database/cmsdatabase.h"
-#include "form/tableinfodialog.h"
+#include "form/addtableinfodialog.h"
 #include "common/controlinclude.h"
 
-namespace Ui {
-class StaffInfoDialog;
-}
 
-class StaffInfoDialog : public TableInfoDialog
+class AddTableInfoStaffDialog : public AddTableInfoDialog
 {
     Q_OBJECT
 
 public:
-    // 如果为空，则为增加，不为空，则为修改
-    explicit StaffInfoDialog(QWidget *parent = nullptr);
-    ~StaffInfoDialog();
+    explicit AddTableInfoStaffDialog(QWidget *parent = nullptr);
+    ~AddTableInfoStaffDialog();
+
+signals:
+    void signalAddSuccess(bool);
 
 private slots:
-    void slotAdd();
+    virtual void slotAdd() override;
+    virtual void slotClear() override;
 
 protected:
     virtual void InitLayout() override;
-    virtual void InitTableView() override;
-    virtual void InitTableModel() override;
 
 private:    
     void InsertStaff();
@@ -36,11 +34,6 @@ private:
     bool CheckExist();
 
 private:
-    Ui::StaffInfoDialog *ui;
-
-private:
-    void ClearAddControl();
-
     StanderLineEdit * m_pLineEditName;
     StanderLineEdit * m_pLineEditPassword;
     StanderLineEdit * m_pLineEditWorkingAge;

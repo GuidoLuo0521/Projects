@@ -7,11 +7,6 @@ namespace Ui {
 class SearchDialog;
 }
 
-
-
-
-
-
 class SearchDialog : public QDialog
 {
     Q_OBJECT
@@ -36,7 +31,7 @@ public:
     };
 
 public:
-    explicit SearchDialog(QWidget *parent = nullptr);
+    explicit SearchDialog(QDialog *parent = nullptr);
     ~SearchDialog();
 
     void SetSearchMode(SearchTableType mode);
@@ -61,6 +56,7 @@ private slots:
     void on_cbJob_currentTextChanged(const QString &arg1);
 
 private:
+    void Clear();
 
     QStringList GetFilter();
     void InitLayout();

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>225</width>
-    <height>194</height>
+    <width>227</width>
+    <height>179</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,22 +23,11 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="labelDepartment">
-       <property name="text">
-        <string>部门：</string>
-       </property>
-      </widget>
+     <item row="4" column="3">
+      <widget class="QDoubleSpinBox" name="sbHigher"/>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="labelName">
-       <property name="text">
-        <string>名称：</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" colspan="3">
-      <widget class="QComboBox" name="cbDepartment"/>
+     <item row="3" column="1" colspan="3">
+      <widget class="QComboBox" name="cbJob"/>
      </item>
      <item row="5" column="2" colspan="2">
       <widget class="QPushButton" name="btnClear">
@@ -47,12 +36,8 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="labelSex">
-       <property name="text">
-        <string>性别：</string>
-       </property>
-      </widget>
+     <item row="4" column="1">
+      <widget class="QDoubleSpinBox" name="sbLower"/>
      </item>
      <item row="4" column="2">
       <widget class="QLabel" name="labelWageRangeTo">
@@ -64,17 +49,29 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="QDoubleSpinBox" name="sbLower"/>
-     </item>
-     <item row="4" column="3">
-      <widget class="QDoubleSpinBox" name="sbHigher"/>
+     <item row="1" column="0">
+      <widget class="QLabel" name="labelSex">
+       <property name="text">
+        <string>性别：</string>
+       </property>
+      </widget>
      </item>
      <item row="0" column="1" colspan="3">
       <widget class="QLineEdit" name="leName"/>
      </item>
-     <item row="1" column="1" colspan="3">
-      <widget class="QComboBox" name="cbSex"/>
+     <item row="0" column="0">
+      <widget class="QLabel" name="labelName">
+       <property name="text">
+        <string>名称：</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="labelDepartment">
+       <property name="text">
+        <string>部门：</string>
+       </property>
+      </widget>
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="labelJob">
@@ -83,8 +80,11 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1" colspan="3">
-      <widget class="QComboBox" name="cbJob"/>
+     <item row="2" column="1" colspan="3">
+      <widget class="QComboBox" name="cbDepartment"/>
+     </item>
+     <item row="1" column="1" colspan="3">
+      <widget class="QComboBox" name="cbSex"/>
      </item>
     </layout>
    </item>

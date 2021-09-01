@@ -1,10 +1,10 @@
-﻿#include "searchdialog.h"
-#include "tableinfodialog.h"
+﻿#include "addtableinfodialog.h"
+#include "searchdialog.h"
 #include "ui_searchdialog.h"
 
 #include <limits>
 
-SearchDialog::SearchDialog(QWidget *parent) :
+SearchDialog::SearchDialog(QDialog *parent) :
     QDialog(parent),
     ui(new Ui::SearchDialog),
     m_bInitOver(false)
@@ -20,6 +20,10 @@ SearchDialog::~SearchDialog()
 
 void SearchDialog::SetSearchMode(SearchTableType mode)
 {
+    m_bInitOver = false;
+
+    Clear();
+
     switch (mode) {
     case STT_JOB: ShowJob(); break;
     case STT_ROLE: ShowRole(); break;
@@ -27,6 +31,9 @@ void SearchDialog::SetSearchMode(SearchTableType mode)
     case STT_DEPARTMENT: ShowDepartment(); break;
     default:   break;
     }
+
+    m_bInitOver = true;
+
 }
 
 QStringList SearchDialog::GetFilter()
@@ -74,6 +81,16 @@ void SearchDialog::on_cbJob_currentTextChanged(const QString &arg1)
     if(m_bInitOver)  emit signalFilterChange(GetFilter());
 }
 
+void SearchDialog::Clear()
+{
+    ui->leName->setText("");
+    ui->cbSex->setCurrentIndex(0);
+    ui->cbDepartment->setCurrentIndex(0);
+    ui->cbJob->setCurrentIndex(0);
+    ui->sbLower->setValue(0);
+    ui->sbHigher->setValue(INT_MAX);
+}
+
 void SearchDialog::on_sbLower_valueChanged(double arg1)
 {
     if(m_bInitOver)  emit signalFilterChange(GetFilter());
@@ -86,12 +103,7 @@ void SearchDialog::on_sbHigher_valueChanged(double arg1)
 
 void SearchDialog::on_btnClear_clicked()
 {
-    ui->leName->setText("");
-    ui->cbSex->setCurrentIndex(0);
-    ui->cbDepartment->setCurrentIndex(0);
-    ui->cbJob->setCurrentIndex(0);
-    ui->sbLower->setValue(0);
-    ui->sbHigher->setValue(INT_MAX);
+    Clear();
 
     if(m_bInitOver)
         emit signalFilterChange(GetFilter());
@@ -101,9 +113,9 @@ void SearchDialog::InitLayout()
 {
     ui->leName->setPlaceholderText("关键字");
 
-    QStringList listSex = TableInfoDialog::GetSexList(); listSex.insert(0, "");
-    QStringList listJob = TableInfoDialog::GetJobList(); listJob.insert(0, "");
-    QStringList listDepartment = TableInfoDialog::GetDepartmentList(); listDepartment.insert(0, "");
+    QStringList listSex = AddTableInfoDialog::GetSexList(); listSex.insert(0, "");
+    QStringList listJob = AddTableInfoDialog::GetJobList(); listJob.insert(0, "");
+    QStringList listDepartment = AddTableInfoDialog::GetDepartmentList(); listDepartment.insert(0, "");
 
     ui->cbSex->insertItems(0, listSex);
     ui->cbJob->insertItems(0, listJob);

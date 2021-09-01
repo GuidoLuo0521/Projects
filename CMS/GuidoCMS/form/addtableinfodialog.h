@@ -12,17 +12,13 @@
 
 #include <QSplitter>
 
-namespace Ui {
-class TableInfoDialog;
-}
-
-class TableInfoDialog : public QDialog
+class AddTableInfoDialog : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit TableInfoDialog(QWidget *parent = nullptr);
-    ~TableInfoDialog();
+    explicit AddTableInfoDialog(QWidget *parent = nullptr);
+    virtual ~AddTableInfoDialog();
 
     static QStringList GetDepartmentList();
     static QStringList GetSpecialtyList();
@@ -33,23 +29,21 @@ public:
     static QStringList GetSexList();
 
 protected:
-    void InitDepartment(QComboBox & combobox);
-    void InitSpecialty(QComboBox & combobox);
-    void InitEducation(QComboBox & combobox);
-    void InitPlace(QComboBox & combobox);
-    void InitJob(QComboBox & combobox);
-
     virtual void InitLayout();
-    virtual void InitTableView();
-    virtual void InitTableModel();
 
-private:
-    Ui::TableInfoDialog *ui;
+signals:
+    void signalAddSuccess(bool);
+
+protected slots:
+    virtual void slotAdd();
+    virtual void slotClear();
 
 protected:
-    QTableView * m_pTableView;
-    QSqlTableModel * m_pSqlTableModel;
     CMSDatabase * m_pCMSDatabase;
+
+    QHBoxLayout * m_pButtonLayout;
+    QPushButton * m_pButtonAdd;
+    QPushButton * m_pButtonClear;
 };
 
 #endif // TABLEINFODIALOG_H

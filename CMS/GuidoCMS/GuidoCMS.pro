@@ -40,15 +40,17 @@ SOURCES += \
         delegate/datedelegate.cpp \
         delegate/readonlydelegate.cpp \
         delegate/comboboxdelegate.cpp \
-        form/departmentinfodialog.cpp \
+        form/addtableinfodepartmentdialog.cpp \
+        form/addtableinfodialog.cpp \
+        form/addtableinfostaffdialog.cpp \
         form/searchdialog.cpp \
-        form/staffinfodialog.cpp \
         form/logindialog.cpp \
         form/mainwindow.cpp \
         form/systemmanagerdialog.cpp\
-        form/tableinfodialog.cpp \
         controlext/standerlineedit.cpp \
         controlext/standercombobox.cpp \
+        form/tablemanagerdialog.cpp \
+        form/tablestaffmanagerdialog.cpp \
         main.cpp
 
 HEADERS += \
@@ -68,24 +70,23 @@ HEADERS += \
         delegate/comboboxdelegate.h \
         delegate/controldelegate.h \
         delegate/datedelegate.h \
+        form/addtableinfodepartmentdialog.h \
+        form/addtableinfodialog.h \
+        form/addtableinfostaffdialog.h \
         form/searchdialog.h \
-        form/staffinfodialog.h \
-        form/departmentinfodialog.h \
         form/logindialog.h \
         form/mainwindow.h \
         form/systemmanagerdialog.h \
-        form/tableinfodialog.h  \
         controlext/standerlineedit.h \
-        controlext/standercombobox.h
+        controlext/standercombobox.h \
+        form/tablemanagerdialog.h \
+        form/tablestaffmanagerdialog.h
 
 FORMS += \
-        form/departmentinfodialog.ui \
         form/logindialog.ui \
         form/mainwindow.ui \
         form/searchdialog.ui \
-        form/staffinfodialog.ui \
-        form/systemmanagerdialog.ui \
-        form/tableinfodialog.ui
+        form/systemmanagerdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

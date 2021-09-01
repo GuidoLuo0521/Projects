@@ -46,6 +46,7 @@ signals:
 
 private slots:
     void slotTableChange();
+    void slotUpdateTable();
     void slotUpdateTime();  
 
     void slotFilter(QStringList);
