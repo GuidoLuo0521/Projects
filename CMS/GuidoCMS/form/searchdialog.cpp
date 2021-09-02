@@ -40,6 +40,7 @@ QStringList SearchDialog::GetFilter()
 {
     QString strName = ui->leName->text();
     QString strSex = ui->cbSex->currentText();
+    QString strState = ui->cbState->currentText();
     QString strDepartment = ui->cbDepartment->currentText();
     QString strJob = ui->cbJob->currentText();
     QString strWageL = ui->sbLower->value() == 0.00 ? "" : ui->sbLower->text();
@@ -52,6 +53,7 @@ QStringList SearchDialog::GetFilter()
     listFilter.push_back(strJob);
     listFilter.push_back(strWageL);
     listFilter.push_back(strWageH);
+    listFilter.push_back(strState);
 
     return listFilter;
 }
@@ -81,10 +83,16 @@ void SearchDialog::on_cbJob_currentTextChanged(const QString &arg1)
     if(m_bInitOver)  emit signalFilterChange(GetFilter());
 }
 
+void SearchDialog::on_cbState_currentTextChanged(const QString &arg1)
+{
+    if(m_bInitOver)  emit signalFilterChange(GetFilter());
+}
+
 void SearchDialog::Clear()
 {
     ui->leName->setText("");
     ui->cbSex->setCurrentIndex(0);
+    ui->cbState->setCurrentIndex(0);
     ui->cbDepartment->setCurrentIndex(0);
     ui->cbJob->setCurrentIndex(0);
     ui->sbLower->setValue(0);
@@ -115,10 +123,13 @@ void SearchDialog::InitLayout()
 
     QStringList listSex = AddTableInfoDialog::GetSexList(); listSex.insert(0, "");
     QStringList listJob = AddTableInfoDialog::GetJobList(); listJob.insert(0, "");
+    QStringList listState = AddTableInfoDialog::GetStateList(); listState.insert(0, "");
     QStringList listDepartment = AddTableInfoDialog::GetDepartmentList(); listDepartment.insert(0, "");
+
 
     ui->cbSex->insertItems(0, listSex);
     ui->cbJob->insertItems(0, listJob);
+    ui->cbState->insertItems(0, listState);
     ui->cbDepartment->insertItems(0, listDepartment );
 
     ui->sbLower->setRange(0, INT_MAX);
@@ -136,6 +147,7 @@ void SearchDialog::HideAll(bool hide)
     ui->labelSex->setHidden(hide);ui->cbSex->setHidden(hide);
     ui->labelDepartment->setHidden(hide);ui->cbDepartment->setHidden(hide);
     ui->labelJob->setHidden(hide);ui->cbJob->setHidden(hide);
+    ui->labelState->setHidden(hide);ui->cbState->setHidden(hide);
     ui->labelWageRange->setHidden(hide);ui->sbLower->setHidden(hide);
     ui->sbHigher->setHidden(hide);ui->labelWageRangeTo->setHidden(hide);
 }
@@ -144,6 +156,7 @@ void SearchDialog::ShowJob()
 {
     HideAll(true);
     ui->labelName->setHidden(false);ui->leName->setHidden(false);
+    ui->labelState->setHidden(false);ui->cbState->setHidden(false);
 
     ui->labelName->setText("职务：");
     m_SearchTableType = STT_JOB;
@@ -161,6 +174,7 @@ void SearchDialog::ShowDepartment()
 {
     HideAll(true);
     ui->labelName->setHidden(false);ui->leName->setHidden(false);
+    ui->labelState->setHidden(false);ui->cbState->setHidden(false);
 
     ui->labelName->setText("部门：");
     m_SearchTableType = STT_DEPARTMENT;
@@ -169,10 +183,12 @@ void SearchDialog::ShowRole()
 {
     HideAll(true);
     ui->labelName->setHidden(false);ui->leName->setHidden(false);
+    ui->labelState->setHidden(false);ui->cbState->setHidden(false);
 
     ui->labelName->setText("角色：");
     m_SearchTableType = STT_ROLE;
 }
+
 
 
 

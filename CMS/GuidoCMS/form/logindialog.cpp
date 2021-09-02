@@ -19,6 +19,10 @@ LoginDialog::LoginDialog(QWidget *parent) :
     ui->setupUi(this);
     this->setFixedSize(360, 450);
 
+    connect(this, SIGNAL(signalSetCurrentUserNameIndex(int)),
+            this, SLOT(signalSetedCurrentUserNameIndex(int)));
+
+
     QStyledItemDelegate *delegate = new QStyledItemDelegate(this);
     ui->cbUserName->setItemDelegate(delegate);
     ui->cbUserName->setStyleSheet("QComboBox QAbstractItemView::item {min-height: 30px;}");
@@ -58,6 +62,8 @@ QString LoginDialog::GetPassWord()
 
 void LoginDialog::slotShowMainWindow()
 {
+    m_bLoadedStaffInfo = false;
+
     Clear();
 
     CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
@@ -89,7 +95,34 @@ void LoginDialog::slotShowMainWindow()
         }
     }
 
+    m_bLoadedStaffInfo = true;
     this->show();
+}
+
+void LoginDialog::signalSetedCurrentUserNameIndex(int index)
+{
+    m_nCurrentStaffIndex = -1;
+
+    if(index >= 0 && index < m_listLoginStaffs.count())
+    {
+        m_nCurrentStaffIndex = index;
+
+        LoginStaff& staff = m_listLoginStaffs[index];
+        ui->leUserName->setText(staff.strStaffID);
+        ui->checkBoxAutoLogin->setChecked(staff.bAutoLogin);
+        ui->checkBoxRmbPW->setChecked(staff.bRemenmberPW);
+        if(staff.bRemenmberPW)
+            ui->lePassword->setText(staff.strPassword);
+
+        QString strDefaultProfile = QApplication::applicationDirPath() + QString("/Profile/000000.png");
+        QString strProfile = QApplication::applicationDirPath() + QString("/Profile/%1.png").arg(staff.strStaffID);
+
+        if( QFile::exists(strProfile) == false)
+        {
+            strProfile = strDefaultProfile;
+        }
+        ui->labelProfile->setPixmap(QPixmap(strProfile));
+    }
 }
 
 void LoginDialog::slotUpdateDownLoadProfile(QString strPath, bool bSuccess)
@@ -316,28 +349,7 @@ int LoginDialog::CheckExistStaffInList(const QString &strUID)
 
 void LoginDialog::on_cbUserName_currentIndexChanged(int index)
 {
-    m_nCurrentStaffIndex = -1;
-
-    if(index >= 0 && index < m_listLoginStaffs.count())
-    {
-        m_nCurrentStaffIndex = index;
-
-        LoginStaff& staff = m_listLoginStaffs[index];
-        ui->leUserName->setText(staff.strStaffID);
-        ui->checkBoxAutoLogin->setChecked(staff.bAutoLogin);
-        ui->checkBoxRmbPW->setChecked(staff.bRemenmberPW);
-        if(staff.bRemenmberPW)
-            ui->lePassword->setText(staff.strPassword);       
-
-        QString strDefaultProfile = QApplication::applicationDirPath() + QString("/Profile/000000.png");
-        QString strProfile = QApplication::applicationDirPath() + QString("/Profile/%1.png").arg(staff.strStaffID);
-
-        if( QFile::exists(strProfile) == false)
-        {
-            strProfile = strDefaultProfile;
-        }
-        ui->labelProfile->setPixmap(QPixmap(strProfile));
-    }
+    emit signalSetCurrentUserNameIndex(index);
 }
 
 void LoginDialog::on_checkBoxAutoLogin_clicked(bool checked)
@@ -348,6 +360,9 @@ void LoginDialog::on_checkBoxAutoLogin_clicked(bool checked)
 
 void LoginDialog::on_leUserName_textChanged(const QString &arg1)
 {
+    if(m_bLoadedStaffInfo == false)
+        return;
+
     ui->lePassword->setText("");
     ui->checkBoxAutoLogin->setChecked(false);
     ui->checkBoxRmbPW->setChecked(false);
@@ -357,7 +372,8 @@ void LoginDialog::on_leUserName_textChanged(const QString &arg1)
     {
         if(ui->cbUserName->itemText(i) == strID)
         {
-            ui->cbUserName->setCurrentIndex(i);
+            //ui->cbUserName->setCurrentIndex(i);
+            emit signalSetCurrentUserNameIndex(i);
             return;
         }
     }
@@ -367,9 +383,4 @@ void LoginDialog::on_leUserName_textChanged(const QString &arg1)
         strProfile = QApplication::applicationDirPath() + QString("/Profile/000000.png");
 
     ui->labelProfile->setPixmap(QPixmap(strProfile));
-}
-
-void LoginDialog::on_cbUserName_editTextChanged(const QString &arg1)
-{
-    qDebug() << arg1;
 }

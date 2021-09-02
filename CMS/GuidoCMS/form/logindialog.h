@@ -43,19 +43,18 @@ public slots:
 
 signals:
     void signalShowMainWindow();
+    void signalSetCurrentUserNameIndex(int index);
 
 private slots:
+    void signalSetedCurrentUserNameIndex(int index);
+
     void slotUpdateDownLoadProfile(QString strPath, bool bSuccess);
 
     void on_btnLogin_clicked();
 
     void on_cbUserName_currentIndexChanged(int index);
-
     void on_checkBoxAutoLogin_clicked(bool checked);
-
     void on_leUserName_textChanged(const QString &arg1);
-
-    void on_cbUserName_editTextChanged(const QString &arg1);
 
 private:
     int VerifyInput();
@@ -81,6 +80,7 @@ private:
     QList<LoginStaff> m_listLoginStaffs;
 
 
+    bool m_bLoadedStaffInfo;
 
 };
 

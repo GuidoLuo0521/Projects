@@ -85,6 +85,13 @@ void TableRoleManagerDialog::slotFilter(QStringList listFilter)
     if(listFilter[SearchDialog::FILTER_NAME] != "")
         strQuery = QString("(RoleName LIKE '%%1%')").arg(listFilter[SearchDialog::FILTER_NAME]);
 
+    if((listFilter[SearchDialog::FILTER_STATE] != ""))
+    {
+        if(strQuery != "")
+            strQuery += " AND ";
+        strQuery += QString("(State = '%1')").arg(listFilter[SearchDialog::FILTER_STATE]);
+    }
+
     m_pSqlTableModel->setFilter(strQuery);
     m_pSqlTableModel->select();
 }

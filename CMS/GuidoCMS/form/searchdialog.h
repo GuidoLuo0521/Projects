@@ -27,7 +27,8 @@ public:
         FILTER_DEPARTMENT,
         FILTER_JOB,
         FILTER_WAGE_L,
-        FILTER_WAGE_H
+        FILTER_WAGE_H,
+        FILTER_STATE
     };
 
 public:
@@ -41,19 +42,16 @@ signals:
     void signalFilterChange(QStringList listFilter);
 
 private slots:
-    void on_leName_textChanged(const QString &arg1);
-
-    void on_cbSex_currentTextChanged(const QString &arg1);
-
-    void on_cbDepartment_currentTextChanged(const QString &arg1);
-
-    void on_sbLower_valueChanged(double arg1);
-
     void on_btnClear_clicked();
 
+    void on_leName_textChanged(const QString &arg1);
+    void on_sbLower_valueChanged(double arg1);
     void on_sbHigher_valueChanged(double arg1);
 
+    void on_cbSex_currentTextChanged(const QString &arg1);
+    void on_cbDepartment_currentTextChanged(const QString &arg1);
     void on_cbJob_currentTextChanged(const QString &arg1);
+    void on_cbState_currentTextChanged(const QString &arg1);
 
 private:
     void Clear();
