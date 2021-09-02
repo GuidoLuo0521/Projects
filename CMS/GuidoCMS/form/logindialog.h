@@ -2,12 +2,12 @@
 #define LOGINDIALOG_H
 
 #include <QDialog>
+#include <common/filedownloader.h>
 #include "database/cmsdatabase.h"
 
 namespace Ui {
 class LoginDialog;
 }
-
 
 struct LoginStaff
 {
@@ -45,6 +45,7 @@ signals:
     void signalShowMainWindow();
 
 private slots:
+    void slotUpdateDownLoadProfile(QString strPath, bool bSuccess);
 
     void on_btnLogin_clicked();
 
@@ -53,6 +54,8 @@ private slots:
     void on_checkBoxAutoLogin_clicked(bool checked);
 
     void on_leUserName_textChanged(const QString &arg1);
+
+    void on_cbUserName_editTextChanged(const QString &arg1);
 
 private:
     int VerifyInput();
@@ -65,15 +68,20 @@ private:
     int LoadLocalStaffInfo();
     void Clear();
 
-    bool CheckExistStaff(const QString &strUID);
+    bool CheckExistStaffInLocalDB(const QString &strUID);
+    int  CheckExistStaffInList(const QString &strUID);
 
 private:
     Ui::LoginDialog *ui;
     CMSDatabase * m_pCMSDatabase;
+    FileDownloader * m_pFileDownloader ;
 
     int m_nSelectStaffIndex ;
     int m_nCurrentStaffIndex ;
     QList<LoginStaff> m_listLoginStaffs;
+
+
+
 };
 
 #endif // LOGINDIALOG_H

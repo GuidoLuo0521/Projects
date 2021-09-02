@@ -4,10 +4,12 @@
 #include "ui_logindialog.h"
 #include "common/staffinfo.h"
 #include "common/commonapi.h"
+#include "common/filedownloader.h"
 
 #include <QFile>
 #include <QStyledItemDelegate>
-#include <QThread>
+
+const QString gk_ProfileUrl = "http://www.millet.fun/GuidoCMS/Profile";
 
 LoginDialog::LoginDialog(QWidget *parent) :
     QDialog(parent)
@@ -20,7 +22,20 @@ LoginDialog::LoginDialog(QWidget *parent) :
     QStyledItemDelegate *delegate = new QStyledItemDelegate(this);
     ui->cbUserName->setItemDelegate(delegate);
     ui->cbUserName->setStyleSheet("QComboBox QAbstractItemView::item {min-height: 30px;}");
-    ui->cbUserName->setIconSize(QSize(30,30));
+    //ui->cbUserName->setIconSize(QSize(30,30));
+    ui->cbUserName->setLineEdit(ui->leUserName);
+
+    QString strDefaultProfile = QApplication::applicationDirPath() + QString("/Profile/000000.png");
+    QString strUrl = gk_ProfileUrl + "/000000.png";
+
+    m_pFileDownloader = new FileDownloader(this);
+    connect(m_pFileDownloader, SIGNAL(signalDownLoaded(QString, bool)),
+            this, SLOT(slotUpdateDownLoadProfile(QString, bool)));
+
+    if(QFile::exists(strDefaultProfile) == false)
+    {
+        m_pFileDownloader->DownLoadFile(strUrl, strDefaultProfile);
+    }
 
     slotShowMainWindow();
 }
@@ -70,11 +85,23 @@ void LoginDialog::slotShowMainWindow()
         ui->cbUserName->setCurrentIndex(m_nSelectStaffIndex);
         if(m_listLoginStaffs[m_nSelectStaffIndex].bAutoLogin)
         {
-            //
+            //on_btnLogin_clicked();
         }
     }
 
     this->show();
+}
+
+void LoginDialog::slotUpdateDownLoadProfile(QString strPath, bool bSuccess)
+{
+    if(bSuccess)
+    {
+        QString strProfile = strPath;
+        if(QFile::exists(strProfile) == false)
+            strProfile = QApplication::applicationDirPath() + QString("/Profile/000000.png");
+
+        ui->labelProfile->setPixmap(QPixmap(strProfile));
+    }
 }
 
 void LoginDialog::on_btnLogin_clicked()
@@ -93,7 +120,17 @@ void LoginDialog::on_btnLogin_clicked()
         {
             UpdateStaffInfo(strPassWord, ui->checkBoxRmbPW->isChecked(), ui->checkBoxAutoLogin->isChecked(), true);
 
+            QString strProfile = QApplication::applicationDirPath() + QString("/Profile/%1.png").arg(strUserID);;
+            if(QFile::exists(strProfile) == false)
+            {
+                QString strUrl = QString("%1/%2.png").arg(gk_ProfileUrl).arg(strUserID);
+                m_pFileDownloader->DownLoadFile(strUrl, strProfile);
+            }
+
             StaffInfoSingleton::SetInstance(GetStaffInfo(strUserID));
+
+            LoadLocalStaffInfo();
+
             emit signalShowMainWindow();
             close();
         }
@@ -149,10 +186,10 @@ void LoginDialog::UpdateCombox()
         LoginStaff& staff = m_listLoginStaffs[i];
         if(staff.bActiveState == true )
         {
-            QString strProfile = QString("Profile/%1.png").arg(staff.strStaffID);
-            QIcon icon = QIcon(strProfile);
+            //QString strProfile = QString("Profile/%1.png").arg(staff.strStaffID);
+            //QIcon icon = QIcon(strProfile);
 
-            ui->cbUserName->insertItem(i, icon, staff.strStaffID);
+            ui->cbUserName->insertItem(i, staff.strStaffID);
         }
     }
 }
@@ -165,7 +202,7 @@ int LoginDialog::UpdateStaffInfo(const QString &strPassWord, const bool bRemenmb
     strQuery = QString("UPDATE StaffInfo SET SelectState = '%1'").arg(false);
     m_pCMSDatabase->m_LocalDatabase.exec(strQuery);
 
-    if(CheckExistStaff(strUserID))
+    if(CheckExistStaffInLocalDB(strUserID))
     {
         LoginStaff& staff = m_listLoginStaffs[m_nCurrentStaffIndex];
         staff.strPassword = strPassWord;
@@ -249,13 +286,14 @@ void LoginDialog::Clear()
     ui->labelInfo->clear();
 
     ui->cbUserName->clear();
+
     ui->lePassword->clear();;
     ui->lePassword->clear();;
     ui->checkBoxRmbPW->setChecked(false);
     ui->checkBoxAutoLogin->setChecked(false);
 }
 
-bool LoginDialog::CheckExistStaff(const QString &strUID)
+bool LoginDialog::CheckExistStaffInLocalDB(const QString &strUID)
 {
     QString strQuery = QString("SELECT StaffID "
                                "FROM StaffInfo "
@@ -263,6 +301,17 @@ bool LoginDialog::CheckExistStaff(const QString &strUID)
     QSqlQuery query = m_pCMSDatabase->m_LocalDatabase.exec(strQuery);
 
     return query.next();
+}
+
+int LoginDialog::CheckExistStaffInList(const QString &strUID)
+{
+    for(int i = 0 ; i < m_listLoginStaffs.size(); ++i)
+    {
+        if(strUID == m_listLoginStaffs[i].strStaffID)
+            return i;
+    }
+
+    return  -1;
 }
 
 void LoginDialog::on_cbUserName_currentIndexChanged(int index)
@@ -278,9 +327,15 @@ void LoginDialog::on_cbUserName_currentIndexChanged(int index)
         ui->checkBoxAutoLogin->setChecked(staff.bAutoLogin);
         ui->checkBoxRmbPW->setChecked(staff.bRemenmberPW);
         if(staff.bRemenmberPW)
-            ui->lePassword->setText(staff.strPassword);
+            ui->lePassword->setText(staff.strPassword);       
 
-        QString strProfile = QString("Profile/%1.png").arg(staff.strStaffID);
+        QString strDefaultProfile = QApplication::applicationDirPath() + QString("/Profile/000000.png");
+        QString strProfile = QApplication::applicationDirPath() + QString("/Profile/%1.png").arg(staff.strStaffID);
+
+        if( QFile::exists(strProfile) == false)
+        {
+            strProfile = strDefaultProfile;
+        }
         ui->labelProfile->setPixmap(QPixmap(strProfile));
     }
 }
@@ -297,9 +352,24 @@ void LoginDialog::on_leUserName_textChanged(const QString &arg1)
     ui->checkBoxAutoLogin->setChecked(false);
     ui->checkBoxRmbPW->setChecked(false);
 
-    QString strProfile = QString("Profile/%1.png").arg(arg1);
+    QString strID = arg1;
+    for(int i = 0; i < ui->cbUserName->count(); ++i)
+    {
+        if(ui->cbUserName->itemText(i) == strID)
+        {
+            ui->cbUserName->setCurrentIndex(i);
+            return;
+        }
+    }
+
+    QString strProfile = QApplication::applicationDirPath() + QString("/Profile/%1.png").arg(arg1);
     if(QFile::exists(strProfile) == false)
-        strProfile = QString("Profile/000000.png");
+        strProfile = QApplication::applicationDirPath() + QString("/Profile/000000.png");
 
     ui->labelProfile->setPixmap(QPixmap(strProfile));
+}
+
+void LoginDialog::on_cbUserName_editTextChanged(const QString &arg1)
+{
+    qDebug() << arg1;
 }
