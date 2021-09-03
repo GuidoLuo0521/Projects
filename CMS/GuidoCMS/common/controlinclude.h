@@ -17,6 +17,13 @@
 #include <QHeaderView>
 #include <QTableView>
 
+#include <QMenuBar>
+#include <QAction>
+
+#include <QDialog>
+#include <QWidget>
+#include <QMainWindow>
+
 #include "delegate/controldelegate.h"
 #include "controlext/controlext.h"
 

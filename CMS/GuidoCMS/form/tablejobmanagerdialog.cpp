@@ -1,4 +1,4 @@
-#include "tablejobmanagerdialog.h"
+﻿#include "tablejobmanagerdialog.h"
 #include "addtableinfojobdialog.h"
 
 TableJobManagerDialog::TableJobManagerDialog(QMainWindow * parent ) :
@@ -22,23 +22,10 @@ TableJobManagerDialog::~TableJobManagerDialog()
 
 void TableJobManagerDialog::CreateSpecialDialog()
 {
+    TableManagerDialog::CreateSpecialDialog();
     m_pAddTableInfoDialog = new AddTableInfoJobDialog(this);
 }
 
-void TableJobManagerDialog::InitLayout()
-{
-    m_pSearchDockWidget->setWindowTitle("查询职务");
-    m_pSearchDockWidget->setWidget(m_pSearchDialog);
-    //m_pSearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pSearchDockWidget);
-
-    m_pAddDockWidget->setWindowTitle("增加职务");
-    m_pAddDockWidget->setWidget(m_pAddTableInfoDialog);
-    //pAddDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pAddDockWidget);
-
-    this->setCentralWidget(m_pTableView);
-}
 
 void TableJobManagerDialog::InitSqlTableModel()
 {
@@ -73,11 +60,17 @@ void TableJobManagerDialog::InitSqlTableModel()
 void TableJobManagerDialog::InitSearchDialog()
 {
     m_pSearchDialog->SetSearchMode(SearchDialog::STT_JOB);
+
+    m_pSearchDockWidget->setWidget( m_pSearchDialog);
+    m_pSearchDockWidget->setWindowTitle("搜索职务");
 }
 
 void TableJobManagerDialog::InitAddTableInfoDialog()
 {
     connect(m_pAddTableInfoDialog, SIGNAL(signalAddSuccess(bool)), this, SLOT(slotUpdateTable(bool)));
+
+    m_pAddDockWidget->setWidget( m_pAddTableInfoDialog);
+    m_pAddDockWidget->setWindowTitle("增加职务");
 }
 
 void TableJobManagerDialog::slotFilter(QStringList listFilter)

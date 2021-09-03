@@ -24,92 +24,82 @@
 #include <QTimer>
 #include <QDockWidget>
 #include <QStatusBar>
+#include <QMenuBar>
 
 #include "delegate/controldelegate.h"
 
 SystemManagerDialog::SystemManagerDialog(QWidget *parent) :
-    QMainWindow(parent)
+    CMSBaseWidget(parent)
 {
     InitLayout();
-
-    slotTableChange();
+    slotSetTableModelTableStaff();
 }
 
 SystemManagerDialog::~SystemManagerDialog()
 {
 }
 
-void SystemManagerDialog::slotTableChange()
+void SystemManagerDialog::slotUpdateCurrentPage()
 {
-    QAction * pAction = (QAction*)sender();
+    TableManagerDialog * ptableWidget = (TableManagerDialog * )m_pStackedWidget->currentWidget();
+    ptableWidget->slotUpdateTable(false);
+}
 
-    if(pAction == m_pJobManager)
-        SetTableModelTableJob();
-    else if(pAction == m_pRoleManager)
-        SetTableModelTableRole();
-    else if(pAction == m_pDepartmentManager)
-        SetTableModelTableDepartment();
+void SystemManagerDialog::slotShowSearchDialog(bool bShow)
+{
+    TableManagerDialog * ptableWidget = (TableManagerDialog * )m_pStackedWidget->currentWidget();
+    if(bShow)
+        ptableWidget->getSearchDockWidget()->show();
     else
-        SetTableModelTableStaff();
-
-    ActionChecked(pAction);
+        ptableWidget->getSearchDockWidget()->hide();
 }
 
-void SystemManagerDialog::slotUpdateTime()
+void SystemManagerDialog::slotShowAddEntryDialog(bool bShow)
 {
-    //[1] 获取时间
-    QDateTime current_time = QDateTime::currentDateTime();
-    QString timestr = current_time.toString( "yyyy-MM-dd hh:mm:ss"); //设置显示的格式
-    m_pStatuTimeLabel->setText(timestr); //设置label的文本内容为时间
+    TableManagerDialog * ptableWidget = (TableManagerDialog * )m_pStackedWidget->currentWidget();
+    if(bShow)
+        ptableWidget->getAddDockWidget()->show();
+    else
+        ptableWidget->getAddDockWidget()->hide();
 }
 
-void SystemManagerDialog::slotExitLogin()
+void SystemManagerDialog::ActionChecked(SystemManagerDialog::StackedWidgetType type)
 {
-    emit signalExitCurrentAccount(); close();
+    m_pActionStaffManager->setChecked(false);
+    m_pActionRoleManager->setChecked(false);
+    m_pActionDepartmentManager->setChecked(false);
+    m_pActionJobManager->setChecked(false);
+
+    switch (type) {
+    //case    StaffWidget: m_pActionStaffManager->setChecked(true); return;
+    case    DepartmentWidget: m_pActionDepartmentManager->setChecked(true); return;
+    case    JobWidget: m_pActionJobManager->setChecked(true); return;
+    case    RoleWidget: m_pActionRoleManager->setChecked(true); return;
+    default: m_pActionStaffManager->setChecked(true); return;
+    }
 }
 
-void SystemManagerDialog::slotShowWindow()
+void SystemManagerDialog::slotSetTableModelTableStaff()
 {
-    CStaffInfo * pStaffInfo = StaffInfoSingleton::GetInstance();
-    QString str = QString("当前登录人员：%1 %2 %3")
-                      .arg(pStaffInfo->GetDepartment())
-                      .arg(pStaffInfo->GetStaffID())
-                      .arg(pStaffInfo->GetStaffName());
-
-    m_pStatuAccountLabel->setText(str);
-    this->show();
-}
-
-void SystemManagerDialog::ActionChecked(QAction * pAction)
-{
-    m_pStaffManager->setChecked(false);
-    m_pRoleManager->setChecked(false);
-    m_pDepartmentManager->setChecked(false);
-    m_pJobManager->setChecked(false);
-
-    if(pAction == nullptr)
-        pAction = m_pStaffManager;
-
-    pAction->setChecked(true);
-}
-
-void SystemManagerDialog::SetTableModelTableStaff()
-{
+    ActionChecked(StaffWidget);
     m_pStackedWidget->setCurrentIndex(StaffWidget);
 }
 
-void SystemManagerDialog::SetTableModelTableRole()
+void SystemManagerDialog::slotSetTableModelTableRole()
 {
+    ActionChecked(RoleWidget);
     m_pStackedWidget->setCurrentIndex(RoleWidget);
 }
 
-void SystemManagerDialog::SetTableModelTableDepartment()
-{    
+void SystemManagerDialog::slotSetTableModelTableDepartment()
+{
+    ActionChecked(DepartmentWidget);
     m_pStackedWidget->setCurrentIndex(DepartmentWidget);
 }
 
-void SystemManagerDialog::SetTableModelTableJob()
+void SystemManagerDialog::slotSetTableModelTableJob()
 {
+    ActionChecked(JobWidget);
     m_pStackedWidget->setCurrentIndex(JobWidget);    
 }
 
@@ -117,8 +107,8 @@ void SystemManagerDialog::InitLayout()
 {
     setWindowTitle("系统管理");
 
+    //QWidget * pMenuBar = InitMenuBar();
     QWidget * ptoolbar = InitToolBar();
-    QWidget * pstatubar = InitStatuBar();
     QWidget * ptableviewStaff = InitTableInfoManagerStaff();
     QWidget * ptableviewDepartment = InitTableInfoManagerDepartment();
     QWidget * ptableviewRole = InitTableInfoManagerRole();
@@ -132,75 +122,78 @@ void SystemManagerDialog::InitLayout()
     m_pStackedWidget->addWidget(ptableviewJob);
     m_pStackedWidget->addWidget(ptableviewRole);
 
-    this->setCentralWidget(m_pStackedWidget);
+    //this->setCentralWidget(m_pStackedWidget);
+
+    QVBoxLayout * pMainLayout = new QVBoxLayout;
+    pMainLayout->addWidget(ptoolbar);
+    pMainLayout->addWidget(m_pStackedWidget);
+
+    this->setLayout(pMainLayout);
+}
+
+QWidget *SystemManagerDialog::InitMenuBar()
+{
+    //QMenuBar* pMainMenuBar =  this->menuBar();
+    QMenuBar* pMainMenuBar =  new QMenuBar;
+
+    QMenu * pViewMenu = pMainMenuBar->addMenu("视图");
+    m_pActionSearch = pViewMenu->addAction("搜索");
+    m_pActionAddEntry = pViewMenu->addAction("增加");
+
+    m_pActionSearch->setCheckable(true);
+    m_pActionAddEntry->setCheckable(true);
+
+    m_pActionSearch->setChecked(true);
+    m_pActionAddEntry->setChecked(true);
+
+    connect( m_pActionSearch, &QAction::triggered, this, &SystemManagerDialog::slotShowSearchDialog);
+    connect( m_pActionAddEntry, &QAction::triggered, this, &SystemManagerDialog::slotShowAddEntryDialog);
+
+    return  pMainMenuBar;
 }
 
 QWidget* SystemManagerDialog::InitToolBar()
 {
-    QToolBar* pToolbarMain =  this->addToolBar("管理");
+    //QToolBar* pToolbarMain =  this->addToolBar("管理");
+    QToolBar* pToolbarMain =  new QToolBar("管理");
+
     pToolbarMain->setMovable(false);
     pToolbarMain->setFloatable(false);
 
-    m_pStaffManager =       pToolbarMain->addAction("用户");
-    m_pDepartmentManager =  pToolbarMain->addAction("部门");
-    m_pJobManager =         pToolbarMain->addAction("职务");
-    m_pRoleManager =        pToolbarMain->addAction("角色");
+    m_pActionStaffManager =       pToolbarMain->addAction("用户");
+    m_pActionDepartmentManager =  pToolbarMain->addAction("部门");
+    m_pActionJobManager =         pToolbarMain->addAction("职务");
+    m_pActionRoleManager =        pToolbarMain->addAction("角色");
 
-    //2011-11-23-QTooBar中最右一个图标的靠右对齐方式
-    QWidget *spacer = new QWidget(this);
-    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    //toolBar is a pointer to an existing toolbar
-    pToolbarMain->addWidget(spacer);
-    pToolbarMain->setFloatable(false);
-    m_pExit =  pToolbarMain->addAction("退出登录");
+    m_pActionJobManager->setCheckable(true);
+    m_pActionRoleManager->setCheckable(true);
+    m_pActionStaffManager->setCheckable(true);
+    m_pActionDepartmentManager->setCheckable(true);
 
-    m_pJobManager->setCheckable(true);
-    m_pRoleManager->setCheckable(true);
-    m_pStaffManager->setCheckable(true);    
-    m_pDepartmentManager->setCheckable(true);
-
-    connect( m_pJobManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
-    connect( m_pRoleManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
-    connect( m_pStaffManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
-    connect( m_pDepartmentManager, &QAction::triggered, this, &SystemManagerDialog::slotTableChange);
-
-    connect( m_pExit, &QAction::triggered, this, &SystemManagerDialog::slotExitLogin);
+    connect( m_pActionJobManager, &QAction::triggered, this, &SystemManagerDialog::slotSetTableModelTableJob);
+    connect( m_pActionRoleManager, &QAction::triggered, this, &SystemManagerDialog::slotSetTableModelTableRole);
+    connect( m_pActionStaffManager, &QAction::triggered, this, &SystemManagerDialog::slotSetTableModelTableStaff);
+    connect( m_pActionDepartmentManager, &QAction::triggered, this, &SystemManagerDialog::slotSetTableModelTableDepartment);
 
     return  pToolbarMain;
 }
 
-QWidget *SystemManagerDialog::InitStatuBar()
-{
-    QStatusBar * pStatubar = this->statusBar();
-    m_pStatuTimeLabel = new QLabel(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
-    pStatubar->addPermanentWidget(m_pStatuTimeLabel);
 
-    QTimer * pTimer = new QTimer(this);
-    pTimer->setInterval(1000);
-    connect(pTimer, &QTimer::timeout, this, &SystemManagerDialog::slotUpdateTime);
-    pTimer->start();
-
-    m_pStatuAccountLabel = new QLabel("当前登录人员：");
-    pStatubar->addWidget(m_pStatuAccountLabel);
-
-    return pStatubar;
-
-}
 QWidget* SystemManagerDialog::InitTableInfoManagerStaff()
 {
-    return  new TableStaffManagerDialog(this);
+    return  new TableStaffManagerDialog;
 }
 QWidget* SystemManagerDialog::InitTableInfoManagerDepartment()
 {
-    return  new TableDepartmentManagerDialog(this);
+    return  new TableDepartmentManagerDialog;
 }
 QWidget* SystemManagerDialog::InitTableInfoManagerRole()
 {
-    return  new TableRoleManagerDialog(this);
+    return  new TableRoleManagerDialog;
 }
 QWidget* SystemManagerDialog::InitTableInfoManagerJob()
 {
-    return  new TableJobManagerDialog(this);
+    return  new TableJobManagerDialog;
 }
 
 

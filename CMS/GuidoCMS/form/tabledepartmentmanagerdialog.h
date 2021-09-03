@@ -1,4 +1,4 @@
-#ifndef TABLEDEPARTMENTMANAGERDIALOG_H
+﻿#ifndef TABLEDEPARTMENTMANAGERDIALOG_H
 #define TABLEDEPARTMENTMANAGERDIALOG_H
 
 #include "tablemanagerdialog.h"
@@ -12,7 +12,6 @@ public:
 protected:
     virtual void CreateSpecialDialog() override;
 
-    virtual void InitLayout() override;
     virtual void InitSqlTableModel() override;
     virtual void InitSearchDialog() override;
     virtual void InitAddTableInfoDialog() override;

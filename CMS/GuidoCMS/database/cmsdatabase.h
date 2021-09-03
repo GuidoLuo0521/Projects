@@ -27,10 +27,10 @@ public:
     int WDB_VerifyLogin(const QString& strUsername, const QString& strPassword);
 
     QSqlQuery WDB_Exec(const QString& strQuery);
-    QSqlError WBD_LastError();
+    QSqlError WDB_LastError();
 
     QSqlQuery LDB_Exec(const QString& strQuery);
-    QSqlError LBD_LastError();
+    QSqlError LDB_LastError();
 
     QSqlQuery LDB_Log(const QString& leave, const QString& context);
     QSqlQuery LDB_Log_FATAL(const QString& context);

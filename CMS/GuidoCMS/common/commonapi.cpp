@@ -18,13 +18,14 @@ void CreateCurrentStaffInfoSingleton()
 }
 
 
-CStaffInfo* GetStaffInfo(const QString& strStaffID)
+CStaffInfo* GetStaffInfo(const QString& strStaffID, const QString& strStaffPassWord)
 {
     CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
     CStaffInfo * pStaffInfo = new CStaffInfo;
     if(pDB->WDB_IsOpen())
     {
-        QString sql = QString("SELECT * FROM staff Where staffid = %1").arg(strStaffID);
+        QString sql = QString("SELECT * FROM staff Where staffid = %1 AND StaffPassword = '%2'")
+                          .arg(strStaffID).arg(strStaffPassWord);
         QSqlQuery query = pDB->WDB_Exec(sql);
         if(query.next())
         {

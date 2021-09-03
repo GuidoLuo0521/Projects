@@ -1,4 +1,4 @@
-#include "tablerolemanagerdialog.h"
+﻿#include "tablerolemanagerdialog.h"
 
 #include "addtableinforoledialog.h"
 
@@ -23,22 +23,8 @@ TableRoleManagerDialog::~TableRoleManagerDialog()
 
 void TableRoleManagerDialog::CreateSpecialDialog()
 {
+    TableManagerDialog::CreateSpecialDialog();
     m_pAddTableInfoDialog = new AddTableInfoRoleDialog(this);
-}
-
-void TableRoleManagerDialog::InitLayout()
-{
-    m_pSearchDockWidget->setWindowTitle("查询角色");
-    m_pSearchDockWidget->setWidget(m_pSearchDialog);
-    //m_pSearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pSearchDockWidget);
-
-    m_pAddDockWidget->setWindowTitle("增加角色");
-    m_pAddDockWidget->setWidget(m_pAddTableInfoDialog);
-    //pAddDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pAddDockWidget);
-
-    this->setCentralWidget(m_pTableView);
 }
 
 void TableRoleManagerDialog::InitSqlTableModel()
@@ -72,11 +58,17 @@ void TableRoleManagerDialog::InitSqlTableModel()
 void TableRoleManagerDialog::InitSearchDialog()
 {
     m_pSearchDialog->SetSearchMode(SearchDialog::STT_ROLE);
+
+    m_pSearchDockWidget->setWindowTitle("查询角色");
+    m_pSearchDockWidget->setWidget(m_pSearchDialog);
 }
 
 void TableRoleManagerDialog::InitAddTableInfoDialog()
 {
     connect(m_pAddTableInfoDialog, SIGNAL(signalAddSuccess(bool)), this, SLOT(slotUpdateTable(bool)));
+
+    m_pAddDockWidget->setWindowTitle("增加角色");
+    m_pAddDockWidget->setWidget(m_pAddTableInfoDialog);
 }
 
 void TableRoleManagerDialog::slotFilter(QStringList listFilter)

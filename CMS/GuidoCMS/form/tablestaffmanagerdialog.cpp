@@ -20,40 +20,10 @@ TableStaffManagerDialog::TableStaffManagerDialog(QMainWindow * parent ) :
 
 void TableStaffManagerDialog::CreateSpecialDialog()
 {
+    TableManagerDialog::CreateSpecialDialog();
     m_pAddTableInfoDialog = new AddTableInfoStaffDialog(this);
 }
 
-void TableStaffManagerDialog::InitLayout()
-{
-    // 左边为列表，右边上面为查询，下面为增加
-
-#if 0
-    QSplitter * pMainSpltter = new QSplitter(Qt::Orientation::Horizontal, this);
-    QSplitter * pRightSpltter = new QSplitter(Qt::Orientation::Vertical, pMainSpltter);
-
-    pRightSpltter->addWidget(m_pSearchDialog);
-    pRightSpltter->addWidget(m_pAddTableInfoDialog);
-
-    pMainSpltter->addWidget(m_pTableView);
-    pMainSpltter->addWidget(pRightSpltter);
-
-    pMainLayout->addWidget(pMainSpltter);
-
-#else
-    m_pSearchDockWidget->setWindowTitle("查询职工");
-    m_pSearchDockWidget->setWidget(m_pSearchDialog);
-    //m_pSearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pSearchDockWidget);
-
-    m_pAddDockWidget->setWindowTitle("增加职工");
-    m_pAddDockWidget->setWidget(m_pAddTableInfoDialog);
-    //pAddDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
-    this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pAddDockWidget);
-
-    this->setCentralWidget(m_pTableView);
-#endif
-
-}
 
 void TableStaffManagerDialog::InitSqlTableModel()
 {
@@ -134,6 +104,9 @@ void TableStaffManagerDialog::InitSqlTableModel()
 void TableStaffManagerDialog::InitSearchDialog()
 {
     m_pSearchDialog->SetSearchMode(SearchDialog::STT_STAFF);
+
+    m_pSearchDockWidget->setWindowTitle("查询职工");
+    m_pSearchDockWidget->setWidget(m_pSearchDialog);
 }
 
 void TableStaffManagerDialog::InitAddTableInfoDialog()
@@ -142,6 +115,9 @@ void TableStaffManagerDialog::InitAddTableInfoDialog()
 
     //connect(m_pAddTableInfoDialog, &AddTableInfoDialog::signalAddSuccess, this, &TableManagerDialog::slotUpdateTable);
     //connect(m_pAddTableInfoDialog, &AddTableInfoStaffDialog::signalAddSuccess, this, &TableManagerDialog::slotUpdateTable);
+
+    m_pAddDockWidget->setWindowTitle("增加职工");
+    m_pAddDockWidget->setWidget(m_pAddTableInfoDialog);
 }
 
 void TableStaffManagerDialog::slotFilter(QStringList listFilter)

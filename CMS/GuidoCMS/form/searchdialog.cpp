@@ -165,6 +165,7 @@ void SearchDialog::ShowJob()
 void SearchDialog::ShowStaff()
 {
     HideAll(false);
+    ui->labelState->setHidden(true);ui->cbState->setHidden(true);
 
     ui->labelName->setText("姓名：");
     m_SearchTableType = STT_STAFF;

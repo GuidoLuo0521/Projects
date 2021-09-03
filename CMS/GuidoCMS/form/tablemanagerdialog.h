@@ -21,15 +21,18 @@ public:
     TableManagerDialog(QMainWindow * parent = 0);
     virtual ~TableManagerDialog();
 
+public:
+    QDockWidget * getSearchDockWidget();
+    QDockWidget * getAddDockWidget();
 protected:
 
-    virtual void CreateSpecialDialog() = 0;
+    virtual void CreateSpecialDialog();
 
     virtual void InitTableView();
-    virtual void InitLayout() = 0;
+    virtual void InitLayout();
     virtual void InitSqlTableModel() = 0;
-    virtual void InitSearchDialog() = 0;
-    virtual void InitAddTableInfoDialog() = 0;
+    virtual void InitSearchDialog();
+    virtual void InitAddTableInfoDialog();
 
 public slots:
     void slotUpdateTable(bool);

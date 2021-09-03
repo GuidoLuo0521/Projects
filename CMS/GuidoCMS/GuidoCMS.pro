@@ -47,8 +47,11 @@ SOURCES += \
         form/addtableinfojobdialog.cpp \
         form/addtableinforoledialog.cpp \
         form/addtableinfostaffdialog.cpp \
+        form/cmsbasewidget.cpp \
+        form/mainwindow.cpp \
         form/searchdialog.cpp \
         form/logindialog.cpp \
+        form/staffpassworddialog.cpp \
         form/systemmanagerdialog.cpp\
         controlext/standerlineedit.cpp \
         controlext/standercombobox.cpp \
@@ -82,8 +85,11 @@ HEADERS += \
         form/addtableinfojobdialog.h \
         form/addtableinforoledialog.h \
         form/addtableinfostaffdialog.h \
+        form/cmsbasewidget.h \
+        form/mainwindow.h \
         form/searchdialog.h \
         form/logindialog.h \
+        form/staffpassworddialog.h \
         form/systemmanagerdialog.h \
         controlext/standerlineedit.h \
         controlext/standercombobox.h \
@@ -96,6 +102,7 @@ HEADERS += \
 FORMS += \
         form/logindialog.ui \
         form/searchdialog.ui \
+        form/staffpassworddialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

@@ -1,4 +1,4 @@
-#ifndef TABLEJOBMANAGERDIALOG_H
+﻿#ifndef TABLEJOBMANAGERDIALOG_H
 #define TABLEJOBMANAGERDIALOG_H
 
 #include "tablemanagerdialog.h"
@@ -12,7 +12,6 @@ public:
 protected:
     virtual void CreateSpecialDialog() override;
 
-    virtual void InitLayout() override;
     virtual void InitSqlTableModel() override;
     virtual void InitSearchDialog() override;
     virtual void InitAddTableInfoDialog() override;

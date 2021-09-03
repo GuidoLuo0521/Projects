@@ -72,10 +72,10 @@ void LoginDialog::slotShowMainWindow()
     if( pDB )
     {
         if(!pDB->WDB_IsOpen())
-            strErrorText += "WebDatabase Not Open。\n";
+            strErrorText += "Web database connect failed.\n";
 
         if(!pDB->LDB_IsOpen())
-            strErrorText += "LocalDatabase Not Open。\n";
+            strErrorText += "Local database connect failed.\n";
     }
 
     ui->labelInfo->setText(strErrorText);
@@ -160,7 +160,7 @@ void LoginDialog::on_btnLogin_clicked()
                 m_pFileDownloader->DownLoadFile(strUrl, strProfile);
             }
 
-            StaffInfoSingleton::SetInstance(GetStaffInfo(strUserID));
+            StaffInfoSingleton::SetInstance(GetStaffInfo(strUserID, strPassWord));
 
             LoadLocalStaffInfo();
 

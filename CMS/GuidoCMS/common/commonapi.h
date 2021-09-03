@@ -15,7 +15,7 @@ void LoadDatabaseSingleton();
 void CreateCurrentStaffInfoSingleton();
 
 /**********************************************************************/
-CStaffInfo* GetStaffInfo(const QString& strStaffID);
+CStaffInfo* GetStaffInfo(const QString& strStaffID, const QString& strStaffPassWord);
 
 
 #endif // COMMONAPI_H

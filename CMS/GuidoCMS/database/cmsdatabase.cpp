@@ -32,7 +32,7 @@ void CMSDatabase::InitParams()
     m_strWebHostName = "127.0.0.1";
     m_strWebDatabaseName = "guidocms";
     m_strWebUserName = "root";
-    m_strWebPassword = "4474ljx";
+    m_strWebPassword = "kangrulai";
 
     m_strLocalType = "QSQLITE";
     m_strLocalConnectionName = "QSQLITE_LOCALDB";
@@ -120,9 +120,9 @@ void CMSDatabase::LoadWebDatabase()
         m_WebDatabase.setPassword(m_strWebPassword);
 
         if(m_WebDatabase.open())
-            qDebug() << "Web Database Open Success.";
+            qDebug() << "Web database connect success.";
         else
-            qDebug() << "Web Database Open Failed." << m_WebDatabase.lastError().text();
+            qDebug() << "Web database connect failed." << m_WebDatabase.lastError().text();
     }
 }
 
@@ -141,9 +141,9 @@ void CMSDatabase::LoadLocalDatabase()
         m_LocalDatabase.setPassword(m_strLocalPassword);
 
         if(m_LocalDatabase.open())
-            qDebug() << "Local Database Open Success.";
+            qDebug() << "Local database connect success.";
         else
-            qDebug() << "Local Database Open Failed." << m_LocalDatabase.lastError().text();
+            qDebug() << "Local database connect failed." << m_LocalDatabase.lastError().text();
 
 
         QString strCTLog = "CREATE TABLE IF NOT EXISTS Log(   "
@@ -195,7 +195,7 @@ QSqlQuery CMSDatabase::WDB_Exec(const QString& strQuery)
 {
     return m_WebDatabase.exec(strQuery);
 }
-QSqlError CMSDatabase::WBD_LastError()
+QSqlError CMSDatabase::WDB_LastError()
 {
     return m_WebDatabase.lastError();
 }
@@ -203,7 +203,7 @@ QSqlQuery CMSDatabase::LDB_Exec(const QString& strQuery)
 {
     return m_LocalDatabase.exec(strQuery);
 }
-QSqlError CMSDatabase::LBD_LastError()
+QSqlError CMSDatabase::LDB_LastError()
 {
     return m_LocalDatabase.lastError();
 }
