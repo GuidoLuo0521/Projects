@@ -1,6 +1,7 @@
 ﻿#include "weeklyreportcommitdialog.h"
 #include "database/cmsdatabase.h"
 #include "common/staffinfo.h"
+#include "common/commonapi.h"
 
 #include <QDebug>
 #include <QJsonDocument>
@@ -16,12 +17,14 @@ WeeklyReportCommitDialog::WeeklyReportCommitDialog(QWidget *parent) :
 void WeeklyReportCommitDialog::slotCommit()
 {
     CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
-    QString strDate = pDB->WDB_Date("yyyy-MM-dd");
+    QString strDate = pDB->WDB_Date("yyyy-MM-dd hh:mm:ss");
     QString strWeek = pDB->WDB_WeekNumber();
 
     QJsonObject jsonObject;
     jsonObject.insert("Date", strDate);
     jsonObject.insert("Week", strWeek);
+    jsonObject.insert("IP", GetIPPath());
+    jsonObject.insert("MAC", GetMacPath());
     jsonObject.insert("ProjectName", m_pProjectName->Text());
     jsonObject.insert("Finish", m_pFinishEdit->Text());
     jsonObject.insert("Plan", m_pPlanEdit->Text());
@@ -30,13 +33,25 @@ void WeeklyReportCommitDialog::slotCommit()
     document.setObject(jsonObject);
 
     CStaffInfo * pStaffInfo = StaffInfoSingleton::GetInstance();
-    QString strFilePath = QString("%1-%2.json").arg(strWeek).arg(pStaffInfo->GetStaffID());
+
+    //weeknumber-staffid
+    QString strNameDate = pDB->WDB_Date("yyyyMMddhhmmss");
+    QString strFilePath = QString("%1-%2-%3.json").arg(strWeek).arg(pStaffInfo->GetStaffID()).arg(strNameDate);
 
     QFile file(strFilePath);
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     file.write(document.toJson());
     file.flush();
     file.close();
+
+    QString strQuery = QString("INSERT INTO weeklyreport(StaffID, FileName, WeekNumber, CommitDate, CommitIP, CommitMac) "
+                               "VALUES('%1', '%2', '%3', '%4', '%5', '%6')")
+            .arg(pStaffInfo->GetStaffID()).arg(strFilePath).arg(strWeek)
+            .arg(strDate).arg(GetIPPath()).arg(GetMacPath());
+
+
+    pDB->WDB_Exec( strQuery);
+    pDB->LDB_Exec( strQuery);
 
     QMessageBox::information(this, "提示", "提交成功。");
 }

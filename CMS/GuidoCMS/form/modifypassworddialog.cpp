@@ -1,5 +1,5 @@
 ﻿#include "modifypassworddialog.h"
-#include "ui_staffpassworddialog.h"
+#include "ui_modifypassworddialog.h"
 
 #include <QMessageBox>
 #include "database/cmsdatabase.h"
@@ -8,7 +8,7 @@
 
 ModifyPasswordDialog::ModifyPasswordDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::StaffPasswordDialog)
+    ui(new Ui::ModifyPasswordDialog)
 {
     ui->setupUi(this);
     m_pCurrentStaff = StaffInfoSingleton::GetInstance();

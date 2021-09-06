@@ -107,7 +107,7 @@ QString CMSDatabase::WDB_Date(const QString& format)
         return query.value("currentTime").toDateTime().toString(format);
     }
 
-    return "0000-00-00";
+    return "0000-00-00 00:00:00";
 }
 
 QString CMSDatabase::WDB_WeekNumber()
@@ -187,6 +187,17 @@ void CMSDatabase::LoadLocalDatabase()
                                     "SelectState BOOL NOT NULL DEFAULT FALSE);";
 
         LDB_Exec(strCTStaffinfo);
+
+        QString strCTWeeklyReport = "CREATE TABLE IF NOT EXISTS WeeklyReport(   "
+                                    "ReportID INTEGER PRIMARY KEY AUTOINCREMENT,   "
+                                    "StaffID  TEXT NOT NULL,"
+                                    "FileName TEXT NOT NULL,"
+                                    "WeekNumber INTEGER NOT NULL,"
+                                    "CommitDate TEXT NOT NULL,"
+                                    "CommitIP TEXT NOT NULL,"
+                                    "CommitMac TEXT NOT NULL);";
+
+        LDB_Exec(strCTWeeklyReport);
 
     }
 }

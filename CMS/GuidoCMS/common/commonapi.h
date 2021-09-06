@@ -18,4 +18,8 @@ void CreateCurrentStaffInfoSingleton();
 CStaffInfo* GetStaffInfo(const QString& strStaffID, const QString& strStaffPassWord);
 
 
+/**********************************************************************/
+QString GetIPPath();
+QString GetMacPath();
+
 #endif // COMMONAPI_H

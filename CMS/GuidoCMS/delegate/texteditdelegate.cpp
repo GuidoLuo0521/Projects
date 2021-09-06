@@ -26,7 +26,7 @@ void TextEditDelegate::setEditorData(QWidget *pEditor, const QModelIndex &index)
 
     switch (m_TextType) {
     case TT_Html: pEdit->setHtml(strDate); return;
-    case TT_MarkDown: pEdit->setMarkdown(strDate); return;
+    //case TT_MarkDown: pEdit->setMarkdown(strDate); return;
     default:
         pEdit->setPlainText(strDate); return;
     }
@@ -38,7 +38,7 @@ void TextEditDelegate::setModelData(QWidget *pEditor, QAbstractItemModel *pModel
 
     switch (m_TextType) {
     case TT_Html: pModel->setData(index, pEdit->toHtml()); return;
-    case TT_MarkDown: pModel->setData(index, pEdit->toMarkdown()); return;
+    //case TT_MarkDown: pModel->setData(index, pEdit->toMarkdown()); return;
     default:pModel->setData(index, pEdit->toPlainText()); return;
     }
 }

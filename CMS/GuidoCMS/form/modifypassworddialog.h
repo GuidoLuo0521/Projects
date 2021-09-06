@@ -5,7 +5,7 @@
 #include "common/staffinfo.h"
 
 namespace Ui {
-class StaffPasswordDialog;
+class ModifyPasswordDialog;
 }
 
 class ModifyPasswordDialog : public QDialog
@@ -30,7 +30,7 @@ private slots:
 
 private:
     int CheckParam();
-    Ui::StaffPasswordDialog *ui;
+    Ui::ModifyPasswordDialog *ui;
 
     CStaffInfo * m_pCurrentStaff;
 };
