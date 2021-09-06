@@ -29,10 +29,10 @@ void CMSDatabase::InitParams()
 {
     m_strWebType = "QMYSQL";
     m_strWebConnectionName = "QMYSQL_WEBDB";
-    m_strWebHostName = "127.0.0.1";
+    m_strWebHostName = "www.millet.fun";
     m_strWebDatabaseName = "guidocms";
-    m_strWebUserName = "root";
-    m_strWebPassword = "kangrulai";
+    m_strWebUserName = "guido";
+    m_strWebPassword = "123456";
 
     m_strLocalType = "QSQLITE";
     m_strLocalConnectionName = "QSQLITE_LOCALDB";
@@ -97,6 +97,30 @@ int CMSDatabase::WDB_VerifyLogin(const QString& strid, const QString& strPasswor
     }
 
     return  -2;
+}
+
+QString CMSDatabase::WDB_Date(const QString& format)
+{
+    QSqlQuery query =  m_WebDatabase.exec("select now(3) as currentTime;");
+    if(query.next())
+    {
+        return query.value("currentTime").toDateTime().toString(format);
+    }
+
+    return "0000-00-00";
+}
+
+QString CMSDatabase::WDB_WeekNumber()
+{
+    QString str = WDB_Date("yyyy-MM-dd");
+    QString strw = QString("SELECT WEEK(date_add('%1',interval 6 day),2) AS weekNumber;").arg(str);
+    QSqlQuery query = WDB_Exec(strw);
+    if(query.next())
+    {
+        return query.value("weekNumber").toString();
+    }
+
+    return "";
 }
 
 void CMSDatabase::LoadDatabase()

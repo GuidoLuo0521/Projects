@@ -1,22 +1,22 @@
-﻿#ifndef ADDTABLEINFOSTAFFDIALOG_H
-#define ADDTABLEINFOSTAFFDIALOG_H
+﻿#ifndef STAFFENTRYDIALOG_H
+#define STAFFENTRYDIALOG_H
 
 #include <QComboBox>
 #include <QDialog>
 #include <QSqlTableModel>
 #include "common/staffinfo.h"
 #include "database/cmsdatabase.h"
-#include "form/addtableinfodialog.h"
+#include "form/entryadddialog.h"
 #include "common/controlinclude.h"
 
 
-class AddTableInfoStaffDialog : public AddTableInfoDialog
+class StaffEntryDialog : public EntryAddDialog
 {
     Q_OBJECT
 
 public:
-    explicit AddTableInfoStaffDialog(QWidget *parent = nullptr);
-    ~AddTableInfoStaffDialog();
+    explicit StaffEntryDialog(QWidget *parent = nullptr);
+    ~StaffEntryDialog();
 
 signals:
     void signalAddSuccess(bool);

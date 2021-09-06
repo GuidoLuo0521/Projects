@@ -35,31 +35,35 @@ SOURCES += \
         common/staffinfo.cpp \
         controlext/standerdateedit.cpp \
         controlext/standerinputstructer.cpp \
-        controlext/standerplaintextedit.cpp \
         controlext/standerrangeedit.cpp \
+        controlext/standertextedit.cpp \
         database/cmsdatabase.cpp \
         database/cmsdatebasedef.cpp \
         delegate/datedelegate.cpp \
         delegate/readonlydelegate.cpp \
         delegate/comboboxdelegate.cpp \
-        form/addtableinfodepartmentdialog.cpp \
-        form/addtableinfodialog.cpp \
-        form/addtableinfojobdialog.cpp \
-        form/addtableinforoledialog.cpp \
-        form/addtableinfostaffdialog.cpp \
+        delegate/texteditdelegate.cpp \
         form/cmsbasewidget.cpp \
+        form/departmentdatedialog.cpp \
+        form/departmententrydialog.cpp \
+        form/entryadddialog.cpp \
+        form/jobdatedialog.cpp \
+        form/jobentrydialog.cpp \
         form/mainwindow.cpp \
+        form/modifypassworddialog.cpp \
+        form/roledatedialog.cpp \
+        form/roleentrydialog.cpp \
         form/searchdialog.cpp \
         form/logindialog.cpp \
-        form/staffpassworddialog.cpp \
+        form/staffdatedialog.cpp \
+        form/staffentrydialog.cpp \
         form/systemmanagerdialog.cpp\
+        form/tabledatedialog.cpp \
         controlext/standerlineedit.cpp \
         controlext/standercombobox.cpp \
-        form/tabledepartmentmanagerdialog.cpp \
-        form/tablejobmanagerdialog.cpp \
-        form/tablemanagerdialog.cpp \
-        form/tablerolemanagerdialog.cpp \
-        form/tablestaffmanagerdialog.cpp \
+        form/weeklyreportcommitdialog.cpp \
+        form/weeklyreportdialog.cpp \
+        form/weeklyreporthistorydialog.cpp \
         main.cpp
 
 HEADERS += \
@@ -72,37 +76,41 @@ HEADERS += \
         controlext/controlext.h \
         controlext/standerdateedit.h \
         controlext/standerinputstructer.h \
-        controlext/standerplaintextedit.h \
         controlext/standerrangeedit.h \
+        controlext/standertextedit.h \
         database/cmsdatabase.h \
         database/cmsdatebasedef.h \
         delegate/readonlydelegate.h \
         delegate/comboboxdelegate.h \
         delegate/controldelegate.h \
         delegate/datedelegate.h \
-        form/addtableinfodepartmentdialog.h \
-        form/addtableinfodialog.h \
-        form/addtableinfojobdialog.h \
-        form/addtableinforoledialog.h \
-        form/addtableinfostaffdialog.h \
+        delegate/texteditdelegate.h \
         form/cmsbasewidget.h \
+        form/departmentdatedialog.h \
+        form/departmententrydialog.h \
+        form/entryadddialog.h \
+        form/jobdatedialog.h \
+        form/jobentrydialog.h \
         form/mainwindow.h \
+        form/modifypassworddialog.h \
+        form/roledatedialog.h \
+        form/roleentrydialog.h \
         form/searchdialog.h \
         form/logindialog.h \
-        form/staffpassworddialog.h \
+        form/staffdatedialog.h \
+        form/staffentrydialog.h \
         form/systemmanagerdialog.h \
+        form/tabledatedialog.h  \
         controlext/standerlineedit.h \
         controlext/standercombobox.h \
-        form/tabledepartmentmanagerdialog.h \
-        form/tablejobmanagerdialog.h \
-        form/tablemanagerdialog.h \
-        form/tablerolemanagerdialog.h \
-        form/tablestaffmanagerdialog.h
+        form/weeklyreportcommitdialog.h \
+        form/weeklyreportdialog.h \
+        form/weeklyreporthistorydialog.h
 
 FORMS += \
         form/logindialog.ui \
-        form/searchdialog.ui \
-        form/staffpassworddialog.ui
+        form/modifypassworddialog.ui \
+        form/searchdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

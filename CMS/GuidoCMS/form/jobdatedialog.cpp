@@ -1,8 +1,8 @@
-﻿#include "tablejobmanagerdialog.h"
-#include "addtableinfojobdialog.h"
+﻿#include "jobdatedialog.h"
+#include "jobentrydialog.h"
 
-TableJobManagerDialog::TableJobManagerDialog(QMainWindow * parent ) :
-    TableManagerDialog(parent)
+JobDateDialog::JobDateDialog(QMainWindow * parent ) :
+    TableDateDialog(parent)
 {
     CreateSpecialDialog();
 
@@ -15,19 +15,19 @@ TableJobManagerDialog::TableJobManagerDialog(QMainWindow * parent ) :
     InitAddTableInfoDialog();
 }
 
-TableJobManagerDialog::~TableJobManagerDialog()
+JobDateDialog::~JobDateDialog()
 {
 
 }
 
-void TableJobManagerDialog::CreateSpecialDialog()
+void JobDateDialog::CreateSpecialDialog()
 {
-    TableManagerDialog::CreateSpecialDialog();
-    m_pAddTableInfoDialog = new AddTableInfoJobDialog(this);
+    TableDateDialog::CreateSpecialDialog();
+    m_pAddTableInfoDialog = new JobEntryDialog(this);
 }
 
 
-void TableJobManagerDialog::InitSqlTableModel()
+void JobDateDialog::InitSqlTableModel()
 {
     m_pSqlTableModel->setTable(g_listCMSDB_Table_Filed_Job[Job_JobTableName]);
 
@@ -43,7 +43,7 @@ void TableJobManagerDialog::InitSqlTableModel()
     m_pTableView->setItemDelegateForColumn(Job_JobID, readOnlyDelegate);
 
     ComboboxDelegate * pComboxDelegateJobName = new ComboboxDelegate(this);
-    QStringList listDepartments = AddTableInfoDialog::GetDepartmentList();
+    QStringList listDepartments = EntryAddDialog::GetDepartmentList();
 
     for(int i = 0; i < listDepartments.size(); ++i)
         pComboxDelegateJobName->PushItem(listDepartments[i]);
@@ -57,7 +57,7 @@ void TableJobManagerDialog::InitSqlTableModel()
     m_pSqlTableModel->select();
 }
 
-void TableJobManagerDialog::InitSearchDialog()
+void JobDateDialog::InitSearchDialog()
 {
     m_pSearchDialog->SetSearchMode(SearchDialog::STT_JOB);
 
@@ -65,7 +65,7 @@ void TableJobManagerDialog::InitSearchDialog()
     m_pSearchDockWidget->setWindowTitle("搜索职务");
 }
 
-void TableJobManagerDialog::InitAddTableInfoDialog()
+void JobDateDialog::InitAddTableInfoDialog()
 {
     connect(m_pAddTableInfoDialog, SIGNAL(signalAddSuccess(bool)), this, SLOT(slotUpdateTable(bool)));
 
@@ -73,7 +73,7 @@ void TableJobManagerDialog::InitAddTableInfoDialog()
     m_pAddDockWidget->setWindowTitle("增加职务");
 }
 
-void TableJobManagerDialog::slotFilter(QStringList listFilter)
+void JobDateDialog::slotFilter(QStringList listFilter)
 {
     QString strQuery;
     if(listFilter[SearchDialog::FILTER_NAME] != "")

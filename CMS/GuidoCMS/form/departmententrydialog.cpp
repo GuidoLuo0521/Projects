@@ -1,25 +1,25 @@
-﻿#include "addtableinfodepartmentdialog.h"
+﻿#include "departmententrydialog.h"
 
 
-AddTableInfoDepartmentDialog::AddTableInfoDepartmentDialog(QWidget *parent) :
-    AddTableInfoDialog(parent)
+DepartmentEntryDialog::DepartmentEntryDialog(QWidget *parent) :
+    EntryAddDialog(parent)
 {
     InitLayout();
 }
 
-AddTableInfoDepartmentDialog::~AddTableInfoDepartmentDialog()
+DepartmentEntryDialog::~DepartmentEntryDialog()
 {
 
 }
 
-void AddTableInfoDepartmentDialog::slotAdd()
+void DepartmentEntryDialog::slotAdd()
 {
     if(CheckParams() == false)
         return;
 
     QString strName = m_pLineEditName->LineEdit()->text();
     QString strState = m_pComboBoxState->ComboBox()->currentText();
-    QString strDesc = m_pPlainTextEditDesc->PlainText();
+    QString strDesc = m_pPlainTextEditDesc->Text();
 
     QString strQuery = QString("INSERT INTO department "
                                "VALUES (0, '%1', '%2', '%3', '')")
@@ -30,14 +30,14 @@ void AddTableInfoDepartmentDialog::slotAdd()
     emit signalAddSuccess(true);
 }
 
-void AddTableInfoDepartmentDialog::slotClear()
+void DepartmentEntryDialog::slotClear()
 {
     m_pLineEditName->LineEdit()->clear();
     m_pComboBoxState->ComboBox()->setCurrentIndex(0);
-    m_pPlainTextEditDesc->PlainTextEdit()->clear();
+    m_pPlainTextEditDesc->TextEdit()->clear();
 }
 
-bool AddTableInfoDepartmentDialog::CheckParams()
+bool DepartmentEntryDialog::CheckParams()
 {
     QString strName = m_pLineEditName->LineEdit()->text();
     if(strName == "")
@@ -58,7 +58,7 @@ bool AddTableInfoDepartmentDialog::CheckParams()
     return true;
 }
 
-void AddTableInfoDepartmentDialog::InitLayout()
+void DepartmentEntryDialog::InitLayout()
 {
     setWindowTitle("部门信息");
     QVBoxLayout * pVAddMainLayout = new QVBoxLayout;

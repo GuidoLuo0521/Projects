@@ -1,13 +1,13 @@
-#ifndef ADDTABLEINFOJOBDIALOG_H
-#define ADDTABLEINFOJOBDIALOG_H
+﻿#ifndef JOBENTRYDIALOG_H
+#define JOBENTRYDIALOG_H
 
-#include "addtableinfodialog.h"
+#include "entryadddialog.h"
 
-class AddTableInfoJobDialog : public AddTableInfoDialog
+class JobEntryDialog : public EntryAddDialog
 {
 public:
-    AddTableInfoJobDialog(QWidget *parent = 0);
-    ~AddTableInfoJobDialog();
+    JobEntryDialog(QWidget *parent = 0);
+    ~JobEntryDialog();
 
 protected slots:
     virtual void slotAdd() override;

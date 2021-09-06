@@ -1,10 +1,10 @@
-﻿#include "tabledepartmentmanagerdialog.h"
-#include "addtableinfodepartmentdialog.h"
+﻿#include "departmentdatedialog.h"
+#include "departmententrydialog.h"
 
 #include <QDockWidget>
 
-TableDepartmentManagerDialog::TableDepartmentManagerDialog(QMainWindow * parent ) :
-    TableManagerDialog(parent)
+DepartmentDateDialog::DepartmentDateDialog(QMainWindow * parent ) :
+    TableDateDialog(parent)
 {
     CreateSpecialDialog();
 
@@ -17,19 +17,19 @@ TableDepartmentManagerDialog::TableDepartmentManagerDialog(QMainWindow * parent 
     InitAddTableInfoDialog();
 }
 
-TableDepartmentManagerDialog::~TableDepartmentManagerDialog()
+DepartmentDateDialog::~DepartmentDateDialog()
 {
 
 }
 
-void TableDepartmentManagerDialog::CreateSpecialDialog()
+void DepartmentDateDialog::CreateSpecialDialog()
 {
-    TableManagerDialog::CreateSpecialDialog();
-    m_pAddTableInfoDialog = new AddTableInfoDepartmentDialog(this);
+    TableDateDialog::CreateSpecialDialog();
+    m_pAddTableInfoDialog = new DepartmentEntryDialog(this);
 }
 
 
-void TableDepartmentManagerDialog::InitSqlTableModel()
+void DepartmentDateDialog::InitSqlTableModel()
 {
     m_pSqlTableModel->setTable(g_listCMSDB_Table_Filed_Department[Department_DepartmentTableName]);
 
@@ -56,7 +56,7 @@ void TableDepartmentManagerDialog::InitSqlTableModel()
     m_pSqlTableModel->select();
 }
 
-void TableDepartmentManagerDialog::InitSearchDialog()
+void DepartmentDateDialog::InitSearchDialog()
 {
     m_pSearchDialog->SetSearchMode(SearchDialog::STT_DEPARTMENT);
 
@@ -64,7 +64,7 @@ void TableDepartmentManagerDialog::InitSearchDialog()
     m_pSearchDockWidget->setWindowTitle("搜索部门");
 }
 
-void TableDepartmentManagerDialog::InitAddTableInfoDialog()
+void DepartmentDateDialog::InitAddTableInfoDialog()
 {
     connect(m_pAddTableInfoDialog, SIGNAL(signalAddSuccess(bool)), this, SLOT(slotUpdateTable(bool)));
 
@@ -72,7 +72,7 @@ void TableDepartmentManagerDialog::InitAddTableInfoDialog()
     m_pAddDockWidget->setWindowTitle("增加部门");
 }
 
-void TableDepartmentManagerDialog::slotFilter(QStringList listFilter)
+void DepartmentDateDialog::slotFilter(QStringList listFilter)
 {
     QString strQuery;
     if(listFilter[SearchDialog::FILTER_NAME] != "")

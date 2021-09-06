@@ -1,4 +1,4 @@
-﻿#include "staffpassworddialog.h"
+﻿#include "modifypassworddialog.h"
 #include "ui_staffpassworddialog.h"
 
 #include <QMessageBox>
@@ -6,7 +6,7 @@
 
 
 
-StaffPasswordDialog::StaffPasswordDialog(QWidget *parent) :
+ModifyPasswordDialog::ModifyPasswordDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::StaffPasswordDialog)
 {
@@ -17,15 +17,15 @@ StaffPasswordDialog::StaffPasswordDialog(QWidget *parent) :
 
     ui->lineEditNewPassword->setPlaceholderText("6 - 20位密码");
 
-    connect(ui->btnCancle, &QPushButton::clicked, this, &StaffPasswordDialog::close);
+    connect(ui->btnCancle, &QPushButton::clicked, this, &ModifyPasswordDialog::close);
 }
 
-StaffPasswordDialog::~StaffPasswordDialog()
+ModifyPasswordDialog::~ModifyPasswordDialog()
 {
     delete ui;
 }
 
-void StaffPasswordDialog::on_btnOK_clicked()
+void ModifyPasswordDialog::on_btnOK_clicked()
 {
     if(CheckParam() < 0)
         return;
@@ -43,7 +43,7 @@ void StaffPasswordDialog::on_btnOK_clicked()
     close();
 }
 
-int StaffPasswordDialog::CheckParam()
+int ModifyPasswordDialog::CheckParam()
 {
     QString strRawPW = ui->lineEditRawPassword->text();
     QString strCekPW = ui->lineEditCheckPassword->text();
@@ -75,17 +75,17 @@ int StaffPasswordDialog::CheckParam()
     return 1;
 }
 
-void StaffPasswordDialog::on_lineEditRawPassword_textChanged(const QString &arg1)
+void ModifyPasswordDialog::on_lineEditRawPassword_textChanged(const QString &arg1)
 {
     ui->labelTips->setText("");
 }
 
-void StaffPasswordDialog::on_lineEditCheckPassword_textChanged(const QString &arg1)
+void ModifyPasswordDialog::on_lineEditCheckPassword_textChanged(const QString &arg1)
 {
     ui->labelTips->setText("");
 }
 
-void StaffPasswordDialog::on_lineEditNewPassword_textChanged(const QString &arg1)
+void ModifyPasswordDialog::on_lineEditNewPassword_textChanged(const QString &arg1)
 {
     if(arg1.count() >= 20)
         ui->labelTips->setText("密码过长，请重新输入。");

@@ -1,30 +1,30 @@
-﻿#include "tablemanagerdialog.h"
+﻿#include "tabledatedialog.h"
 
 
 
-TableManagerDialog::TableManagerDialog(QMainWindow * parent) :
+TableDateDialog::TableDateDialog(QMainWindow * parent) :
     QMainWindow(parent) ,
     m_pAddTableInfoDialog(nullptr)
 {
 
 }
 
-TableManagerDialog::~TableManagerDialog()
+TableDateDialog::~TableDateDialog()
 {
 
 }
 
-QDockWidget *TableManagerDialog::getSearchDockWidget()
+QDockWidget *TableDateDialog::getSearchDockWidget()
 {
     return  m_pSearchDockWidget;
 }
 
-QDockWidget *TableManagerDialog::getAddDockWidget()
+QDockWidget *TableDateDialog::getAddDockWidget()
 {
     return m_pAddDockWidget;
 }
 
-void TableManagerDialog::CreateSpecialDialog()
+void TableDateDialog::CreateSpecialDialog()
 {
     m_pAddDockWidget = new QDockWidget("", this);
     m_pAddDockWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
@@ -32,7 +32,7 @@ void TableManagerDialog::CreateSpecialDialog()
     m_pSearchDockWidget->setFeatures(QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
 
     m_pSearchDialog = new SearchDialog;
-    connect(m_pSearchDialog, &SearchDialog::signalFilterChange, this, &TableManagerDialog::slotFilter);
+    connect(m_pSearchDialog, &SearchDialog::signalFilterChange, this, &TableDateDialog::slotFilter);
 
     m_pSqlTableModel = new QSqlTableModel(this, CMSDatabaseSingleton::GetInstance()->m_WebDatabase);;
 
@@ -41,32 +41,32 @@ void TableManagerDialog::CreateSpecialDialog()
     m_pTableView->setModel(m_pSqlTableModel);
 }
 
-void TableManagerDialog::InitTableView()
+void TableDateDialog::InitTableView()
 {
     m_pTableView->setSelectionMode(QAbstractItemView::SingleSelection);
 }
 
-void TableManagerDialog::InitLayout()
+void TableDateDialog::InitLayout()
 {
     this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pSearchDockWidget);
     this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pAddDockWidget);
     this->setCentralWidget(m_pTableView);
 }
 
-void TableManagerDialog::InitSearchDialog()
+void TableDateDialog::InitSearchDialog()
 {
     m_pSearchDockWidget->setWidget(m_pSearchDialog);
     //m_pSearchDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
 }
 
-void TableManagerDialog::InitAddTableInfoDialog()
+void TableDateDialog::InitAddTableInfoDialog()
 {
     m_pAddDockWidget->setWidget(m_pAddTableInfoDialog);
     //pAddDockWidget->setFeatures(QDockWidget::NoDockWidgetFeatures);
     this->addDockWidget(Qt::DockWidgetArea::RightDockWidgetArea, m_pAddDockWidget);
 }
 
-void TableManagerDialog::slotUpdateTable(bool nToBottom)
+void TableDateDialog::slotUpdateTable(bool nToBottom)
 {
     m_pSqlTableModel->select();
     if(nToBottom)

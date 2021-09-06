@@ -1,7 +1,7 @@
-﻿#include "addtableinfodialog.h"
+﻿#include "entryadddialog.h"
 #include <QGridLayout>
 
-AddTableInfoDialog::AddTableInfoDialog(QWidget *parent) :
+EntryAddDialog::EntryAddDialog(QWidget *parent) :
     QWidget(parent),
     m_pCMSDatabase(nullptr)
 {
@@ -14,17 +14,17 @@ AddTableInfoDialog::AddTableInfoDialog(QWidget *parent) :
     m_pButtonLayout->addWidget(m_pButtonAdd);
     m_pButtonLayout->addWidget(m_pButtonClear);
 
-    connect(m_pButtonAdd, &QPushButton::clicked, this, &AddTableInfoDialog::slotAdd);
-    connect(m_pButtonClear, &QPushButton::clicked, this, &AddTableInfoDialog::slotClear);
-    connect(this, &AddTableInfoDialog::signalAddSuccess, this, &AddTableInfoDialog::slotClear);
+    connect(m_pButtonAdd, &QPushButton::clicked, this, &EntryAddDialog::slotAdd);
+    connect(m_pButtonClear, &QPushButton::clicked, this, &EntryAddDialog::slotClear);
+    connect(this, &EntryAddDialog::signalAddSuccess, this, &EntryAddDialog::slotClear);
 }
 
-AddTableInfoDialog::~AddTableInfoDialog()
+EntryAddDialog::~EntryAddDialog()
 {
 
 }
 
-QStringList AddTableInfoDialog::GetDepartmentList()
+QStringList EntryAddDialog::GetDepartmentList()
 {
     QString strQuery = "SELECT DepartmentName FROM department";
     QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
@@ -38,7 +38,7 @@ QStringList AddTableInfoDialog::GetDepartmentList()
     return  strList;
 }
 
-QStringList AddTableInfoDialog::GetSpecialtyList()
+QStringList EntryAddDialog::GetSpecialtyList()
 {
     QString strQuery = "SELECT Name FROM Specialty";
     QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
@@ -52,7 +52,7 @@ QStringList AddTableInfoDialog::GetSpecialtyList()
     return  strList;
 }
 
-QStringList AddTableInfoDialog::GetEducationList()
+QStringList EntryAddDialog::GetEducationList()
 {
     QString strQuery = "SELECT Name FROM education";
     QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
@@ -66,7 +66,7 @@ QStringList AddTableInfoDialog::GetEducationList()
     return  strList;
 }
 
-QStringList AddTableInfoDialog::GetPlaceList()
+QStringList EntryAddDialog::GetPlaceList()
 {
     QString strQuery = "SELECT Province, City FROM place";
     QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
@@ -82,7 +82,7 @@ QStringList AddTableInfoDialog::GetPlaceList()
     return  strList;
 }
 
-QStringList AddTableInfoDialog::GetJobList()
+QStringList EntryAddDialog::GetJobList()
 {
     QString strQuery = "SELECT JobName FROM job";
     QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
@@ -96,7 +96,7 @@ QStringList AddTableInfoDialog::GetJobList()
     return  strList;
 }
 
-QStringList AddTableInfoDialog::GetRoleList()
+QStringList EntryAddDialog::GetRoleList()
 {
     QString strQuery = "SELECT RoleName FROM role";
     QSqlQuery query = CMSDatabaseSingleton::GetInstance()->WDB_Exec(strQuery);
@@ -110,27 +110,27 @@ QStringList AddTableInfoDialog::GetRoleList()
     return  strList;
 }
 
-QStringList AddTableInfoDialog::GetStateList()
+QStringList EntryAddDialog::GetStateList()
 {
     return {"正常", "撤销"};
 }
 
-QStringList AddTableInfoDialog::GetSexList()
+QStringList EntryAddDialog::GetSexList()
 {
     return {"男性", "女性", "未知"};
 }
 
-void AddTableInfoDialog::InitLayout()
+void EntryAddDialog::InitLayout()
 {
 
 }
 
-void AddTableInfoDialog::slotAdd()
+void EntryAddDialog::slotAdd()
 {
     emit signalAddSuccess(true);
 }
 
-void AddTableInfoDialog::slotClear()
+void EntryAddDialog::slotClear()
 {
 
 }

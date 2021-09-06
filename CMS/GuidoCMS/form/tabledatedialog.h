@@ -1,5 +1,5 @@
-﻿#ifndef TABLEMANAGERDIALOG_H
-#define TABLEMANAGERDIALOG_H
+﻿#ifndef TABLEDATEDIALOG_H
+#define TABLEDATEDIALOG_H
 
 #include <QDialog>
 #include <QSqlTableModel>
@@ -12,14 +12,14 @@
 #include "database/cmsdatebasedef.h"
 
 #include "searchdialog.h"
-#include "addtableinfodialog.h"
+#include "entryadddialog.h"
 
-class TableManagerDialog : public QMainWindow
+class TableDateDialog : public QMainWindow
 {
     Q_OBJECT
 public:
-    TableManagerDialog(QMainWindow * parent = 0);
-    virtual ~TableManagerDialog();
+    TableDateDialog(QMainWindow * parent = 0);
+    virtual ~TableDateDialog();
 
 public:
     QDockWidget * getSearchDockWidget();
@@ -45,7 +45,7 @@ protected:
     QDockWidget * m_pAddDockWidget;
 
     SearchDialog * m_pSearchDialog;
-    AddTableInfoDialog * m_pAddTableInfoDialog;
+    EntryAddDialog * m_pAddTableInfoDialog;
 
     QTableView * m_pTableView;
     QSqlTableModel * m_pSqlTableModel;

@@ -1,17 +1,17 @@
-#include "addtableinfojobdialog.h"
+#include "jobentrydialog.h"
 
-AddTableInfoJobDialog::AddTableInfoJobDialog(QWidget *parent) :
-    AddTableInfoDialog(parent)
+JobEntryDialog::JobEntryDialog(QWidget *parent) :
+    EntryAddDialog(parent)
 {
     InitLayout();
 }
 
-AddTableInfoJobDialog::~AddTableInfoJobDialog()
+JobEntryDialog::~JobEntryDialog()
 {
 
 }
 
-void AddTableInfoJobDialog::slotAdd()
+void JobEntryDialog::slotAdd()
 {
     if(CheckParams() == false)
         return;
@@ -19,7 +19,7 @@ void AddTableInfoJobDialog::slotAdd()
     QString strName = m_pLineEditName->LineEdit()->text();
     QString strWage = m_pLineEditBaseWage->LineEdit()->text();
     QString strState = m_pComboBoxState->ComboBox()->currentText();
-    QString strDesc = m_pPlainTextEditDesc->PlainText();
+    QString strDesc = m_pPlainTextEditDesc->Text();
 
     QString strQuery = QString("INSERT INTO job "
                                "VALUES (0, '%1', %2, '%3', '%4', '')")
@@ -30,15 +30,15 @@ void AddTableInfoJobDialog::slotAdd()
     emit signalAddSuccess(true);
 }
 
-void AddTableInfoJobDialog::slotClear()
+void JobEntryDialog::slotClear()
 {
     m_pLineEditName->LineEdit()->clear();
     m_pLineEditBaseWage->LineEdit()->clear();
     m_pComboBoxState->ComboBox()->setCurrentIndex(0);
-    m_pPlainTextEditDesc->PlainTextEdit()->clear();
+    m_pPlainTextEditDesc->TextEdit()->clear();
 }
 
-void AddTableInfoJobDialog::InitLayout()
+void JobEntryDialog::InitLayout()
 {
     setWindowTitle("职务信息");
     QVBoxLayout * pVAddMainLayout = new QVBoxLayout;
@@ -73,7 +73,7 @@ void AddTableInfoJobDialog::InitLayout()
     this->setLayout(pVAddMainLayout);
 }
 
-bool AddTableInfoJobDialog::CheckParams()
+bool JobEntryDialog::CheckParams()
 {
     QString strName = m_pLineEditName->LineEdit()->text();
     if(strName == "")

@@ -1,20 +1,20 @@
-﻿#include "addtableinfostaffdialog.h"
+﻿#include "staffentrydialog.h"
 
 #include "database/cmsdatebasedef.h"
 #include "delegate/controldelegate.h"
 #include "controlext/controlext.h"
 
-AddTableInfoStaffDialog::AddTableInfoStaffDialog(QWidget *parent) :
-    AddTableInfoDialog(parent)
+StaffEntryDialog::StaffEntryDialog(QWidget *parent) :
+    EntryAddDialog(parent)
 {
     InitLayout();
 }
 
-AddTableInfoStaffDialog::~AddTableInfoStaffDialog()
+StaffEntryDialog::~StaffEntryDialog()
 {
 }
 
-void AddTableInfoStaffDialog::slotAdd()
+void StaffEntryDialog::slotAdd()
 {
     if(CheckParams() == false || CheckExist() == true)
         return;
@@ -38,7 +38,7 @@ void AddTableInfoStaffDialog::slotAdd()
     QString Phone = m_pLineEditPhone->Text().toUtf8();
     QString EnterCampany = m_pDateEditEnterCompany->Date().toUtf8();
     QString LeaveCampany = m_pDateEditLeaveCompany->Date().toUtf8();
-    QString Introduction = m_pPlainTextEditDesc->PlainText();
+    QString Introduction = m_pPlainTextEditDesc->Text();
     QString Param = "";
 
     QString strSql = QString(" INSERT INTO staff "
@@ -58,7 +58,7 @@ void AddTableInfoStaffDialog::slotAdd()
     emit signalAddSuccess(true);
 }
 
-void AddTableInfoStaffDialog::InitLayout()
+void StaffEntryDialog::InitLayout()
 {
     setWindowTitle("人员信息");
      ////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ void AddTableInfoStaffDialog::InitLayout()
     this->setLayout(pGridLayoutAdd);
 }
 
-bool AddTableInfoStaffDialog::CheckParams()
+bool StaffEntryDialog::CheckParams()
 {
     if(m_pLineEditName->Text() == "")
     {
@@ -142,7 +142,7 @@ bool AddTableInfoStaffDialog::CheckParams()
     return true;
 }
 
-bool AddTableInfoStaffDialog::CheckExist()
+bool StaffEntryDialog::CheckExist()
 {
     QString StaffName = m_pLineEditName->Text().toUtf8();
     QString Sex = m_pComboBoxSex->CurrentText().toUtf8();
@@ -170,7 +170,7 @@ bool AddTableInfoStaffDialog::CheckExist()
     return false;
 }
 
-void AddTableInfoStaffDialog::slotClear()
+void StaffEntryDialog::slotClear()
 {
     m_pLineEditName->LineEdit()->clear();
     m_pLineEditPassword->LineEdit()->clear();
@@ -179,7 +179,7 @@ void AddTableInfoStaffDialog::slotClear()
     m_pLineEditPhone->LineEdit()->clear();
     m_pLineEditEmail->LineEdit()->clear();
     m_pLineEditAddress->LineEdit()->clear();
-    m_pPlainTextEditDesc->PlainTextEdit()->clear();
+    m_pPlainTextEditDesc->TextEdit()->clear();
 
     m_pDateEditBirthday->DateEdit()->setDate(QDate::fromString("1965-01-01", Qt::ISODate));
     m_pDateEditEnterCompany->DateEdit()->setDate(QDate::currentDate());

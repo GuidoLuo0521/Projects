@@ -1,13 +1,12 @@
-﻿#ifndef TABLEJOBMANAGERDIALOG_H
-#define TABLEJOBMANAGERDIALOG_H
+﻿#ifndef STAFFDATEDIALOG_H
+#define STAFFDATEDIALOG_H
 
-#include "tablemanagerdialog.h"
+#include "tabledatedialog.h"
 
-class TableJobManagerDialog : public TableManagerDialog
+class StaffDateDialog : public TableDateDialog
 {
 public:
-    TableJobManagerDialog(QMainWindow * parent = 0);
-    ~TableJobManagerDialog();
+    StaffDateDialog(QMainWindow * parent = 0);
 
 protected:
     virtual void CreateSpecialDialog() override;
@@ -20,4 +19,4 @@ protected slots:
     virtual void slotFilter(QStringList) override;
 };
 
-#endif // TABLEJOBMANAGERDIALOG_H
+#endif // TABLESTAFFMANAGERDIALOG_H

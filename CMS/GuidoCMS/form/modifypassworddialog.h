@@ -1,5 +1,5 @@
-﻿#ifndef STAFFPASSWORDDIALOG_H
-#define STAFFPASSWORDDIALOG_H
+﻿#ifndef MODIFYPASSWORDDIALOG_H
+#define MODIFYPASSWORDDIALOG_H
 
 #include <QDialog>
 #include "common/staffinfo.h"
@@ -8,13 +8,13 @@ namespace Ui {
 class StaffPasswordDialog;
 }
 
-class StaffPasswordDialog : public QDialog
+class ModifyPasswordDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit StaffPasswordDialog(QWidget *parent = nullptr);
-    ~StaffPasswordDialog();
+    explicit ModifyPasswordDialog(QWidget *parent = nullptr);
+    ~ModifyPasswordDialog();
 
 signals:
     void signalUpdateSuccess();

@@ -60,7 +60,7 @@ private:
     QWidget* InitTableInfoManagerRole();
     QWidget* InitTableInfoManagerJob();
 
-    void ActionChecked(StackedWidgetType type);
+    void ChangeActionChecked(StackedWidgetType type);
 
     QAction * m_pActionStaffManager;
     QAction * m_pActionRoleManager;

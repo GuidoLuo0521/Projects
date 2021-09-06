@@ -1,4 +1,4 @@
-﻿#include "addtableinfodialog.h"
+﻿#include "entryadddialog.h"
 #include "searchdialog.h"
 #include "ui_searchdialog.h"
 
@@ -121,10 +121,10 @@ void SearchDialog::InitLayout()
 {
     ui->leName->setPlaceholderText("关键字");
 
-    QStringList listSex = AddTableInfoDialog::GetSexList(); listSex.insert(0, "");
-    QStringList listJob = AddTableInfoDialog::GetJobList(); listJob.insert(0, "");
-    QStringList listState = AddTableInfoDialog::GetStateList(); listState.insert(0, "");
-    QStringList listDepartment = AddTableInfoDialog::GetDepartmentList(); listDepartment.insert(0, "");
+    QStringList listSex = EntryAddDialog::GetSexList(); listSex.insert(0, "");
+    QStringList listJob = EntryAddDialog::GetJobList(); listJob.insert(0, "");
+    QStringList listState = EntryAddDialog::GetStateList(); listState.insert(0, "");
+    QStringList listDepartment = EntryAddDialog::GetDepartmentList(); listDepartment.insert(0, "");
 
 
     ui->cbSex->insertItems(0, listSex);

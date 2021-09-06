@@ -6,7 +6,8 @@
 #include <QApplication>
 
 #include <form/mainwindow.h>
-#include <form/staffpassworddialog.h>
+#include <form/modifypassworddialog.h>
+#include <form/weeklyreportdialog.h>
 
 
 
@@ -35,6 +36,11 @@ int main(int argc, char *argv[])
     StaffInfoSingleton::SetInstance(GetStaffInfo("000002", "000002"));
     StaffPasswordDialog w;
     w.show();
+#elif 1
+
+    WeeklyReportDialog w;
+    w.show();
+
 #endif
 
 

@@ -1,13 +1,13 @@
-﻿#ifndef TABLEDEPARTMENTMANAGERDIALOG_H
-#define TABLEDEPARTMENTMANAGERDIALOG_H
+﻿#ifndef DEPARTMENTDATEDIALOG_H
+#define DEPARTMENTDATEDIALOG_H
 
-#include "tablemanagerdialog.h"
+#include "tabledatedialog.h"
 
-class TableDepartmentManagerDialog : public TableManagerDialog
+class DepartmentDateDialog : public TableDateDialog
 {
 public:
-    TableDepartmentManagerDialog(QMainWindow * parent = 0);
-    ~TableDepartmentManagerDialog();
+    DepartmentDateDialog(QMainWindow * parent = 0);
+    ~DepartmentDateDialog();
 
 protected:
     virtual void CreateSpecialDialog() override;

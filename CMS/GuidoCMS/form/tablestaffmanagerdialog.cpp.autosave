@@ -5,7 +5,7 @@
 #include <QDockWidget>
 
 TableStaffManagerDialog::TableStaffManagerDialog(QMainWindow * parent ) :
-    TableManagerDialog(parent)
+    TabledDateDialog(parent)
 {
     CreateSpecialDialog();
 
@@ -20,7 +20,7 @@ TableStaffManagerDialog::TableStaffManagerDialog(QMainWindow * parent ) :
 
 void TableStaffManagerDialog::CreateSpecialDialog()
 {
-    TableManagerDialog::CreateSpecialDialog();
+    TabledDateDialog::CreateSpecialDialog();
     m_pAddTableInfoDialog = new AddTableInfoStaffDialog(this);
 }
 

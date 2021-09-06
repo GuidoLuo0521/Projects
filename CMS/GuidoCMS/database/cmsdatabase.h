@@ -26,6 +26,9 @@ public:
     /// 返回值  1：成功，0：密码错误 -1：没此账户 2：数据库未连接
     int WDB_VerifyLogin(const QString& strUsername, const QString& strPassword);
 
+    QString WDB_Date(const QString& format);
+    QString WDB_WeekNumber();
+
     QSqlQuery WDB_Exec(const QString& strQuery);
     QSqlError WDB_LastError();
 

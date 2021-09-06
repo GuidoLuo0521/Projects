@@ -1,5 +1,5 @@
-﻿#ifndef TABLEINFODIALOG_H
-#define TABLEINFODIALOG_H
+﻿#ifndef ENTRYDIALOG_H
+#define ENTRYDIALOG_H
 
 #include <QDialog>
 #include <QComboBox>
@@ -12,13 +12,13 @@
 
 #include <QSplitter>
 
-class AddTableInfoDialog : public QWidget
+class EntryAddDialog : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit AddTableInfoDialog(QWidget *parent = nullptr);
-    virtual ~AddTableInfoDialog();
+    explicit EntryAddDialog(QWidget *parent = nullptr);
+    virtual ~EntryAddDialog();
 
     static QStringList GetDepartmentList();
     static QStringList GetSpecialtyList();

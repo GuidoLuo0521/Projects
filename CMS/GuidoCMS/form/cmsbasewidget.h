@@ -8,12 +8,16 @@ class CMSBaseWidget : public QWidget
     Q_OBJECT
 public:
     explicit CMSBaseWidget(QWidget *parent = nullptr);
-    ~CMSBaseWidget();
+    virtual ~CMSBaseWidget();
 
 public slots:
     void slotSetShow(bool bShow);
 
 signals:
+
+
+protected:
+    virtual void InitLayout() = 0;
 
 };
 

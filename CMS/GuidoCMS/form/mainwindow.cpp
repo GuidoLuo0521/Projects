@@ -1,7 +1,7 @@
 ﻿#include "mainwindow.h"
 #include "systemmanagerdialog.h"
-#include "staffpassworddialog.h"
-#include "tablerolemanagerdialog.h"
+#include "modifypassworddialog.h"
+#include "roledatedialog.h"
 
 #include <QStatusBar>
 #include <QTimer>
@@ -40,29 +40,59 @@ void MainWindow::slotShowCurrentAccount()
 
 void MainWindow::slotUpdateStaffPassword()
 {
-    StaffPasswordDialog dlg(this);
+    ModifyPasswordDialog dlg(this);
 
-    connect( &dlg, &StaffPasswordDialog::signalUpdateSuccess,
+    connect( &dlg, &ModifyPasswordDialog::signalUpdateSuccess,
             m_pSystemManagerDialog, &SystemManagerDialog::slotUpdateCurrentPage);
 
     dlg.show();
     dlg.exec();
 }
 
+void MainWindow::slotShowDialog(MainWindow::MainWindowDialogType type)
+{
+    ChangeActionChecked(type);
+    m_pMainStackWidget->setCurrentIndex(type);
+}
+
+void MainWindow::slotToolbarActionClicked()
+{
+    QAction * pAction = (QAction * )sender();
+    if(pAction == m_pActionSystemManager)
+        emit signalShowCurrentDialog(SystemManagerDialogType);
+    else if (pAction == m_pActionWeeklyReport)
+        emit signalShowCurrentDialog(WeeklyReportDialogType);
+}
+
+void MainWindow::ChangeActionChecked(MainWindow::MainWindowDialogType type)
+{
+    m_pActionWeeklyReport->setChecked(false);
+    m_pActionSystemManager->setChecked(false);
+
+    switch (type) {
+    case    SystemManagerDialogType: m_pActionSystemManager->setChecked(true); return;
+    case    WeeklyReportDialogType: m_pActionWeeklyReport->setChecked(true); return;
+    default:  return;
+    }
+}
+
+
 void MainWindow::InitLayout()
 {
-    m_pStackCentralWidget = new QStackedWidget;
+    m_pMainStackWidget = new QStackedWidget;
 
     m_pSystemManagerDialog = new SystemManagerDialog(this);
-    //this->setCentralWidget(m_pSystemManagerDialog);
+    m_pWeeklyReportDialog = new WeeklyReportDialog(this);
 
-    m_pStackCentralWidget->addWidget(m_pSystemManagerDialog);
+    m_pMainStackWidget->addWidget(m_pSystemManagerDialog);
+    m_pMainStackWidget->addWidget(m_pWeeklyReportDialog);
 
     InitMenuBar();
     InitToolBar();
     InitStatuBar();
 
-    this->setCentralWidget(m_pStackCentralWidget);
+    connect(this, &MainWindow::signalShowCurrentDialog, this, &MainWindow::slotShowDialog);
+    this->setCentralWidget(m_pMainStackWidget);
 }
 
 QWidget *MainWindow::InitMenuBar()
@@ -83,17 +113,19 @@ QWidget *MainWindow::InitToolBar()
 {
    QToolBar * pToolBar = new QToolBar("窗口");
    pToolBar->setMovable(false);
-   this->addToolBar(Qt::ToolBarArea::LeftToolBarArea, pToolBar);
-
    pToolBar->setAllowedAreas(Qt::ToolBarArea::LeftToolBarArea);
+   this->addToolBar(Qt::ToolBarArea::LeftToolBarArea, pToolBar);   
 
-   QAction * pActionSystemManager = pToolBar->addAction("系统管理");
-   pActionSystemManager->setCheckable(true);
-   pActionSystemManager->setChecked(true);
+   m_pActionSystemManager = pToolBar->addAction("系统管理");
+   m_pActionWeeklyReport = pToolBar->addAction("周报管理");
 
-   connect(pActionSystemManager, &QAction::triggered,
-           m_pSystemManagerDialog, &SystemManagerDialog::slotSetShow);
+   m_pActionSystemManager->setCheckable(true);
+   m_pActionWeeklyReport->setCheckable(true);
 
+   m_pActionSystemManager->setChecked(true);
+
+   connect(m_pActionSystemManager, &QAction::triggered, this, &MainWindow::slotToolbarActionClicked);
+   connect(m_pActionWeeklyReport, &QAction::triggered, this, &MainWindow::slotToolbarActionClicked);
    return  pToolBar;
 }
 

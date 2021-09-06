@@ -1,13 +1,13 @@
-#ifndef ADDTABLEINFOROLEDIALOG_H
-#define ADDTABLEINFOROLEDIALOG_H
+﻿#ifndef ROLEENTRYDIALOG_H
+#define ROLEENTRYDIALOG_H
 
-#include "addtableinfodialog.h"
+#include "entryadddialog.h"
 
-class AddTableInfoRoleDialog : public AddTableInfoDialog
+class RoleEntryDialog : public EntryAddDialog
 {
 public:
-    AddTableInfoRoleDialog(QWidget *parent = 0);
-    ~AddTableInfoRoleDialog();
+    RoleEntryDialog(QWidget *parent = 0);
+    ~RoleEntryDialog();
 
 protected slots:
     virtual void slotAdd() override;

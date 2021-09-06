@@ -1,13 +1,13 @@
-﻿#ifndef TABLEROLEMANAGERDIALOG_H
-#define TABLEROLEMANAGERDIALOG_H
+﻿#ifndef ROLEDATEDIALOG_H
+#define ROLEDATEDIALOG_H
 
-#include "tablemanagerdialog.h"
+#include "tabledatedialog.h"
 
-class TableRoleManagerDialog : public TableManagerDialog
+class RoleDateDialog : public TableDateDialog
 {
 public:
-    TableRoleManagerDialog(QMainWindow * parent = 0);
-    ~TableRoleManagerDialog();
+    RoleDateDialog(QMainWindow * parent = 0);
+    ~RoleDateDialog();
 
 protected:
     virtual void CreateSpecialDialog() override;

@@ -5,10 +5,10 @@
 #include "database/cmsdatebasedef.h"
 
 
-#include "form/tablestaffmanagerdialog.h"
-#include "form/tabledepartmentmanagerdialog.h"
-#include "form/tablejobmanagerdialog.h"
-#include "form/tablerolemanagerdialog.h"
+#include "form/staffdatedialog.h"
+#include "form/departmentdatedialog.h"
+#include "form/jobdatedialog.h"
+#include "form/roledatedialog.h"
 
 
 #include <QToolBar>
@@ -41,13 +41,13 @@ SystemManagerDialog::~SystemManagerDialog()
 
 void SystemManagerDialog::slotUpdateCurrentPage()
 {
-    TableManagerDialog * ptableWidget = (TableManagerDialog * )m_pStackedWidget->currentWidget();
+    TableDateDialog * ptableWidget = (TableDateDialog * )m_pStackedWidget->currentWidget();
     ptableWidget->slotUpdateTable(false);
 }
 
 void SystemManagerDialog::slotShowSearchDialog(bool bShow)
 {
-    TableManagerDialog * ptableWidget = (TableManagerDialog * )m_pStackedWidget->currentWidget();
+    TableDateDialog * ptableWidget = (TableDateDialog * )m_pStackedWidget->currentWidget();
     if(bShow)
         ptableWidget->getSearchDockWidget()->show();
     else
@@ -56,14 +56,14 @@ void SystemManagerDialog::slotShowSearchDialog(bool bShow)
 
 void SystemManagerDialog::slotShowAddEntryDialog(bool bShow)
 {
-    TableManagerDialog * ptableWidget = (TableManagerDialog * )m_pStackedWidget->currentWidget();
+    TableDateDialog * ptableWidget = (TableDateDialog * )m_pStackedWidget->currentWidget();
     if(bShow)
         ptableWidget->getAddDockWidget()->show();
     else
         ptableWidget->getAddDockWidget()->hide();
 }
 
-void SystemManagerDialog::ActionChecked(SystemManagerDialog::StackedWidgetType type)
+void SystemManagerDialog::ChangeActionChecked(SystemManagerDialog::StackedWidgetType type)
 {
     m_pActionStaffManager->setChecked(false);
     m_pActionRoleManager->setChecked(false);
@@ -81,25 +81,25 @@ void SystemManagerDialog::ActionChecked(SystemManagerDialog::StackedWidgetType t
 
 void SystemManagerDialog::slotSetTableModelTableStaff()
 {
-    ActionChecked(StaffWidget);
+    ChangeActionChecked(StaffWidget);
     m_pStackedWidget->setCurrentIndex(StaffWidget);
 }
 
 void SystemManagerDialog::slotSetTableModelTableRole()
 {
-    ActionChecked(RoleWidget);
+    ChangeActionChecked(RoleWidget);
     m_pStackedWidget->setCurrentIndex(RoleWidget);
 }
 
 void SystemManagerDialog::slotSetTableModelTableDepartment()
 {
-    ActionChecked(DepartmentWidget);
+    ChangeActionChecked(DepartmentWidget);
     m_pStackedWidget->setCurrentIndex(DepartmentWidget);
 }
 
 void SystemManagerDialog::slotSetTableModelTableJob()
 {
-    ActionChecked(JobWidget);
+    ChangeActionChecked(JobWidget);
     m_pStackedWidget->setCurrentIndex(JobWidget);    
 }
 
@@ -181,19 +181,19 @@ QWidget* SystemManagerDialog::InitToolBar()
 
 QWidget* SystemManagerDialog::InitTableInfoManagerStaff()
 {
-    return  new TableStaffManagerDialog;
+    return  new StaffDateDialog;
 }
 QWidget* SystemManagerDialog::InitTableInfoManagerDepartment()
 {
-    return  new TableDepartmentManagerDialog;
+    return  new DepartmentDateDialog;
 }
 QWidget* SystemManagerDialog::InitTableInfoManagerRole()
 {
-    return  new TableRoleManagerDialog;
+    return  new RoleDateDialog;
 }
 QWidget* SystemManagerDialog::InitTableInfoManagerJob()
 {
-    return  new TableJobManagerDialog;
+    return  new JobDateDialog;
 }
 
 

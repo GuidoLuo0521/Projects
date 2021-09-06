@@ -3,7 +3,7 @@
 #include "addtableinforoledialog.h"
 
 TableRoleManagerDialog::TableRoleManagerDialog(QMainWindow * parent) :
-    TableManagerDialog(parent)
+    TabledDateDialog(parent)
 {
     CreateSpecialDialog();
 
@@ -23,7 +23,7 @@ TableRoleManagerDialog::~TableRoleManagerDialog()
 
 void TableRoleManagerDialog::CreateSpecialDialog()
 {
-    TableManagerDialog::CreateSpecialDialog();
+    TabledDateDialog::CreateSpecialDialog();
     m_pAddTableInfoDialog = new AddTableInfoRoleDialog(this);
 }
 

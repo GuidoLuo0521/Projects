@@ -1,21 +1,21 @@
-﻿#ifndef ADDDEPARTMENTINFODIALOG_H
-#define ADDDEPARTMENTINFODIALOG_H
+﻿#ifndef DEPARTMENTENTRYDIALOG_H
+#define DEPARTMENTENTRYDIALOG_H
 
 #include <QDialog>
-#include <form/addtableinfodialog.h>
+#include <form/entryadddialog.h>
 #include "common/controlinclude.h"
 #include "database/cmsdatabase.h"
 #include "database/cmsdatebasedef.h"
 #include <QSqlTableModel>
 
 
-class AddTableInfoDepartmentDialog : public AddTableInfoDialog
+class DepartmentEntryDialog : public EntryAddDialog
 {
     Q_OBJECT
 
 public:
-    explicit AddTableInfoDepartmentDialog(QWidget *parent = nullptr);
-    ~AddTableInfoDepartmentDialog();
+    explicit DepartmentEntryDialog(QWidget *parent = nullptr);
+    ~DepartmentEntryDialog();
 
 protected slots:
     virtual void slotAdd() override;
