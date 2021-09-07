@@ -8,35 +8,50 @@
 #include <QJsonObject>
 #include <QMessageBox>
 
+
+
 WeeklyReportCommitDialog::WeeklyReportCommitDialog(QWidget *parent) :
     QWidget(parent)
 {
     InitLayout();
+
+    m_pNetworkManager = new QNetworkAccessManager(this);
+    //QNetworkAccessManager* naManager = new QNetworkAccessManager(this);
+    QMetaObject::Connection connRet = QObject::connect(m_pNetworkManager,
+                                                       SIGNAL(finished(QNetworkReply*)),
+                                                       this,
+                                                       SLOT(slotRequestFinished(QNetworkReply*)));
+    Q_ASSERT(connRet);
+
 }
 
 void WeeklyReportCommitDialog::slotCommit()
 {
+    CStaffInfo * pStaffInfo = StaffInfoSingleton::GetInstance();
     CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
+
     QString strDate = pDB->WDB_Date("yyyy-MM-dd hh:mm:ss");
-    QString strWeek = pDB->WDB_WeekNumber();
+    QString strWeekNumber = pDB->WDB_WeekNumber();
 
     QJsonObject jsonObject;
     jsonObject.insert("Date", strDate);
-    jsonObject.insert("Week", strWeek);
+    jsonObject.insert("WeekNumber", strWeekNumber);
     jsonObject.insert("IP", GetIPPath());
     jsonObject.insert("MAC", GetMacPath());
     jsonObject.insert("ProjectName", m_pProjectName->Text());
     jsonObject.insert("Finish", m_pFinishEdit->Text());
     jsonObject.insert("Plan", m_pPlanEdit->Text());
 
+    //weeknumber-staffid
+    QString strNameDate = strDate;
+    strNameDate = strNameDate.remove(' ');
+    strNameDate = strNameDate.remove(':');
+    strNameDate = strNameDate.remove('-');
+    QString strFilePath = QString("%1-%2-%3.json").arg(strWeekNumber).arg(pStaffInfo->GetStaffID()).arg(strNameDate);
+    jsonObject.insert("FileName", strFilePath);
+
     QJsonDocument document;
     document.setObject(jsonObject);
-
-    CStaffInfo * pStaffInfo = StaffInfoSingleton::GetInstance();
-
-    //weeknumber-staffid
-    QString strNameDate = pDB->WDB_Date("yyyyMMddhhmmss");
-    QString strFilePath = QString("%1-%2-%3.json").arg(strWeek).arg(pStaffInfo->GetStaffID()).arg(strNameDate);
 
     QFile file(strFilePath);
     file.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -46,15 +61,31 @@ void WeeklyReportCommitDialog::slotCommit()
 
     QString strQuery = QString("INSERT INTO weeklyreport(StaffID, FileName, WeekNumber, CommitDate, CommitIP, CommitMac) "
                                "VALUES('%1', '%2', '%3', '%4', '%5', '%6')")
-            .arg(pStaffInfo->GetStaffID()).arg(strFilePath).arg(strWeek)
+            .arg(pStaffInfo->GetStaffID()).arg(strFilePath).arg(strWeekNumber)
             .arg(strDate).arg(GetIPPath()).arg(GetMacPath());
 
 
-    pDB->WDB_Exec( strQuery);
+    // web 部分放入 webapi 插入
+    //pDB->WDB_Exec( strQuery);
     pDB->LDB_Exec( strQuery);
 
+    QString strDateYear = strDate.left(4);
+    QString strUrl = QString("https://localhost:44348/weeklyreport?staffid=%1&year=%2&weeknumber=%3")
+        .arg(pStaffInfo->GetStaffID()).arg(strDateYear).arg(strWeekNumber);
+    QNetworkRequest request;
+    request.setUrl(QUrl(strUrl));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QString strJson = document.toJson();
+
+    m_pNetworkManager->post(request, strJson.toUtf8());
+}
+
+void WeeklyReportCommitDialog::slotRequestFinished(QNetworkReply* reply)
+{
+    reply->deleteLater();
     QMessageBox::information(this, "提示", "提交成功。");
 }
+
 
 void WeeklyReportCommitDialog::slotClear()
 {
