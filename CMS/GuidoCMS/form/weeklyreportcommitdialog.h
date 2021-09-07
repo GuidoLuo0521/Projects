@@ -21,6 +21,8 @@ private slots:
     void slotClear();
     void slotRequestFinished(QNetworkReply *reply);
 
+    void slotTextChanged();
+
 protected:
     void InitLayout();
 
@@ -31,6 +33,8 @@ private:
     StanderPlainTextEdit * m_pPlanEdit ;
 
     QNetworkAccessManager* m_pNetworkManager;
+
+    bool m_bChanged;
 };
 
 #endif // WEEKLYREPORTCOMMITDIALOG_H

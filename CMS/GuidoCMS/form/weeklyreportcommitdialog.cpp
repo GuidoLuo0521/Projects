@@ -11,7 +11,8 @@
 
 
 WeeklyReportCommitDialog::WeeklyReportCommitDialog(QWidget *parent) :
-    QWidget(parent)
+    QWidget(parent),
+    m_bChanged(false)
 {
     InitLayout();
 
@@ -22,11 +23,16 @@ WeeklyReportCommitDialog::WeeklyReportCommitDialog(QWidget *parent) :
                                                        this,
                                                        SLOT(slotRequestFinished(QNetworkReply*)));
     Q_ASSERT(connRet);
-
 }
 
 void WeeklyReportCommitDialog::slotCommit()
 {
+    if(m_bChanged == false)
+    {
+        QMessageBox::warning(this, "警告", "未修改！");
+        return;
+    }
+
     CStaffInfo * pStaffInfo = StaffInfoSingleton::GetInstance();
     CMSDatabase * pDB = CMSDatabaseSingleton::GetInstance();
 
@@ -70,22 +76,30 @@ void WeeklyReportCommitDialog::slotCommit()
     pDB->LDB_Exec( strQuery);
 
     QString strDateYear = strDate.left(4);
-    QString strUrl = QString("https://localhost:44348/weeklyreport?staffid=%1&year=%2&weeknumber=%3")
-        .arg(pStaffInfo->GetStaffID()).arg(strDateYear).arg(strWeekNumber);
+    //QString strWebSite = "https://localhost:44348";
+    QString strWebSite = "http://www.millet.fun/GuidoCMS/WebAPI/WeeklyReport";
+    QString strUrl = QString("%4/?staffid=%1&year=%2&weeknumber=%3")
+        .arg(pStaffInfo->GetStaffID()).arg(strDateYear).arg(strWeekNumber).arg(strWebSite);
     QNetworkRequest request;
     request.setUrl(QUrl(strUrl));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     QString strJson = document.toJson();
 
     m_pNetworkManager->post(request, strJson.toUtf8());
+
 }
 
 void WeeklyReportCommitDialog::slotRequestFinished(QNetworkReply* reply)
 {
     reply->deleteLater();
     QMessageBox::information(this, "提示", "提交成功。");
+    m_bChanged = false;
 }
 
+void WeeklyReportCommitDialog::slotTextChanged()
+{
+    m_bChanged = true;
+}
 
 void WeeklyReportCommitDialog::slotClear()
 {
@@ -102,6 +116,10 @@ void WeeklyReportCommitDialog::InitLayout()
 
     m_pFinishEdit->TextEdit()->setFont(QFont("宋体", 12, 12));
     m_pPlanEdit->TextEdit()->setFont(QFont("宋体", 12, 12));
+
+    connect(m_pProjectName->LineEdit(), &QLineEdit::textChanged, this, &WeeklyReportCommitDialog::slotTextChanged);
+    connect(m_pPlanEdit->TextEdit(), &QPlainTextEdit::textChanged, this, &WeeklyReportCommitDialog::slotTextChanged);
+    connect(m_pFinishEdit->TextEdit(), &QPlainTextEdit::textChanged, this, &WeeklyReportCommitDialog::slotTextChanged);
 
     QVBoxLayout * pEditLayout = new QVBoxLayout;
 
