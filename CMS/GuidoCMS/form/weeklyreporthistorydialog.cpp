@@ -22,14 +22,12 @@ void WeeklyReportHistoryDialog::InitLayout()
     QFont fnt = m_pTableView->font();
     fnt.setPointSize(12);
     m_pTableView->setFont(fnt);
+    m_pTableView->setSortingEnabled(true);
     m_pTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-    m_pTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-
-
-
-    m_pStandardItemModel = new QStandardItemModel;
+    m_pTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);    
 
     int nIndex = 0;
+    m_pStandardItemModel = new QStandardItemModel;
     m_pStandardItemModel->setColumnCount(6);
     m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "提交编号");
     m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "提交周数");
@@ -37,9 +35,6 @@ void WeeklyReportHistoryDialog::InitLayout()
     m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "完成内容");
     m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "下周计划");
     m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "提交时间");
-
-
-    //AddDate();
 
     ReadOnlyDelegate * readOnlyDelegate = new ReadOnlyDelegate(this);
     m_pTableView->setItemDelegateForColumn(0, readOnlyDelegate);
@@ -53,7 +48,6 @@ void WeeklyReportHistoryDialog::InitLayout()
     //
     //TextEditDelegate * pTextEditDelegatePlain = new TextEditDelegate(TextEditDelegate::TT_PlainText ,this);
     //m_pTableView->setItemDelegateForColumn(3, pTextEditDelegatePlain);
-
 
     //TextEditDelegate * pTextEditDelegatePlain = new TextEditDelegate(TextEditDelegate::TT_PlainText ,this);
     //m_pTableView->setItemDelegateForColumn(2, pTextEditDelegatePlain);

@@ -106,8 +106,10 @@ namespace GuidoCMS.Controllers
                 return "{}";
 
             string strQuery = $"select w.* from weeklyreport w where (w.staffid, w.WeekNumber, w.CommitDate) in " +
-                $"(select wr.staffid, wr.WeekNumber, max(wr.CommitDate)  from weeklyreport wr where staffid = '{staffid}' " +
-                $"group by wr.staffid, wr.WeekNumber)";
+                $"(select wr.staffid, wr.WeekNumber, max(wr.CommitDate)  " +
+                $"  from weeklyreport wr where staffid = '{staffid}' " +
+                $"  group by wr.staffid, wr.WeekNumber) " +
+                $"order by w.WeekNumber DESC";
 
             using (MySqlConnection con = new MySql.Data.MySqlClient.MySqlConnection(_ConnectionString))
             {
