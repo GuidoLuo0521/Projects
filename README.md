@@ -6,7 +6,7 @@
 
 # [CShapeExample](https://github.com/GuidoLuo0521/Projects/tree/master/CShapeExample)
 
-学习C#时候的小例子
+C#例子
 
 ![1626678442773](images/1626678442773.png)
 
