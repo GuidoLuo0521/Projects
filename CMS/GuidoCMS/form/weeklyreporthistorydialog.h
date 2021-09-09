@@ -4,6 +4,8 @@
 #include "common/controlinclude.h"
 #include "controlext/controlext.h"
 
+#include <QNetworkAccessManager>
+
 class WeeklyReportHistoryDialog : public QWidget
 {
     Q_OBJECT
@@ -12,15 +14,17 @@ public:
 
 signals:
 
+public slots:
+    void slotGetDate();
+    void slotAccountChanged();
 
 protected:
     void InitLayout();
-    void AddDate();
-
 private:
     QTableView * m_pTableView;
     QStandardItemModel * m_pStandardItemModel;
 
+    QNetworkAccessManager * m_pNetManager;
 };
 
 #endif // WEEKLYREPORTHISTORYDIALOG_H

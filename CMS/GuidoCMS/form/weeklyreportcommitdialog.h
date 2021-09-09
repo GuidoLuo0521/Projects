@@ -23,6 +23,8 @@ private slots:
 
     void slotTextChanged();
 
+    void slotAccountChanged();
+
 protected:
     void InitLayout();
 

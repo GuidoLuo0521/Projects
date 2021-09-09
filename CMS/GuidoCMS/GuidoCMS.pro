@@ -30,7 +30,7 @@ CONFIG += c++11
 SOURCES += \
         common/commonapi.cpp \
         common/filedownloader.cpp \
-        common/ntpclient.cpp \
+        #common/ntpclient.cpp \
         common/singleton.cpp \
         common/staffinfo.cpp \
         controlext/standerdateedit.cpp \
@@ -50,7 +50,7 @@ SOURCES += \
         form/jobdatedialog.cpp \
         form/jobentrydialog.cpp \
         form/mainwindow.cpp \
-        form/modifypassworddialog.cpp \
+        form/profiledialog.cpp \
         form/roledatedialog.cpp \
         form/roleentrydialog.cpp \
         form/searchdialog.cpp \
@@ -71,7 +71,7 @@ HEADERS += \
         common/controlinclude.h \
         common/filedownloader.h \
         common/staffinfo.h \
-        common/ntpclient.h \
+        #common/ntpclient.h \
         common/singleton.h \
         controlext/controlext.h \
         controlext/standerdateedit.h \
@@ -92,7 +92,7 @@ HEADERS += \
         form/jobdatedialog.h \
         form/jobentrydialog.h \
         form/mainwindow.h \
-        form/modifypassworddialog.h \
+        form/profiledialog.h \
         form/roledatedialog.h \
         form/roleentrydialog.h \
         form/searchdialog.h \
@@ -109,7 +109,7 @@ HEADERS += \
 
 FORMS += \
         form/logindialog.ui \
-        form/modifypassworddialog.ui \
+        form/profiledialog.ui \
         form/searchdialog.ui
 
 

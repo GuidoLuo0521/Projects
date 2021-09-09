@@ -1,14 +1,14 @@
-﻿#include "modifypassworddialog.h"
-#include "ui_modifypassworddialog.h"
+﻿#include "profiledialog.h"
+#include "ui_profiledialog.h"
 
 #include <QMessageBox>
 #include "database/cmsdatabase.h"
 
 
 
-ModifyPasswordDialog::ModifyPasswordDialog(QWidget *parent) :
+ProfileDialog::ProfileDialog(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ModifyPasswordDialog)
+    ui(new Ui::ProfileDialog)
 {
     ui->setupUi(this);
     m_pCurrentStaff = StaffInfoSingleton::GetInstance();
@@ -17,15 +17,15 @@ ModifyPasswordDialog::ModifyPasswordDialog(QWidget *parent) :
 
     ui->lineEditNewPassword->setPlaceholderText("6 - 20位密码");
 
-    connect(ui->btnCancle, &QPushButton::clicked, this, &ModifyPasswordDialog::close);
+    connect(ui->btnCancle, &QPushButton::clicked, this, &ProfileDialog::close);
 }
 
-ModifyPasswordDialog::~ModifyPasswordDialog()
+ProfileDialog::~ProfileDialog()
 {
     delete ui;
 }
 
-void ModifyPasswordDialog::on_btnOK_clicked()
+void ProfileDialog::on_btnOK_clicked()
 {
     if(CheckParam() < 0)
         return;
@@ -43,7 +43,7 @@ void ModifyPasswordDialog::on_btnOK_clicked()
     close();
 }
 
-int ModifyPasswordDialog::CheckParam()
+int ProfileDialog::CheckParam()
 {
     QString strRawPW = ui->lineEditRawPassword->text();
     QString strCekPW = ui->lineEditCheckPassword->text();
@@ -75,17 +75,17 @@ int ModifyPasswordDialog::CheckParam()
     return 1;
 }
 
-void ModifyPasswordDialog::on_lineEditRawPassword_textChanged(const QString &arg1)
+void ProfileDialog::on_lineEditRawPassword_textChanged(const QString &arg1)
 {
     ui->labelTips->setText("");
 }
 
-void ModifyPasswordDialog::on_lineEditCheckPassword_textChanged(const QString &arg1)
+void ProfileDialog::on_lineEditCheckPassword_textChanged(const QString &arg1)
 {
     ui->labelTips->setText("");
 }
 
-void ModifyPasswordDialog::on_lineEditNewPassword_textChanged(const QString &arg1)
+void ProfileDialog::on_lineEditNewPassword_textChanged(const QString &arg1)
 {
     if(arg1.count() >= 20)
         ui->labelTips->setText("密码过长，请重新输入。");

@@ -32,17 +32,23 @@ SystemManagerDialog::SystemManagerDialog(QWidget *parent) :
     CMSBaseWidget(parent)
 {
     InitLayout();
-    slotSetTableModelTableStaff();
+
 }
 
 SystemManagerDialog::~SystemManagerDialog()
 {
+
 }
 
 void SystemManagerDialog::slotUpdateCurrentPage()
 {
     TableDateDialog * ptableWidget = (TableDateDialog * )m_pStackedWidget->currentWidget();
     ptableWidget->slotUpdateTable(false);
+}
+
+void SystemManagerDialog::slotAccountChanged()
+{
+    slotSetTableModelTableStaff();
 }
 
 void SystemManagerDialog::slotShowSearchDialog(bool bShow)

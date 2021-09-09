@@ -10,8 +10,8 @@ class WeeklyReportDialog : public CMSBaseWidget
     Q_OBJECT
     enum WeeklyReportDialogType
     {
-        HistoryDialog,
         CommitDialog,
+        HistoryDialog,
     };
 
 
@@ -19,12 +19,17 @@ public:
     explicit WeeklyReportDialog(QWidget *parent = nullptr);
     ~WeeklyReportDialog();
 
-signals:
-    void signalShowCurrentDialog(WeeklyReportDialogType);
+public slots:
+    void slotAccountChanged();
 
-private:
-    void slotShowDialog(WeeklyReportDialogType);
-    void slotToolbarActionClicked();
+signals:
+    void signalAccountChange();
+    void signalCurrentDialogChange(WeeklyReportDialogType);
+    void signalGetHistoryReport();
+
+private slots:
+    void slotCurrentDialogChanged(WeeklyReportDialogType);
+    void slotToolbarActionClicked(QAction * pAction);
 
 protected:
     virtual void InitLayout() override;

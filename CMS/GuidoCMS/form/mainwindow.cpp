@@ -1,6 +1,6 @@
 ﻿#include "mainwindow.h"
 #include "systemmanagerdialog.h"
-#include "modifypassworddialog.h"
+#include "profiledialog.h"
 #include "roledatedialog.h"
 
 #include <QStatusBar>
@@ -27,6 +27,12 @@ void MainWindow::slotUpdateTime()
     m_pStatuTimeLabel->setText(timestr); //设置label的文本内容为时间
 }
 
+void MainWindow::slotAccountChanged()
+{
+    slotShowDialog(SystemManagerDialogType);
+    slotShowCurrentAccount();
+}
+
 void MainWindow::slotShowCurrentAccount()
 {
     CStaffInfo * pStaffInfo = StaffInfoSingleton::GetInstance();
@@ -40,9 +46,9 @@ void MainWindow::slotShowCurrentAccount()
 
 void MainWindow::slotUpdateStaffPassword()
 {
-    ModifyPasswordDialog dlg(this);
+    ProfileDialog dlg(this);
 
-    connect( &dlg, &ModifyPasswordDialog::signalUpdateSuccess,
+    connect( &dlg, &ProfileDialog::signalUpdateSuccess,
             m_pSystemManagerDialog, &SystemManagerDialog::slotUpdateCurrentPage);
 
     dlg.show();
@@ -55,9 +61,8 @@ void MainWindow::slotShowDialog(MainWindow::MainWindowDialogType type)
     m_pMainStackWidget->setCurrentIndex(type);
 }
 
-void MainWindow::slotToolbarActionClicked()
+void MainWindow::slotToolbarActionClicked(QAction * pAction)
 {
-    QAction * pAction = (QAction * )sender();
     if(pAction == m_pActionSystemManager)
         emit signalShowCurrentDialog(SystemManagerDialogType);
     else if (pAction == m_pActionWeeklyReport)
@@ -82,7 +87,12 @@ void MainWindow::InitLayout()
     m_pMainStackWidget = new QStackedWidget;
 
     m_pSystemManagerDialog = new SystemManagerDialog(this);
+    connect(this, &MainWindow::signalAccountChange,
+            m_pSystemManagerDialog, &SystemManagerDialog::slotAccountChanged);
+
     m_pWeeklyReportDialog = new WeeklyReportDialog(this);
+    connect(this, &MainWindow::signalAccountChange,
+            m_pWeeklyReportDialog, &WeeklyReportDialog::slotAccountChanged);
 
     m_pMainStackWidget->addWidget(m_pSystemManagerDialog);
     m_pMainStackWidget->addWidget(m_pWeeklyReportDialog);
@@ -92,6 +102,7 @@ void MainWindow::InitLayout()
     InitStatuBar();
 
     connect(this, &MainWindow::signalShowCurrentDialog, this, &MainWindow::slotShowDialog);
+    connect(this, &MainWindow::signalAccountChange, this, &MainWindow::slotAccountChanged);
     this->setCentralWidget(m_pMainStackWidget);
 }
 
@@ -124,8 +135,9 @@ QWidget *MainWindow::InitToolBar()
 
    m_pActionSystemManager->setChecked(true);
 
-   connect(m_pActionSystemManager, &QAction::triggered, this, &MainWindow::slotToolbarActionClicked);
-   connect(m_pActionWeeklyReport, &QAction::triggered, this, &MainWindow::slotToolbarActionClicked);
+   connect( pToolBar, &QToolBar::actionTriggered,
+           this, &MainWindow::slotToolbarActionClicked);
+
    return  pToolBar;
 }
 
@@ -154,7 +166,8 @@ void MainWindow::slotExitLogin()
 
 void MainWindow::slotShowWindow()
 {
-    slotShowCurrentAccount();
+    emit signalAccountChange();
+
     showMaximized();
     this->show();
 }

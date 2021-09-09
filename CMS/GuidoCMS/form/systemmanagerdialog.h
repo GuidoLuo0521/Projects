@@ -41,6 +41,7 @@ signals:
 
 public slots:
     void slotUpdateCurrentPage();
+    void slotAccountChanged();
 
 private slots:
     void slotShowSearchDialog(bool bShow);

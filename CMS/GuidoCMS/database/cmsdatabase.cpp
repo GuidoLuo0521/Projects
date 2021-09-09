@@ -4,7 +4,7 @@
 #include <QDateTime>
 #include <QTcpSocket>
 
-#include "common/ntpclient.h"
+//#include "common/ntpclient.h"
 
 /*
 const QString CMSDatabase::m_strWebType = "QMYSQL";

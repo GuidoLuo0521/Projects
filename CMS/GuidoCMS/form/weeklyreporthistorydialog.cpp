@@ -1,8 +1,18 @@
 ﻿#include "weeklyreporthistorydialog.h"
 
+#include <QEventLoop>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+
+#include "common/staffinfo.h"
+
 WeeklyReportHistoryDialog::WeeklyReportHistoryDialog(QWidget *parent) : QWidget(parent)
 {
     InitLayout();
+    m_pNetManager = new QNetworkAccessManager(this);
 }
 
 void WeeklyReportHistoryDialog::InitLayout()
@@ -15,22 +25,28 @@ void WeeklyReportHistoryDialog::InitLayout()
     m_pTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     m_pTableView->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+
+
     m_pStandardItemModel = new QStandardItemModel;
 
-    m_pStandardItemModel->setColumnCount(4);
-    m_pStandardItemModel->setHeaderData(0, Qt::Horizontal, "提交时间");
-    m_pStandardItemModel->setHeaderData(1, Qt::Horizontal, "项目名称");
-    m_pStandardItemModel->setHeaderData(2, Qt::Horizontal, "完成内容");
-    m_pStandardItemModel->setHeaderData(3, Qt::Horizontal, "下周计划");
-    //m_pStandardItemModel->setHeaderData(4, Qt::Horizontal, "修改内容");
+    int nIndex = 0;
+    m_pStandardItemModel->setColumnCount(6);
+    m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "提交编号");
+    m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "提交周数");
+    m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "项目名称");
+    m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "完成内容");
+    m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "下周计划");
+    m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "提交时间");
 
-    AddDate();
+
+    //AddDate();
 
     ReadOnlyDelegate * readOnlyDelegate = new ReadOnlyDelegate(this);
     m_pTableView->setItemDelegateForColumn(0, readOnlyDelegate);
     m_pTableView->setItemDelegateForColumn(1, readOnlyDelegate);
     m_pTableView->setItemDelegateForColumn(2, readOnlyDelegate);
     m_pTableView->setItemDelegateForColumn(3, readOnlyDelegate);
+    m_pTableView->setItemDelegateForColumn(4, readOnlyDelegate);
 
     //TextEditDelegate * pTextEditDelegateFinish = new TextEditDelegate(TextEditDelegate::TT_PlainText ,this);
     //m_pTableView->setItemDelegateForColumn(2, pTextEditDelegateFinish);
@@ -49,19 +65,63 @@ void WeeklyReportHistoryDialog::InitLayout()
     this->setLayout(pHistoryLayout);
 }
 
-void WeeklyReportHistoryDialog::AddDate()
+void WeeklyReportHistoryDialog::slotGetDate()
 {
-    for(int i = 0; i < 20; ++i)
-    {
-        m_pStandardItemModel->setItem(i, 0, new QStandardItem(QString("2021-09-0%1").arg(i) ));
-        m_pStandardItemModel->setItem(i, 1, new QStandardItem("诊断算法\n心博分类\n心电算法"));
-        m_pStandardItemModel->setItem(i, 2, new QStandardItem("1、完善心电算法，对T波高耸的数据进行分析，目前 T波高耸数据已经能正常检测。\n"
-                                                              "2、完善心博分类算法，测试手表和手环数据，因为我的数据较为正常，因此后面找更多人测试。\n"
-                                                              "3、增加心博指定心博模板的算法。目前已经编码完成。\n"
-                                                              "4、查看任开文的源码，了解他们的自动诊断算法。\n"));
+    int nRowCount = m_pStandardItemModel->rowCount();
+    m_pStandardItemModel->removeRows(0, nRowCount);
 
-        m_pStandardItemModel->setItem(i, 3, new QStandardItem("1、了解任开文的心博分类算法，整理成文档。\n"
-                                                              "2、分析端测试手表和手环的数据。\n"
-                                                              "3、跟进分析端的使用和修改。\n"));
+    CStaffInfo * pStaffInfo = StaffInfoSingleton::GetInstance();
+
+    // 构建及发送请求
+    QString strWebUrl = "http://www.millet.fun/GuidoCMS/WebAPI/WeeklyReport";
+    //QString strWebUrl = "https://localhost:44348/WeeklyReport";
+    QString strUrl = QString("%1/?staffid=%2").arg(strWebUrl).arg(pStaffInfo->GetStaffID());
+    QNetworkRequest request;
+    request.setUrl(QUrl(strUrl));
+    //request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+
+    QNetworkReply *pReply = m_pNetManager->get(request);
+    // 开启一个局部的事件循环，等待页面响应结束
+    QEventLoop eventLoop;
+    QObject::connect(m_pNetManager, &QNetworkAccessManager::finished, &eventLoop, &QEventLoop::quit);
+    eventLoop.exec();
+    // 获取网页Body中的内容
+    QString strJson = pReply->readAll();
+    //qDebug() << strJson;
+
+    QJsonDocument doc = QJsonDocument::fromJson(strJson.toUtf8());
+    QJsonObject obj = doc.object();
+
+    QString str = "", key = "";
+    int nRow = 0, nColumn = 0;
+    QStringList list =  obj.keys();
+    foreach (key, list)
+    {
+        if(obj[key].isObject())
+        {
+            nColumn = 0;
+
+            QJsonObject objval =  obj[key].toObject();
+            str = QString("%1").arg(key);
+            m_pStandardItemModel->setItem(nRow, nColumn++, new QStandardItem(str));
+            str = QString("%1").arg(objval["WeekNumber"].toString());
+            m_pStandardItemModel->setItem(nRow, nColumn++, new QStandardItem(str));
+            str = QString("%1").arg(objval["Project"].toString());
+            m_pStandardItemModel->setItem(nRow, nColumn++, new QStandardItem(str));
+            str = QString("%1").arg(objval["Finished"].toString());
+            m_pStandardItemModel->setItem(nRow, nColumn++, new QStandardItem(str));
+            str = QString("%1").arg(objval["Plan"].toString());
+            m_pStandardItemModel->setItem(nRow, nColumn++, new QStandardItem(str));
+            str = QString("%1").arg(objval["CommitDate"].toString());
+            m_pStandardItemModel->setItem(nRow, nColumn++, new QStandardItem(str));
+        }
+        nRow++;
     }
+
+    pReply->deleteLater();
+}
+
+void WeeklyReportHistoryDialog::slotAccountChanged()
+{
+    slotGetDate();
 }

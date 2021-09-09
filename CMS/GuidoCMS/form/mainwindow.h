@@ -25,13 +25,15 @@ private slots:
     void slotExitLogin();
     void slotShowWindow();
     void slotUpdateTime();
+    void slotAccountChanged();
     void slotShowCurrentAccount();
     void slotUpdateStaffPassword();
 
     void slotShowDialog(MainWindow::MainWindowDialogType);
-    void slotToolbarActionClicked();
+    void slotToolbarActionClicked(QAction * pAction);
 
 signals:
+    void signalAccountChange();
     void signalExitCurrentAccount();
     void signalShowCurrentDialog(MainWindow::MainWindowDialogType);
 

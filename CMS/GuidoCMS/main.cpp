@@ -6,7 +6,7 @@
 #include <QApplication>
 
 #include <form/mainwindow.h>
-#include <form/modifypassworddialog.h>
+#include <form/profiledialog.h>
 #include <form/weeklyreportdialog.h>
 
 
@@ -20,7 +20,6 @@ int main(int argc, char *argv[])
 #if 1
     LoginDialog logindlg;
     MainWindow maindlg;
-    //SystemManagerDialog maindlg;
 
     //点击登录对话框的登录按钮; 进入主界面
     QObject::connect(&logindlg, SIGNAL(signalShowMainWindow()), &maindlg, SLOT(slotShowWindow()));

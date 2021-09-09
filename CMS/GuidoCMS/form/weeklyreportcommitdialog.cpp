@@ -40,12 +40,13 @@ void WeeklyReportCommitDialog::slotCommit()
     QString strWeekNumber = pDB->WDB_WeekNumber();
 
     QJsonObject jsonObject;
+    jsonObject.insert("StaffID", pStaffInfo->GetStaffID());
     jsonObject.insert("Date", strDate);
     jsonObject.insert("WeekNumber", strWeekNumber);
     jsonObject.insert("IP", GetIPPath());
     jsonObject.insert("MAC", GetMacPath());
-    jsonObject.insert("ProjectName", m_pProjectName->Text());
-    jsonObject.insert("Finish", m_pFinishEdit->Text());
+    jsonObject.insert("Project", m_pProjectName->Text());
+    jsonObject.insert("Finished", m_pFinishEdit->Text());
     jsonObject.insert("Plan", m_pPlanEdit->Text());
 
     //weeknumber-staffid
@@ -59,11 +60,13 @@ void WeeklyReportCommitDialog::slotCommit()
     QJsonDocument document;
     document.setObject(jsonObject);
 
+#if 0
     QFile file(strFilePath);
     file.open(QIODevice::WriteOnly | QIODevice::Text);
     file.write(document.toJson());
     file.flush();
     file.close();
+#endif
 
     QString strQuery = QString("INSERT INTO weeklyreport(StaffID, FileName, WeekNumber, CommitDate, CommitIP, CommitMac) "
                                "VALUES('%1', '%2', '%3', '%4', '%5', '%6')")
@@ -75,13 +78,10 @@ void WeeklyReportCommitDialog::slotCommit()
     //pDB->WDB_Exec( strQuery);
     pDB->LDB_Exec( strQuery);
 
-    QString strDateYear = strDate.left(4);
-    //QString strWebSite = "https://localhost:44348";
-    QString strWebSite = "http://www.millet.fun/GuidoCMS/WebAPI/WeeklyReport";
-    QString strUrl = QString("%4/?staffid=%1&year=%2&weeknumber=%3")
-        .arg(pStaffInfo->GetStaffID()).arg(strDateYear).arg(strWeekNumber).arg(strWebSite);
+    //QString strWebUrl = "https://localhost:44348/WeeklyReport";
+    QString strWebUrl = "http://www.millet.fun/GuidoCMS/WebAPI/WeeklyReport";
     QNetworkRequest request;
-    request.setUrl(QUrl(strUrl));
+    request.setUrl(QUrl(strWebUrl));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     QString strJson = document.toJson();
 
@@ -99,6 +99,12 @@ void WeeklyReportCommitDialog::slotRequestFinished(QNetworkReply* reply)
 void WeeklyReportCommitDialog::slotTextChanged()
 {
     m_bChanged = true;
+}
+
+void WeeklyReportCommitDialog::slotAccountChanged()
+{
+    slotClear();
+    m_bChanged = false;
 }
 
 void WeeklyReportCommitDialog::slotClear()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ModifyPasswordDialog</class>
- <widget class="QDialog" name="ModifyPasswordDialog">
+ <class>ProfileDialog</class>
+ <widget class="QDialog" name="ProfileDialog">
   <property name="geometry">
    <rect>
     <x>0</x>

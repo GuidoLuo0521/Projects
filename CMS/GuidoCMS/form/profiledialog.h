@@ -5,16 +5,16 @@
 #include "common/staffinfo.h"
 
 namespace Ui {
-class ModifyPasswordDialog;
+class ProfileDialog;
 }
 
-class ModifyPasswordDialog : public QDialog
+class ProfileDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit ModifyPasswordDialog(QWidget *parent = nullptr);
-    ~ModifyPasswordDialog();
+    explicit ProfileDialog(QWidget *parent = nullptr);
+    ~ProfileDialog();
 
 signals:
     void signalUpdateSuccess();
@@ -30,7 +30,7 @@ private slots:
 
 private:
     int CheckParam();
-    Ui::ModifyPasswordDialog *ui;
+    Ui::ProfileDialog *ui;
 
     CStaffInfo * m_pCurrentStaff;
 };

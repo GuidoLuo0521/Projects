@@ -164,9 +164,9 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             else if(keyEvent->key() == Qt::Key_Q) { AddMarkPoint(MarkPointType::PS); return true; }
             else if(keyEvent->key() == Qt::Key_W) { AddMarkPoint(MarkPointType::P); return true; }
             else if(keyEvent->key() == Qt::Key_E) { AddMarkPoint(MarkPointType::PE); return true; }
-            else if(keyEvent->key() == Qt::Key_A) { AddMarkPoint(MarkPointType::Q); return true; }
+            else if(keyEvent->key() == Qt::Key_A) { AddMarkPoint(MarkPointType::QS); return true; }
             else if(keyEvent->key() == Qt::Key_S) { AddMarkPoint(MarkPointType::R); return true; }
-            else if(keyEvent->key() == Qt::Key_D) { AddMarkPoint(MarkPointType::S); return true; }
+            else if(keyEvent->key() == Qt::Key_D) { AddMarkPoint(MarkPointType::SE); return true; }
             else if(keyEvent->key() == Qt::Key_Z) { AddMarkPoint(MarkPointType::TS); return true; }
             else if(keyEvent->key() == Qt::Key_X) { AddMarkPoint(MarkPointType::T); return true; }
             else if(keyEvent->key() == Qt::Key_C) { AddMarkPoint(MarkPointType::TE); return true; }
@@ -407,9 +407,9 @@ void MainWindow::slotUpdataCustomplotSelectedData()
         pen.setColor(m_vColorSelected[GT_MARK_POINT_P]);
         m_pCustomPlot->graph(GT_SELECTED_MARK)->setPen(pen);
         break;
-    case MarkPointType::Q:
+    case MarkPointType::QS:
     case MarkPointType::R:
-    case MarkPointType::S:
+    case MarkPointType::SE:
         pen.setColor(m_vColorSelected[GT_MARK_POINT_R]);
         m_pCustomPlot->graph(GT_SELECTED_MARK)->setPen(pen);
         break;
@@ -465,7 +465,7 @@ void MainWindow::slotInsertCustomplotMarkData()
                 m_CustomplotPMarkData[0].push_back(x);
                 m_CustomplotPMarkData[1].push_back(y);
             }
-            else if( i <= MarkPointType::S )
+            else if( i <= MarkPointType::SE )
             {
                 m_CustomplotRMarkData[0].push_back(x);
                 m_CustomplotRMarkData[1].push_back(y);
@@ -961,7 +961,7 @@ bool MainWindow::CheckSaveCorrect()
         QMessageBox::critical(this, "警告", "PS PE 个数不相等");
         return false;
     }
-    if(m_vectMarkPoint[(int)MarkPointType::Q].size() != m_vectMarkPoint[(int)MarkPointType::S].size())
+    if(m_vectMarkPoint[(int)MarkPointType::QS].size() != m_vectMarkPoint[(int)MarkPointType::SE].size())
     {
         QMessageBox::critical(this, "警告", "Q S 个数不相等");
         return false;
