@@ -121,14 +121,13 @@ namespace GuidoCMS.Controllers
                     con.Open();
 
                     MySqlCommand mycmd1 = new MySqlCommand(strQuery, con);
-                    mycmd1.ExecuteNonQuery();
-
                     MySqlDataReader reader = mycmd1.ExecuteReader();
                     while (reader.Read())
                     {
-                        jsonString.Append($"\"{reader["ReportID"].ToString()}\":{{");
-                        jsonString.Append($"\"WeekNumber\":\"{reader["WeekNumber"].ToString()}\",");
-                        jsonString.Append($"\"CommitDate\":\"{Convert.ToDateTime(reader["CommitDate"].ToString()).ToString("yyyy-HH-dd hh:mm:ss")}\",");
+                        
+                        jsonString.Append($"\"{reader["WeekNumber"].ToString()}\":{{");
+                        jsonString.Append($"\"ReportID\":\"{reader["ReportID"].ToString()}\",");
+                        jsonString.Append($"\"CommitDate\":\"{Convert.ToDateTime(reader["CommitDate"].ToString()).ToString("yyyy-MM-d HH:mm:ss")}\",");
                         jsonString.Append($"\"Project\":\"{reader["Project"].ToString()}\",");
                         jsonString.Append($"\"Finished\":\"{reader["Finished"].ToString()}\",");
                         jsonString.Append($"\"Plan\":\"{reader["Plan"].ToString()}\"");

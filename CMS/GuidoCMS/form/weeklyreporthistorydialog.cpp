@@ -28,8 +28,8 @@ void WeeklyReportHistoryDialog::InitLayout()
 
     int nIndex = 0;
     m_pStandardItemModel = new QStandardItemModel;
-    m_pStandardItemModel->setColumnCount(6);
-    m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "提交编号");
+    m_pStandardItemModel->setColumnCount(5);
+    //m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "提交编号");
     m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "提交周数");
     m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "项目名称");
     m_pStandardItemModel->setHeaderData(nIndex++, Qt::Horizontal, "完成内容");
@@ -86,19 +86,19 @@ void WeeklyReportHistoryDialog::slotGetDate()
     QJsonDocument doc = QJsonDocument::fromJson(strJson.toUtf8());
     QJsonObject obj = doc.object();
 
-    QString str = "", key = "";
-    int nRow = 0, nColumn = 0;
     QStringList list =  obj.keys();
+    QString str = "", key = "";
+    int nRow = list.count() - 1, nColumn = 0;
+
     foreach (key, list)
     {
         if(obj[key].isObject())
         {
             nColumn = 0;
-
             QJsonObject objval =  obj[key].toObject();
+            //str = QString("%1").arg(objval["ReportID"].toString());
+            //m_pStandardItemModel->setItem(nRow, nColumn++, new QStandardItem(str));
             str = QString("%1").arg(key);
-            m_pStandardItemModel->setItem(nRow, nColumn++, new QStandardItem(str));
-            str = QString("%1").arg(objval["WeekNumber"].toString());
             m_pStandardItemModel->setItem(nRow, nColumn++, new QStandardItem(str));
             str = QString("%1").arg(objval["Project"].toString());
             m_pStandardItemModel->setItem(nRow, nColumn++, new QStandardItem(str));
@@ -109,8 +109,9 @@ void WeeklyReportHistoryDialog::slotGetDate()
             str = QString("%1").arg(objval["CommitDate"].toString());
             m_pStandardItemModel->setItem(nRow, nColumn++, new QStandardItem(str));
         }
-        nRow++;
+        --nRow;
     }
+
 
     pReply->deleteLater();
 }
