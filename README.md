@@ -80,7 +80,7 @@ Qt `QNetworkAccessManager`，`QNetworkRequest`，`QNetworkReply`
 
 Qt，Json，自动更新
 
-![1629420530183](images/1629420530183.png)
+![1632288528619](images/1632288528619.png)
 
 
 

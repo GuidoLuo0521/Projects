@@ -199,6 +199,12 @@ void MainWindow::slotCurrentFileChanged()
     slotOpenCurrentFile();
 }
 
+void MainWindow::slotFileNameFilterChanged(const QString & str)
+{
+    m_strFileNameFilter = str;
+    emit signalFillFileList();
+}
+
 void MainWindow::slotFillFileList()
 {
     QDir dir(m_strCurrentDir);
@@ -215,22 +221,46 @@ void MainWindow::slotFillFileList()
             {
                 if( str.contains("副本") == false )
                 {
-                    QStandardItem *item = new QStandardItem(list[i].fileName());
-                    m_pModel->appendRow(item);
+                    if(m_strFileNameFilter == "" )
+                    {
+                        QStandardItem *item = new QStandardItem(list[i].fileName());
+                        m_pModel->appendRow(item);
+                    }
+                    else if(str.contains(m_strFileNameFilter))
+                    {
+                        QStandardItem *item = new QStandardItem(list[i].fileName());
+                        m_pModel->appendRow(item);
+                    }
                 }
             }
             else if (m_nCustomFilterType == 2)
             {
                 if( str.contains("副本") == true )
                 {
-                    QStandardItem *item = new QStandardItem(list[i].fileName());
-                    m_pModel->appendRow(item);
+                    if(m_strFileNameFilter == "" )
+                    {
+                        QStandardItem *item = new QStandardItem(list[i].fileName());
+                        m_pModel->appendRow(item);
+                    }
+                    else if(str.contains(m_strFileNameFilter))
+                    {
+                        QStandardItem *item = new QStandardItem(list[i].fileName());
+                        m_pModel->appendRow(item);
+                    }
                 }
             }
             else
             {
-                QStandardItem *item = new QStandardItem(list[i].fileName());
-                m_pModel->appendRow(item);
+                if(m_strFileNameFilter == "" )
+                {
+                    QStandardItem *item = new QStandardItem(list[i].fileName());
+                    m_pModel->appendRow(item);
+                }
+                else if(str.contains(m_strFileNameFilter))
+                {
+                    QStandardItem *item = new QStandardItem(list[i].fileName());
+                    m_pModel->appendRow(item);
+                }
             }
         }
     }
@@ -716,7 +746,7 @@ void MainWindow::InitLayout()
     // 绘图
     InitCustomplot();
 
-    pMainSplitter->addWidget(m_pListView);    
+    pMainSplitter->addWidget(m_pLeftWidget);
     pMainSplitter->addWidget(m_pCustomPlot);
 
     pMainSplitter->setStretchFactor(0, 1);
@@ -860,6 +890,14 @@ void MainWindow::InitCustomplot()
 
 void MainWindow::InitListView()
 {
+    m_pLeftWidget = new QWidget;
+
+    QVBoxLayout * pVBoxLayout = new QVBoxLayout;
+    QLineEdit * pSearchName = new QLineEdit;
+    connect(pSearchName, &QLineEdit::textChanged, this, &MainWindow::slotFileNameFilterChanged);
+
+    pSearchName->setPlaceholderText("请输入文件名");
+
     m_pModel = new QStandardItemModel;
     m_pListView = new QListView;
 
@@ -928,8 +966,10 @@ void MainWindow::InitListView()
     connect(m_pActionOpenDir, SIGNAL(triggered(bool)), this, SLOT(slotOpenDir()));
     connect(m_pActionDeleteFile, SIGNAL(triggered(bool)), this, SLOT(slotDeleteFile()));
 
+    pVBoxLayout->addWidget(pSearchName);
+    pVBoxLayout->addWidget(m_pListView);
+    m_pLeftWidget->setLayout(pVBoxLayout);
 
-    m_pListView->installEventFilter(this);
 }
 
 void MainWindow::BindSignalSlot()

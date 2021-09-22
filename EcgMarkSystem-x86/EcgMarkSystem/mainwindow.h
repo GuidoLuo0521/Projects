@@ -70,6 +70,8 @@ private slots:
     void slotCurrentDirChanged();
     void slotCurrentFileChanged();
 
+    void slotFileNameFilterChanged(const QString &);
+
     void slotFillFileList();
     void slotListViewSelectChanged(QModelIndex);
     void slotListViewSelectdChanged(const QModelIndex &current, const QModelIndex &previous);
@@ -144,6 +146,8 @@ private:
     QLabel * m_pStatusSelectdLable;
 
     QCustomPlot * m_pCustomPlot;
+
+    QWidget * m_pLeftWidget;
     QListView * m_pListView;
     QStandardItemModel *m_pModel;
 
@@ -169,6 +173,7 @@ private:
     int m_nCustomFilterType;    // 0: 全部显示 1：原始文件 2：副本
     QDir::SortFlag m_Sortflag = QDir::SortFlag::LocaleAware;
 
+    QString m_strFileNameFilter;
     QString m_strCurrentVersion;
 
     QString m_strCurrentDir;
