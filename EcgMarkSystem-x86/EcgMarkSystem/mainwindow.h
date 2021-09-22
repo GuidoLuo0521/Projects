@@ -169,6 +169,7 @@ private:
     int m_nCustomFilterType;    // 0: 全部显示 1：原始文件 2：副本
     QDir::SortFlag m_Sortflag = QDir::SortFlag::LocaleAware;
 
+    QString m_strCurrentVersion;
 
     QString m_strCurrentDir;
     QString m_strCurrentFile;

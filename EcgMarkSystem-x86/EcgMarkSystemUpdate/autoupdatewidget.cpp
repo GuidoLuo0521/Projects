@@ -124,7 +124,6 @@ void AutoUpdateWidget::slotCancleDownLoadNewExe()
 
 void AutoUpdateWidget::slotDownLoadNewExe()
 {
-    slotUpdateLocalUpdateFile();
     ui->progressBar->setHidden(false);
 
     //杀掉正在运行的进程
@@ -142,25 +141,9 @@ void AutoUpdateWidget::slotDownLoadNewExe()
 
 }
 
-void AutoUpdateWidget::slotUpdateLocalUpdateFile()
-{
-    if(QFile::exists(QApplication::applicationDirPath() + "/" + skm_LocalTempUpdateName) == false )
-        return;
-
-    if(QFile::exists(QApplication::applicationDirPath() + "/" + skm_UpdateFileName) == true)
-        QFile::remove(QApplication::applicationDirPath() + "/" + skm_UpdateFileName);
-
-    if(QFile::rename(QApplication::applicationDirPath() + "/" + skm_LocalTempUpdateName,
-                      QApplication::applicationDirPath() + "/" + skm_UpdateFileName) == false)
-    {
-        QMessageBox::critical(this, "错误", "更新本地版本文件错误。");
-        return;
-    }
-}
-
 void AutoUpdateWidget::replyJsonFinished(QNetworkReply *reply)
 {
-    QFile file(skm_LocalTempUpdateName);
+    QFile file(QApplication::applicationDirPath() + "/" + skm_LocalTempUpdateName);
     if(file.open(QIODevice::Text | QIODevice::WriteOnly) == false)
     {
         QMessageBox::critical(this, "错误", "创建临时文件更新错误。");
@@ -178,10 +161,19 @@ void AutoUpdateWidget::replyJsonFinished(QNetworkReply *reply)
 void AutoUpdateWidget::slotDownloadExeFinished()
 {
     QMessageBox::information(this, "提示", "更新完成。");
-    QFile::remove(skm_LocalTempUpdateName);
+
+    if(QFile::exists(QApplication::applicationDirPath() + "/" + skm_UpdateFileName) == true)
+        QFile::remove(QApplication::applicationDirPath() + "/" + skm_UpdateFileName);
+
+    QFile::rename(QApplication::applicationDirPath() + "/" + skm_LocalTempUpdateName,
+                  QApplication::applicationDirPath() + "/" + skm_UpdateFileName);
 
     QProcess process(this);
-    process.startDetached(AutoUpdateWidget::skm_UpdateExeName);
+    bool bOk = process.startDetached(QApplication::applicationDirPath() + "/" + skm_UpdateExeName);
+    if( bOk )
+    {
+        qDebug() << QApplication::applicationDirPath() + "/" + skm_UpdateExeName + " 打开成功";
+    }
 
     accept();
 }

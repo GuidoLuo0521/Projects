@@ -49,7 +49,6 @@ private slots:
 
     void slotCancleDownLoadNewExe();
     void slotDownLoadNewExe();
-    void slotUpdateLocalUpdateFile();
     void replyJsonFinished(QNetworkReply *reply);   //json 文件下载结束
 
     void slotDownloadExeFinished();   //json 文件下载结束

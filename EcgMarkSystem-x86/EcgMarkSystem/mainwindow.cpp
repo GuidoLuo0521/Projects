@@ -22,8 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowIcon(QIcon(":/icon/Main.ico"));
 
-    QString strVersion = GetCurrentVersion();
-    setWindowTitle("EMS - " + strVersion);
+    m_strCurrentVersion = GetCurrentVersion();
+    setWindowTitle("EMS - " + m_strCurrentVersion);
 
     InitColor();
     InitLayout();
@@ -256,8 +256,7 @@ void MainWindow::slotOpenCurrentFile()
 
     ClearLastFile();
 
-    QString strTitle = windowTitle();
-    setWindowTitle(strTitle + " " + m_strCurrentFile);
+    setWindowTitle("EMS - " + m_strCurrentVersion + " " + m_strCurrentFile);
 
     QFile file(strFilePath);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -271,7 +270,7 @@ void MainWindow::slotOpenCurrentFile()
         ShowStatusTips("解析json文件错误！");
 
         m_strCurrentFile = "";
-        this->setWindowTitle(m_strCurrentFile);
+        this->setWindowTitle("EMS - " + m_strCurrentVersion + " " + m_strCurrentFile);
         return;
     }
     QJsonObject jsonObject = document.object();
@@ -344,7 +343,7 @@ void MainWindow::slotSaveCurrentFile()
 void MainWindow::slotCheckUpdate()
 {
     // 可以单独写一个 update.exe 文件;
-    if( QFile::exists(skg_UpdateExeName) == false)
+    if( QFile::exists(QApplication::applicationDirPath() + "/" + skg_UpdateExeName) == false)
     {
         ShowStatusTips("更新文件：" + skg_UpdateExeName + " 不存在，正在下载。");
 
@@ -1084,12 +1083,12 @@ HitMarkPoint MainWindow::HitMark(double xpos, double ypos)
 
 QString MainWindow::GetCurrentVersion()
 {
-    if(QFile::exists(skg_UpdateFileName) == false)
+    if(QFile::exists(QApplication::applicationDirPath() + "/" + skg_UpdateFileName) == false)
     {
         return  "V Unknow";
     }
 
-    QFile file(skg_UpdateFileName);
+    QFile file(QApplication::applicationDirPath() + "/" + skg_UpdateFileName);
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     QString value = file.readAll();
     file.close();
