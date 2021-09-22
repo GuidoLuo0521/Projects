@@ -89,6 +89,11 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             {
                 if( m_bMousePressing)
                 {
+                    if( xint >= m_CustomplotEcgData[1].size())
+                        xint = m_CustomplotEcgData[1].size() - 1;
+                    if( xint < 0)
+                        xint = 0;
+
                     m_HitMarkPoint.nNewPos = xint;
                     SetCustomplotActiviedData(xint, m_CustomplotEcgData[1][ xint ]);
                 }
@@ -98,22 +103,27 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         }
         else if(event->type() == QEvent::MouseButtonRelease)
         {
-            if(m_bMousePressing)
+            m_bMousePressing = false;
+
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+            double x = mouseEvent->pos().x();
+            double y = mouseEvent->pos().y();
+            double x_ = m_pCustomPlot->xAxis->pixelToCoord(x);
+            double y_ = m_pCustomPlot->yAxis->pixelToCoord(y);
+            int xint = int(x_+0.5);
+
+            m_dMousePosX = x_;
+            m_dMousePosY = y_;
+
+            if(m_HitMarkPoint.type < MARK_POINT_COUNT)
             {
-                m_bMousePressing = false;
-
-                QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-                double x = mouseEvent->pos().x();
-                double y = mouseEvent->pos().y();
-                double x_ = m_pCustomPlot->xAxis->pixelToCoord(x);
-                double y_ = m_pCustomPlot->yAxis->pixelToCoord(y);
-                int xint = int(x_+0.5);
-
-                m_dMousePosX = x_;
-                m_dMousePosY = y_;
-
-                if(m_HitMarkPoint.type < MARK_POINT_COUNT)
+                if(m_bMousePressing)
                 {
+                    if( xint >= m_CustomplotEcgData[1].size())
+                        xint = m_CustomplotEcgData[1].size() - 1;
+                    if( xint < 0)
+                        xint = 0;
+
                     m_HitMarkPoint.nNewPos = xint;
                     SetCustomplotActiviedData(xint, m_CustomplotEcgData[1][ xint ]);
 
@@ -515,6 +525,11 @@ void MainWindow::slotShowListViewContextMenu(const QPoint&)
     m_pListViewContextMenu->exec(QCursor::pos());//在当前鼠标位置显示
 }
 
+void MainWindow::slotShowCustomplotContextMenu(const QPoint &)
+{
+    m_pCustomPlotContextMenu->exec(QCursor::pos());//在当前鼠标位置显示
+}
+
 void MainWindow::slotSetListSort()
 {
     m_pActionSortByName->setChecked(false);
@@ -627,6 +642,18 @@ void MainWindow::slotDownloadUpdateExeFinished()
 
     QProcess process(this);
     process.startDetached(strUpdateExePath);
+}
+
+void MainWindow::slotClearMarkPoint()
+{
+    ClearMarkPointVect();
+    ClearCustomplotMarkData();
+    ClearCustomplotSelectedData();
+    ClearCustomplotActiviedData();
+
+    ClearHitMarkDate();
+
+    emit signalUpdataCustomplotMarkData();
 }
 
 void MainWindow::ClearLastFile()
@@ -798,6 +825,15 @@ void MainWindow::InitCustomplot()
     m_pCustomPlot->xAxis->setLabel("x");             // 设置x轴的标签
     m_pCustomPlot->yAxis->setLabel("y");
     m_pCustomPlot->legend->setVisible(true);         // 显示图例
+
+    m_pCustomPlot->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(m_pCustomPlot, SIGNAL(customContextMenuRequested(const QPoint&)),
+            this, SLOT(slotShowCustomplotContextMenu(const QPoint&)));
+
+    m_pCustomPlotContextMenu = new QMenu(m_pCustomPlot);
+    QAction * pActionClear = new QAction("清除数据");
+    m_pCustomPlotContextMenu->addAction(pActionClear);
+    connect(pActionClear, SIGNAL(triggered(bool)), this, SLOT(slotClearMarkPoint()));
 
     m_pCustomPlot->selectionRect()->setPen(QPen(Qt::black,1,Qt::DashLine));//设置选框的样式：虚线
     m_pCustomPlot->selectionRect()->setBrush(QBrush(QColor(0,0,100,50)));//设置选框的样式：半透明浅蓝

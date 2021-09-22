@@ -45,7 +45,7 @@
       <item>
        <widget class="QPushButton" name="btnDownload">
         <property name="text">
-         <string>下载</string>
+         <string>更新</string>
         </property>
        </widget>
       </item>

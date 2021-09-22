@@ -71,7 +71,7 @@ void CHttpDownLoadFile::DestroyData()
 void CHttpDownLoadFile::ReplyNewDataArrived()//响应m_netReply有新的数据到达
 {
     if (m_file)
-    {
+    {        
         // 写文件-形式为追加
         QFile file(m_strFileName);
         if (file.open(QIODevice::OpenModeFlag::Append))

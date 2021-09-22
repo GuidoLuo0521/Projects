@@ -23,6 +23,7 @@ SOURCES += \
     main.cpp \
 
 HEADERS += \
+    GenPdbFile.h \
     autoupdatewidget.h \
     chttpdownloadfile.h \
 
@@ -39,3 +40,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     Resources.qrc
 
+LIBS += -lDbgHelp

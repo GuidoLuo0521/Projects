@@ -91,6 +91,7 @@ private slots:
     void slotInsertCustomplotMarkData();
 
     void slotShowListViewContextMenu(const QPoint&);
+    void slotShowCustomplotContextMenu(const QPoint&);
 
     void slotSetListSort();
 
@@ -99,6 +100,8 @@ private slots:
     void slotSetFillFileKeyWord();
 
     void slotDownloadUpdateExeFinished();
+
+    void slotClearMarkPoint();
 
 private:
     void ClearLastFile();
@@ -146,6 +149,8 @@ private:
     QLabel * m_pStatusSelectdLable;
 
     QCustomPlot * m_pCustomPlot;
+    QMenu * m_pCustomPlotContextMenu;
+
 
     QWidget * m_pLeftWidget;
     QListView * m_pListView;
